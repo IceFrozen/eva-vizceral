@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <script src="./dist/vizceral.js"></script>
+      <link rel="stylesheet" type="text/css" href="./dist/app.css" />
+<script>
+      
+        var testView = new Vizceral.EvaDataNode(Math.random(),"test1")    // 创建节点1 入口点
+  var testView2 = new Vizceral.EvaDataNode(Math.random(),"test2")    //创建节点2
+  var testView3 = new Vizceral.EvaDataNode(Math.random(),"test3")    //创建节点3
+  var testView4 = new Vizceral.EvaDataNode(Math.random(),"test4")    //创建节点4
+  //创建节点链接
+  testView2.connectAndGetConnetion(testView4).setDetail("danger",1000)    // 节点2链接节点4
+  testView2.connectAndGetConnetion(testView3,{"danger":1000,"normal":2000}) //节点2链接节点3
+
+  testView.connectAndGetConnetion(testView2) //节点1链接节点2
+          .createNotices("test title 1",1)   // 通知名 通知级别 是否有链接
+          .createNotices("test title 2",2,"http://www.baidu.com")
+          // 设置流向图 数量
+          .setDetail("danger",1000)
+          .setDetail("normal",1000)
+          .setDetail("warning",1000)
+  var region
+  function run () {
+   region = new Vizceral.EvaRegion(document.getElementById('viz')) 
+  //or region.setEntrtNode(testView)
+     // 只有这两部操作完成之后，EvaDataNode的属性变化才会被监听到
+      region.on("objectHighlighted",function(type,nodeOrConnection,navtiveNode) {
+        if(type == "connection") {
+            console.log("this is a  conenction")
+            console.log(type,nodeOrConnection,navtiveNode)
+            console.log("nodeOrConnection is EvaConnection",nodeOrConnection)
+        }
+        if(type == "node") {
+            console.log("this is a node")
+            console.log(type,nodeOrConnection,navtiveNode)
+            console.log("nodeOrConnection is evaNode",nodeOrConnection)
+        }
+        if(type == "cancel"){
+            console.log("this is a node")
+            console.log(type,nodeOrConnection,navtiveNode)
+            console.log("nodeOrConnection is null",nodeOrConnection)
+        }
+     })
+
+
+
+     region.setRootLevels(testView).show()
+      setTimeout(function(){
+      // 以下步骤自动刷新视图
+        var c = region.getNodeByNodeId(testView2.id)
+        //c.setClass("danger")  //设置变化
+        //c.setNodeType("user")
+        //c.setHightLight(true)     // 设置高亮
+        var node = region.getNodeByNodeId(testView3.id)
+        // 动态链接
+        // node.connectAndGetConnetion(testView4,{"danger":1000,"normal":2000})
+        //   .createNotices("test title 3",1)   // 通知名 通知级别 是否有链接 //新增节点
+        setTimeout(function(){
+            console.log("============")
+           //c.setHightLight(false)     // 取消高亮
+        },3000)
+      },3000)
+
+      }
+
+      
+</script>
+</head>
+  <body onload='run()'>
+    <div id="viz">
+     <!--   <canvas id='vizceral'></canvas> 
+       <div class="vizceral-notice"></div> -->
+    </div>
+   
+  </body>
+</html>
