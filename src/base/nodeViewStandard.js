@@ -33,20 +33,21 @@ class NodeViewStandard extends NodeView {
     this.dotColor = GlobalStyles.getColorTrafficRGBA(this.object.getClass());
     this.dotMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color(this.dotColor.r, this.dotColor.g, this.dotColor.b), transparent: true, opacity: this.dotColor.a });
     // custom shapes support. node_type property should be defined for a node in json. If node_type is missing or undefined, the default shape (circle) will be picked up
-    this.shape = ShapesFactory.getShape(service);
+
 
     // super.innerCircleMaterial = this.shape.material
     // super.borderMaterial = this.shape.bordermaterial
-    this.meshes.outerBorder = this.addChildElement(this.shape.outerborder, this.borderMaterial);
-    this.meshes.innerCircle = this.addChildElement(this.shape.innergeometry, this.innerCircleMaterial);
+    this.meshes.outerBorder = this.addChildElement(this.shape.outerborder, this.shape.outerborder_material);
+    this.meshes.innerCircle = this.addChildElement(this.shape.innergeometry, this.shape.innergeometry_material);
     //this.meshes.innerCircle = this.addChildElement(NodeView.getInnerCircleGeometry(radius), this.innerCircleMaterial);
-   
-
 /*    
     this.meshes.outerBorder = this.addChildElement(NodeView.getOuterBorderGeometry(radius), this.borderMaterial);
    
 */
-
+    // const borderColor = GlobalStyles.getColorTrafficRGBA("danger", false);
+    // console.log("super",super.innerCircleMaterial)
+    //super.innerCircleMaterial.color.setRGB(borderColor.r, borderColor.g, borderColor.b);
+   
     this.meshes.noticeDot = this.addChildElement(NodeView.getNoticeDotGeometry(radius), this.dotMaterial);
     this.refreshNotices();
 

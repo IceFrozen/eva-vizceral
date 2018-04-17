@@ -19,3 +19,4 @@ import './ShapeStorage';
 import './ShapeService';
 import './ShapeUser';
 import './ShapeUsers';
+import './ShapeAzure';

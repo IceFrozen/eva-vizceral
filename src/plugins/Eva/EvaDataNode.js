@@ -44,17 +44,22 @@ class EvaDataNode extends EventEmitter {
   }
   checkDataNode () {
   // 用于检查 数据的合法性
-    if(this.id == null) throw new Error("dataNodeId is required")
+    if(this.id == null) {
+      console.log(this)
+      throw new Error("dataNodeId is required")
+    }
     if(!this.renderer) {
       this.renderer = EvaDataNode.CONSTS.DEAULT.RENDERER
     }
-    if(!this.name) {
-      throw new Error("dataNode name is required")
+    if(this.name == null) {
+      console.error(this)
+      throw new Error("dataNode's name is required!")
     }
     if(!this.displayName) {
       this.displayName = this.name
     }
     if(!this.node_type) {
+      //TODO
       this.node_type = "default"
     }
     if(!this.maxVolume) {
@@ -140,7 +145,8 @@ class EvaDataNode extends EventEmitter {
     let childs = this.childNodes.map(function(dataNodeItem){return dataNodeItem.getFormatData()})
     let selfEntryNode = {
       name:this.name,
-      renderer:EvaDataNode.CONSTS.RENDERER.FOCUSEDCHILD
+      renderer:EvaDataNode.CONSTS.RENDERER.FOCUSEDCHILD,
+      node_type:this.node_type
     }
     if(this.displayName) {
       selfEntryNode.displayName = this.displayName

@@ -21,13 +21,14 @@ import ShapesFactory from '../ShapesFactory';
 import ShapesUtils from '../ShapesUtils';
 
 class ShapeService {
-  constructor () {
+  constructor (node) {
     this.customNode = {};
-    this.customNode.innergeometry = this._createInnerGeometry(16, 32);
+    this.node = node
+    this.customNode.innergeometry = this._createInnerGeometry(10, 32);
     this.customNode.outerborder = this._createOuterBorder(10, 32);
-    this.customNode.material = this._createMaterial(GlobalStyles.shapesStyles.colorShapeService);
-    this.customNode.bordermaterial = this._createMaterial(GlobalStyles.shapesStyles.colorShapeBorder);
-
+    this.customNode.innergeometry_material = this._createMaterial(node);
+    this.customNode.outerborder_material = this._createMaterial(node);
+    this.customNode.getShapeColor = this.getShapeColor;
     return this.customNode;
   }
 
@@ -62,6 +63,10 @@ class ShapeService {
     return new THREE.ShapeGeometry(shapes, curveSegments);
   }
 
+  getShapeColor (node,highlight) {
+    const borderColor = GlobalStyles.getColorTrafficRGBA(node.getClass(), highlight);
+    return borderColor
+  }
   _createMaterial (rgb) {
     return new THREE.MeshBasicMaterial({ color: rgb });
   }

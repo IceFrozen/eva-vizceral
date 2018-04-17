@@ -244,7 +244,7 @@ class TrafficGraph extends EventEmitter {
         dimNodes[node.getName()] = false;
       });
     }
-
+    // 设置透明
     this._applyDimming(dimNodes, dimConnections, dimDefault);
 
     return matches;
@@ -702,7 +702,7 @@ class TrafficGraph extends EventEmitter {
         if (changed) { dimChanged.push(view); }
       }
     });
-    // Run the animations
+      // Run the animations
     new TWEEN.Tween({ percent: 0 })
               .to({ percent: 1 }, 150)
               .easing(TWEEN.Easing.Cubic.In)

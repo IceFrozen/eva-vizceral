@@ -224,7 +224,7 @@ class EvaRegion extends EventEmitter {
   }
   setHightLightNode (nodeId,hightOrHidden) {
     if(!this.vizceral) {
-      console.warn("viz is not exist")
+      console.warn("this.vizceral is not exist")
       return this
     }
     let node = this.getNodeByNodeId(nodeId)
@@ -267,7 +267,8 @@ class EvaRegion extends EventEmitter {
       let sourceNode = children.find(function(child){return child.name === sourceName})
       let targetNode = children.find(function(child){return child.name === targetName})
       if(!sourceNode || !targetNode){
-        throw new Error("error in pass the json data")
+        console.warn("error in pass the json data source:",conn.sourceNode,conn.targetNode,conn)
+       continue;
       }
       let connection = sourceNode.connectAndGetConnetion(targetNode,conn.metrics)
       if(conn.notices) {

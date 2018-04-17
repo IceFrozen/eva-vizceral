@@ -19,12 +19,14 @@ import ShapesFactory from '../ShapesFactory';
 import ShapesUtils from '../ShapesUtils';
 
 class ShapeUsers {
-  constructor () {
+  constructor (node) {
     this.customNode = {};
-    this.customNode.innergeometry = this._createInnerGeometry(16, 32);
-    this.customNode.outerborder = this._createOuterBorder(10, 32);
-    this.customNode.material = this._createMaterial(GlobalStyles.shapesStyles.colorShapeUsers);
-    this.customNode.bordermaterial = this._createMaterial(GlobalStyles.shapesStyles.colorShapeBorder);
+    this.node = node
+    this.customNode.innergeometry = this._createInnerGeometry(18, 32);
+    this.customNode.outerborder = this._createOuterBorder(20, 32);
+    this.customNode.innergeometry_material = this._createMaterial(node);
+    this.customNode.outerborder_material = this._createMaterial(node);
+    this.customNode.getShapeColor = this.getShapeColor;
     return this.customNode;
   }
 
@@ -47,6 +49,10 @@ class ShapeUsers {
 
   _createMaterial (rgb) {
     return new THREE.MeshBasicMaterial({ color: rgb });
+  }
+   getShapeColor (node,highlight) {
+    const borderColor = GlobalStyles.getColorTrafficRGBA(node.getClass(), highlight);
+    return borderColor
   }
 
 }

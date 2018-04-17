@@ -2,22 +2,24 @@ import * as THREE from 'three';
 import GlobalStyles from '../../globalStyles';
 import ShapesFactory from '../ShapesFactory';
 import ShapesUtils from '../ShapesUtils';
+import ShapeParent from './ShapeParent';
+import NodeView from '../nodeView';
 
 class ShapeUsers {
-  constructor () {
+  constructor (node) {
     this.customNode = {};
-    this.customNode.innergeometry = this._createInnerGeometry(16, 32);
-    this.customNode.outerborder = this._createOuterBorder(10, 32);
-    this.customNode.material = this._createMaterial(GlobalStyles.shapesStyles.colorShapeUsers);
-    this.customNode.bordermaterial = this._createMaterial(GlobalStyles.shapesStyles.colorShapeBorder);
+    this.node = node
+    this.customNode.innergeometry = this._createInnerGeometry(20, 32);
+    this.customNode.outerborder = this._createOuterBorder(20, 32);
+    this.customNode.innergeometry_material = this._createMaterial(node);
+    this.customNode.outerborder_material = this._createMaterial(node);
+    this.customNode.getShapeColor = this.getShapeColor
     return this.customNode;
   }
 
   _createInnerGeometry (radius, curveSegments) {
-    let polyStr = '40.7 2.55 40.59 1.55 40.29 0.03 18.02 0 17.78 0.98 17.63 1.97 17.56 2.98 17.58 3.99 17.69 4.99 17.86 5.82 0.46 5.8 0.22 6.78 0.07 7.77 0 8.78 0.02 9.79 0.13 10.79 0.33 11.78 0.61 12.75 0.98 13.69 1.42 14.59 1.95 15.46 2.54 16.27 3.21 17.03 3.94 17.73 4.73 18.36 5.57 18.93 5.95 19.14 5.55 19.6 5.16 20.16 4.82 20.74 4.53 21.36 4.29 22 4.11 22.65 3.99 23.32 3.93 23.99 3.92 24.67 3.98 25.35 4.09 26.02 4.27 26.68 4.5 27.31 4.78 27.93 5.12 28.52 5.5 29.08 5.93 29.6 6.41 30.08 6.93 30.52 7.49 30.91 8.07 31.26 8.69 31.55 9.32 31.78 9.98 31.96 10.64 32.08 11.32 32.15 12 32.15 12.68 32.09 13.35 31.98 14 31.81 14.64 31.58 15.26 31.29 15.85 30.96 16.41 30.57 16.93 30.14 17.41 29.66 17.85 29.14 18.24 28.59 18.58 28 18.87 27.39 19.11 26.75 19.29 26.1 19.41 25.43 19.47 24.75 19.48 24.07 19.42 23.4 19.3 22.73 19.13 22.07 18.9 21.43 18.62 20.82 18.28 20.23 17.9 19.67 17.46 19.14 17.39 19.07 18.01 18.69 18.82 18.1 19.59 17.44 20.28 16.71 20.92 15.93 21.48 15.09 21.96 14.21 22.37';
-    polyStr += ' 13.29 22.56 12.74 23.13 13.13 23.51 13.34 23.11 13.8 22.72 14.36 22.38 14.95 22.09 15.56 21.85 16.2 21.67 16.85 21.55 17.52 21.49 18.19 21.49 18.87 21.54 19.55 21.66 20.22 21.83 20.88 22.06 21.51 22.34 22.13 22.68 22.72 23.06 23.28 23.5 23.8 23.98 24.28 24.49 24.72 25.05 25.11 25.63 25.46 26.25 25.75 26.88 25.98 27.54 26.16 28.21 26.28 28.88 26.35 29.56 26.35 30.24 26.29 30.91 26.18 31.56 26.01 32.2 25.78 32.82 25.49 33.41 25.16 33.97 24.77 34.49 24.34 34.97 23.86 35.41 23.34 35.8 22.79 36.15 22.2 36.44 21.59 36.67 20.95 36.85 20.3 36.97 19.63 37.03 18.95 37.04 18.27 36.98 17.6 36.87 16.93 36.7 16.27 36.47 15.63 36.18 15.02 35.85 14.43 35.46 13.87 35.03 13.35 34.95 13.27 35.57 12.89 36.39 12.3 37.15 11.64 37.85 10.91 38.48 10.13 39.04 9.29 39.53 8.41 39.93 7.49 40.26 6.54 40.5 5.56 40.65 4.56 40.72 3.56 40.7 2.55';
-    const polyPath = [
-      polyStr
+     const polyPath = [
+      '38.36 7.58 38.1 9.23 37.7 10.86 37.16 12.44 36.49 13.97 35.68 15.44 34.75 16.83 33.7 18.13 32.53 19.33 31.27 20.43 29.92 21.42 28.88 22.04 29.01 22.17 29.73 23.04 30.37 23.96 30.93 24.94 31.4 25.97 31.78 27.03 32.07 28.12 32.26 29.23 32.35 30.36 32.35 31.48 32.24 32.61 32.04 33.72 31.74 34.8 31.35 35.86 30.87 36.88 30.3 37.86 29.65 38.78 28.92 39.64 28.12 40.43 27.25 41.15 26.32 41.79 25.35 42.35 24.32 42.82 23.26 43.2 22.17 43.49 21.06 43.68 19.93 43.77 18.81 43.77 17.68 43.66 16.57 43.46 15.48 43.16 14.43 42.77 13.41 42.29 12.43 41.72 11.51 41.07 10.65 40.34 9.86 39.54 9.14 38.67 8.5 37.74 7.94 36.77 7.47 35.74 7.09 34.68 6.8 33.59 6.61 32.48 6.52 31.35 6.52 30.22 6.63 29.1 6.83 27.99 7.13 26.9 7.52 25.85 8 24.83 8.57 23.85 9.22 22.93 9.88 22.15 9.25 21.8 7.85 20.87 6.54 19.82 5.33 18.66 4.23 17.39 3.23 16.04 2.36 14.61 1.62 13.1 1.01 11.54 0.55 9.93 0.22 8.29 0.04 6.62 0 4.95 0.11 3.28 0.37 1.63 0.77 0 37.75 0.05 38.25 2.57 38.44 4.23 38.47 5.91 38.36 7.58'
     ];
     const newShapes = ShapesUtils.getShapeFromPolyPointsArray(polyPath, ' ', 4, 4);
 
@@ -25,15 +27,28 @@ class ShapeUsers {
   }
 
   _createOuterBorder (radius, curveSegments) {
-    const border = new THREE.Shape();
-    border.absarc(0, 0, radius - 2, 0, Math.PI * 2, false);
-    return new THREE.ShapeGeometry(border, curveSegments);
+    // const border = new THREE.Shape();
+    // border.absarc(0, 0, radius - 2, 0, Math.PI * 2, false);
+    // const borderHole = new THREE.Path();
+    // borderHole.absarc(0, 0, radius, 0, Math.PI * 2, true);
+    // border.holes.push(borderHole);
+    // return new THREE.ShapeGeometry(border, curveSegments);
+      const border = new THREE.Shape();
+      border.absarc(0, 0, radius - 2, 0, Math.PI * 2, false);
+      const borderHole = new THREE.Path();
+      borderHole.absarc(0, 0, radius, 0, Math.PI * 2, true);
+      border.holes.push(borderHole);
+      return new THREE.ShapeGeometry(border,curveSegments);
   }
 
   _createMaterial (rgb) {
     return new THREE.MeshBasicMaterial({ color: rgb });
   }
 
+  getShapeColor (node,highlight) {
+    const borderColor = GlobalStyles.getColorTrafficRGBA(node.getClass(), highlight);
+    return borderColor
+  }
 }
-ShapesFactory.registerShape('users', ShapeUsers);
+ShapesFactory.registerShape('user', ShapeUsers);
 export default ShapeUsers;

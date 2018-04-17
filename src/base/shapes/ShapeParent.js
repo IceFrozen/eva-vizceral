@@ -19,8 +19,8 @@ import GlobalStyles from '../../globalStyles';
 class ShapeParent {
   constructor (node) {
     this.customNode = {};
-    this.customNode.innergeometry = this._createInnerGeometry(25, 32);
-    this.customNode.outerborder = this._createOuterBorder(25, 32);
+    this.customNode.innergeometry = this._createInnerGeometry(22, 32);
+    this.customNode.outerborder = this._createOuterBorder(22, 32);
 
     if (node.nodeStatus && GlobalStyles.styles.colorNodeStatus[node.nodeStatus]) {
       this.customNode.material = this._createMaterial(GlobalStyles.styles.colorNodeStatus[node.nodeStatus]);

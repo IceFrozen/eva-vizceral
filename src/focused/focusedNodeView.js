@@ -24,7 +24,7 @@ import GlobalDefinitions from '../globalDefinitions';
 import GlobalStyles from '../globalStyles';
 import NodeView from '../base/nodeView';
 import NodeNameView from '../base/nodeNameView';
-
+import ShapesFactory from '../base/ShapesFactory';
 const Console = console;
 
 const arcMeterWidth = 15;
@@ -57,9 +57,17 @@ class FocusedNodeView extends NodeView {
 
     this.radius = this.object.size;
     this.innerRadius = this.radius * 0.8;
+    this.shape = ShapesFactory.getShape(service);
 
-    this.meshes.outerBorder = this.addChildElement(NodeView.getOuterBorderGeometry(this.radius), this.borderMaterial);
-    this.meshes.innerCircle = this.addChildElement(NodeView.getInnerCircleGeometry(this.radius), this.innerCircleMaterial);
+    // super.innerCircleMaterial = this.shape.material
+    // super.borderMaterial = this.shape.bordermaterial
+    this.meshes.outerBorder = this.addChildElement(this.shape.outerborder, this.borderMaterial);
+    this.meshes.innerCircle = this.addChildElement(this.shape.innergeometry, this.innerCircleMaterial);
+
+
+    // this.meshes.outerBorder = this.addChildElement(NodeView.getOuterBorderGeometry(this.radius), this.borderMaterial);
+    // this.meshes.innerCircle = this.addChildElement(NodeView.getInnerCircleGeometry(this.radius), this.innerCircleMaterial);
+    
     this.meshes.innerCircle.position.setZ(-10);
     this.meshes.donut = this.addChildElement(NodeView.getDonutGeometry(this.radius, this.innerRadius), this.donutMaterial, 'donut');
     this.meshes.innerBorder = this.addChildElement(NodeView.getInnerBorderGeometry(this.innerRadius), this.borderMaterial);

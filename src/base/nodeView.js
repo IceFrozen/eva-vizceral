@@ -33,10 +33,19 @@ class NodeView extends BaseView {
 
     this.donutInternalColor = GlobalStyles.rgba.colorDonutInternalColor;
     this.donutInternalColorThree = new THREE.Color(this.donutInternalColor.r, this.donutInternalColor.g, this.donutInternalColor.b);
-
     this.borderColor = GlobalStyles.getColorTrafficRGBA(node.getClass());
-    this.borderMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color(this.borderColor.r, this.borderColor.g, this.borderColor.b), transparent: true, opacity: this.borderColor.a });
-    this.innerCircleMaterial = new THREE.MeshBasicMaterial({ color: this.donutInternalColorThree});
+    this.shape = ShapesFactory.getShape(node)
+    // if(this.shape){
+    //   console.log("node.view.shape.material",this.shape.material)
+    //   this.borderMaterial = this.shape.bordermaterial
+    //   this.innerCircleMaterial = this.shape.material
+    // }else{
+    //   console.log("not exit")
+    //   this.borderMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color(this.borderColor.r, this.borderColor.g, this.borderColor.b), transparent: true, opacity: this.borderColor.a });
+    //   this.innerCircleMaterial = new THREE.MeshBasicMaterial({ color: this.donutInternalColorThree,transparent :true});
+    // }
+    this.borderMaterial = this.shape.outerborder_material
+    this.innerCircleMaterial = this.shape.innergeometry_material
   }
 
   setOpacity (opacity) {
@@ -45,6 +54,7 @@ class NodeView extends BaseView {
     // Fade the inner node color to background color since setting opacity will show the particles hiding behind the node.
     if (!this.highlight) {
       this.innerCircleMaterial.color.setStyle(chroma.mix(GlobalStyles.styles.colorPageBackground, GlobalStyles.styles.colorDonutInternalColor, opacity).css());
+      this.borderMaterial.color.setStyle(chroma.mix(GlobalStyles.styles.colorPageBackground, GlobalStyles.styles.colorDonutInternalColor, opacity).css());
       this.meshes.innerCircle.geometry.colorsNeedUpdate = true;
     }
 
@@ -93,11 +103,12 @@ class NodeView extends BaseView {
         if (this.meshes.innerBorder) { this.meshes.innerBorder.geometry.colorsNeedUpdate = true; }
       } else {
         if (this.getOpacity() === 1) {
-          this.innerCircleMaterial.color.set(this.donutInternalColorThree);
-          this.meshes.innerCircle.geometry.colorsNeedUpdate = true;
+            const  borderColorInshape = this.shape.getShapeColor(this.object,this.highlight)
+            this.innerCircleMaterial.color.setRGB(borderColorInshape.r, borderColorInshape.g, borderColorInshape.b);
+            this.meshes.innerCircle.geometry.colorsNeedUpdate = true;
+            this.borderMaterial.color.setRGB(borderColor.r, borderColor.g, borderColor.b);       
         }
-        this.borderMaterial.color.setRGB(borderColor.r, borderColor.g, borderColor.b);
-        this.meshes.outerBorder.geometry.colorsNeedUpdate = true;
+        
         if (this.meshes.innerBorder) { 
           this.meshes.innerBorder.geometry.colorsNeedUpdate = true; 
         }

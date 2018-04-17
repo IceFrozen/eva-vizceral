@@ -29,4 +29,6 @@ ShapesFactory.getShape = function (node) {
   return new ShapesFactory.shapes.default(node);
 };
 
+
+
 export default ShapesFactory;

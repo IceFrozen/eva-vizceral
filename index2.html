@@ -8,17 +8,26 @@
   var testView2 = new Vizceral.EvaDataNode(Math.random(),"test2")    //创建节点2
   var testView3 = new Vizceral.EvaDataNode(Math.random(),"test3")    //创建节点3
   var testView4 = new Vizceral.EvaDataNode(Math.random(),"test4")    //创建节点4
+  var testView5 = new Vizceral.EvaDataNode(Math.random(),"test5")    //创建节点4
+  var testView6 = new Vizceral.EvaDataNode(Math.random(),"test6")    //创建节点4
   //创建节点链接
-  testView2.connectAndGetConnetion(testView4).setDetail("danger",0)    // 节点2链接节点4
-  testView2.connectAndGetConnetion(testView3,{"danger":0,"normal":0}) //节点2链接节点3
-
+  testView2.connectAndGetConnetion(testView4).setDetail("danger",10)    // 节点2链接节点4
+  testView2.connectAndGetConnetion(testView3,{"danger":10,"normal":10}) //节点2链接节点3
+  testView2.connectAndGetConnetion(testView5,{"danger":10,"normal":10}) //节点2链接节点3
+  testView2.connectAndGetConnetion(testView6,{"danger":10,"normal":10}) //节点2链接节点3
+  testView.setNodeType('users')
+  testView2.setNodeType('service')
+  testView3.setNodeType('storage')
+  testView5.setNodeType('pipe')
+  testView6.setNodeType('azure')
   testView.connectAndGetConnetion(testView2) //节点1链接节点2
-          .createNotices("test title 1",4)   // 通知名 通知级别 是否有链接
+          .createNotices("test title 1",1)   // 通知名 通知级别 是否有链接
 //          .createNotices("test title 2",2,"http://www.baidu.com")
           // 设置流向图 数量
-          .setDetail("danger",0)
-          .setDetail("normal",0)
-          .setDetail("warning",0)
+          .setDetail("danger",100)
+          .setDetail("normal",20)
+          .setDetail("warning",20)
+
   var region
   function run () {
    region = new Vizceral.EvaRegion(document.getElementById('viz')) 
@@ -49,7 +58,7 @@
       setTimeout(function(){
       // 以下步骤自动刷新视图
         var c = region.getNodeByNodeId(testView2.id)
-        //c.setClass("danger")  //设置变化
+        c.setClass("danger")  //设置变化
         //c.setNodeType("user")
         //c.setHightLight(true)     // 设置高亮
         var node = region.getNodeByNodeId(testView3.id)

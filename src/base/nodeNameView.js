@@ -42,9 +42,9 @@ function roundRect (context, x, y, w, h, radius, strokeColor, fillColor) {
 }
 
 function truncate (name) {
-  if (name.length > 18) {
-    return `${name.substr(0, 7)}…${name.substr(-7)}`;
-  }
+  // if (name.length > 18) {
+  //   return `${name.substr(0, 7)}…${name.substr(-7)}`;
+  // }
   return name;
 }
 
@@ -56,7 +56,8 @@ class NodeNameView extends BaseView {
     this.nodeView = nodeView;
 
     // How far away from the node we want the label to begin
-    this.buffer = Math.max(this.nodeView.radius * 0.3, 7);
+    // TODO 25 调整离节点距离
+    this.buffer = Math.max(this.nodeView.radius * 0.3, 25);
 
 
     // Create the canvas to build a sprite
@@ -81,7 +82,8 @@ class NodeNameView extends BaseView {
 
   updateLabel () {
     const context = this.nameCanvas.getContext('2d');
-    const fontSize = this.fixedWidth ? 28 : 25;
+    //TODO 这里调整 字体大小
+    const fontSize = this.fixedWidth ? 30 : 30;
 
     const font = `${fontSize}px 'Source Sans Pro', sans-serif`;
     context.font = font;

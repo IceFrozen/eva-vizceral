@@ -43,8 +43,8 @@ class GlobalStyles {
         danger: 'rgb(255, 53, 53)'
       },
       colorNodeStatus: {
-        default: 'rgb(35, 35, 35)',
-        normal: 'rgb(127, 255, 0)',
+        default: 'rgb(127, 255, 237)',
+        normal: 'rgb(127, 255, 237)',
         warning: 'rgb(268, 185, 73)',
         danger: 'rgb(255, 53, 53)'
       },
@@ -58,17 +58,18 @@ class GlobalStyles {
       colorPageBackground: 'rgb(45, 45, 45)',
       colorPageBackgroundTransparent: 'rgba(45, 45, 45, 0)',
       colorBorderLines: 'rgb(137, 137, 137)',
-      colorShapeDefault: 'rgb(186, 213, 237)',
       colorArcBackground: 'rgb(60, 60, 60)',
+      colorShapeDefault: 'rgb(127, 255, 0))'
     };
     this.shapesStyles = {
-        colorShapeDefault: 'rgb(120, 120, 120)',
-        colorShapeBorder: 'rgb(255, 255, 255)',     
-        colorShapePipe: 'rgb(10 10, 255)',
+        colorShapeDefault: 'rgb(35, 35, 35)',
+        colorShapeBorder: 'rgb(255, 53, 53)',     
+        colorShapePipe: 'rgb(10, 10, 255)',
         colorShapeAzure: 'rgb(91, 91, 255)', 
         colorShapeStorage: 'rgb(10, 200, 10)', 
         colorShapeService: 'rgb(50, 50, 250)', 
-        colorShapeDefault: 'rgb(120, 120, 120)'
+        colorShapeUsers:'rgb(120, 120, 120)',
+        colorShapeUser:'rgb(35, 35, 35)'
      };
 
     this.updateComputedStyles();

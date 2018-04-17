@@ -1,33 +1,57 @@
-/**
- *
- *     Licensed under the Apache License, Version 2.0 (the "License");
- *     you may not use this file except in compliance with the License.
- *     You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- *     Unless required by applicable law or agreed to in writing, software
- *     distributed under the License is distributed on an "AS IS" BASIS,
- *     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *     See the License for the specific language governing permissions and
- *     limitations under the License.
- *
- */
-import * as THREE from 'three';
-import ShapesFactory from '../ShapesFactory';
-import ShapesUtils from '../ShapesUtils';
-import ShapeParent from './ShapeParent';
 
-class ShapeAzure extends ShapeParent {
+import * as THREE from 'three';
+import GlobalStyles from '../../globalStyles';
+import ShapesFactory from '../ShapesFactory';
+import ShapeParent from './ShapeParent';
+import NodeView from '../nodeView';
+import ShapesUtils from '../ShapesUtils';
+class ShapeAzure {
+  constructor (node) {
+    this.customNode = {};
+    this.node = node
+    this.customNode.innergeometry = this._createInnerGeometry(18, 32);
+    this.customNode.outerborder = this._createOuterBorder(25, 32);
+    this.customNode.innergeometry_material = this._createMaterial(node);
+    this.customNode.outerborder_material = this._createMaterial(node);
+    this.customNode.getShapeColor = this.getShapeColor;
+    return this.customNode;
+  }
+
   _createInnerGeometry (radius, curveSegments) {
-    const polyPath = [
+     const polyPath = [
       '0,3,14,35,23,42,14,3,0,3',
       '20,23,24,42,42,0,10,1,35,5,20,23'
     ];
     const newShapes = ShapesUtils.getShapeFromPolyPointsArray(polyPath, ',', -19, -17);
-
     return new THREE.ShapeGeometry(newShapes, curveSegments);
+
+    // const polyShape = ShapesUtils.get(rawPolyString, ' ', -20, -20);
+    // const holeShape = new THREE.Shape();
+    // holeShape.moveTo(radius / 2, 0);
+    // holeShape.absarc(6, -9, radius / 2, 0, 2 * Math.PI, false);
+    // polyShape.holes.push(holeShape);
+    // return new THREE.ShapeGeometry(polyShape, curveSegments);
   }
+
+  _createOuterBorder (radius, curveSegments) {
+    const border = new THREE.Shape();
+    border.absarc(0, 0, radius + 2, 0, Math.PI * 2, false);
+    const borderHole = new THREE.Path();
+    borderHole.absarc(0, 0, radius, 0, Math.PI * 2, true);
+    border.holes.push(borderHole);
+    return new THREE.ShapeGeometry(border,curveSegments);
+  }
+
+  _createMaterial (node) {
+    const materialColor = GlobalStyles.styles.colorTraffic[node.getClass()];
+    return  new THREE.MeshBasicMaterial({ color: materialColor});
+  }
+  getShapeColor (node,highlight) {
+    const borderColor = GlobalStyles.getColorTrafficRGBA(node.getClass(), highlight);
+    return borderColor
+  }
+
 }
 ShapesFactory.registerShape('azure', ShapeAzure);
 export default ShapeAzure;
+
