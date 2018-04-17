@@ -78,6 +78,7 @@ import MoveNodeInteraction from './moveNodeInteraction';
 */
 
 
+
 // These are a static size and ratio for graph placement.  The element itself can resize.
 const graphWidth = 1800;
 const graphHeight = 1100;
@@ -435,16 +436,18 @@ class Vizceral extends EventEmitter {
     const newGraph = this.getNearestValidGraph(viewArray);
 
     // If the view changed, set it.
+    // 暂时丢弃动画效果
     if (!this.currentGraph || !_.isEqual(newGraph.graphIndex, this.currentGraph.graphIndex)) {
       const difference = this.currentGraph ? (newGraph.graphIndex.length - this.currentGraph.graphIndex.length) : 0;
       if (difference === -1) {
-        this.zoomOutOfNode();
+        //this.zoomOutOfNode();
       } else if (difference === 1) {
-        this.zoomIntoNode(newGraph.name);
+        //this.zoomIntoNode(newGraph.name);
       } else {
-        this.selectGraph(newGraph, redirectedFrom);
+        
+        //this.selectGraph(newGraph, redirectedFrom);
       }
-
+      this.selectGraph(newGraph, redirectedFrom);
       this.calculateMouseOver();
     }
 
@@ -590,7 +593,6 @@ class Vizceral extends EventEmitter {
     const toViewObject = toGraph.view.container;
 
     this.scene.add(toViewObject);
-
     // Pan over and zoom in to the selected node
     new TWEEN.Tween(_.clone(parametersFrom))
               .to(parametersTo, 1000)
@@ -645,6 +647,7 @@ class Vizceral extends EventEmitter {
   }
 
   zoomOutOfNode () {
+     
     if (this.currentGraph && this.currentGraph !== this.getGraph(this.rootGraphName)) {
       const parentGraph = this.currentGraph.parentGraph;
       if (parentGraph) {
@@ -699,6 +702,7 @@ class Vizceral extends EventEmitter {
   }
 
   calculateMouseOver (immediate) {
+    // 计算鼠标是否在上面
     if (this.currentGraph) {
       this.raycaster.linePrecision = this.currentGraph.linePrecision || 1;
       const intersects = this.raycaster.intersectObjects(this.currentGraph.view.getInteractiveChildren());
@@ -775,7 +779,7 @@ class Vizceral extends EventEmitter {
   }
 
   render (time) {
-    TWEEN.update();
+    TWEEN.update(time);
 
     // Check size
     if ((this.renderer.domElement.offsetWidth !== 0 && this.width !== this.renderer.domElement.offsetWidth) ||

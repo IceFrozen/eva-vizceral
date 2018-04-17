@@ -2,7 +2,27 @@
 import EventEmitter from 'events';
 import Vizceral  from '../../vizceral';
 import EvaDataNode  from "./EvaDataNode";
-import generateUuid from 'generate-uuid';  
+import generateUuid from 'generate-uuid'; 
+import TWEEN from 'tween.js'; // Start TWEEN updates for sparklines and loading screen fading out
+
+const getPerformanceNow = function () {
+    const g = window;
+    if (g != null) {
+      const perf = g.performance;
+      if (perf != null) {
+          try {
+            const perfNow = perf.now();
+            if (typeof perfNow === 'number') {
+              return perfNow;
+            }
+          } catch (e) {
+          // do nothing
+          }
+      }
+    }
+    return null;
+}
+
 class EvaRegion extends EventEmitter {
   constructor (rootElement) {
   	 super();
@@ -17,6 +37,7 @@ class EvaRegion extends EventEmitter {
   	this.vizstatus = {}
     this.entryNode = []
     this.childNodes = []
+    this.perfNow = getPerformanceNow()
     this.data = {}
     this.currentView = undefined
     this.init()
@@ -31,7 +52,7 @@ class EvaRegion extends EventEmitter {
     }
    
     this.vizceral = new Vizceral(this.canvasDom)
-    this.vizceral.animate()
+    this.vizceral.animate(this.perfNow === null ? 0 : this.perfNow);
     let self = this
     this.vizceral.on("viewChanged",view => {
         this.currentView = view
@@ -88,7 +109,7 @@ class EvaRegion extends EventEmitter {
     this.rootElement.append(this.noticeDom)
     let self = this
     this.navDom.addEventListener('click',()=>{
-      self.vizceral.zoomOutViewLevel()
+      self.backToParentLevel()
     })
     if(this.rootElement.className) {
        this.rootElement.className += ' graph'
@@ -118,9 +139,6 @@ class EvaRegion extends EventEmitter {
       return complier(data)
     }).join("&gt;")
     this.navDom.innerHTML = c
-
-
-
   }
   show () {
     if(this.hasInit) {
@@ -152,6 +170,15 @@ class EvaRegion extends EventEmitter {
     }
     this.update(eventSubType)
     return this
+  }
+  backToParentLevel() {
+
+    if(!this.currentView || !this.currentView.view){
+      return
+    }
+    let tmp =_.cloneDeep(this.currentView.view)
+    tmp.pop()
+    this.changeView(tmp,null)
   }
   setRootLevels (...EvaDataNods) {
     let children = []
@@ -258,7 +285,7 @@ class EvaRegion extends EventEmitter {
       return
     }
     this._reload = true
-    this.setNodeData(datas)
+    this.setNodeData(...datas)
     this.update(true)
     this._reload = false
     return this

@@ -27,6 +27,10 @@ class EvaConnection extends EventEmitter {
     this.emit("modify","createNotices",this,evaNotice)
     return this
   }
+  showNotices () {
+    // 显示问题
+    
+  }
   clearNotics () {
     // TODO remove all listen
     this.notices = []

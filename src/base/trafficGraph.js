@@ -702,7 +702,6 @@ class TrafficGraph extends EventEmitter {
         if (changed) { dimChanged.push(view); }
       }
     });
-
     // Run the animations
     new TWEEN.Tween({ percent: 0 })
               .to({ percent: 1 }, 150)
