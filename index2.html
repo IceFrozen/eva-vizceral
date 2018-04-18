@@ -4,24 +4,31 @@
       <link rel="stylesheet" type="text/css" href="./dist/app.css" />
 <script>
       
-        var testView = new Vizceral.EvaDataNode(Math.random(),"test1")    // 创建节点1 入口点
+  var testView = new Vizceral.EvaDataNode(Math.random(),"test1")    // 创建节点1 入口点
   var testView2 = new Vizceral.EvaDataNode(Math.random(),"test2")    //创建节点2
   var testView3 = new Vizceral.EvaDataNode(Math.random(),"test3")    //创建节点3
   var testView4 = new Vizceral.EvaDataNode(Math.random(),"test4")    //创建节点4
   var testView5 = new Vizceral.EvaDataNode(Math.random(),"test5")    //创建节点4
   var testView6 = new Vizceral.EvaDataNode(Math.random(),"test6")    //创建节点4
   //创建节点链接
-  // 第二个参数  >3 不显示任何图标
-  testView2.setClass("danger")
-  testView2.connectAndGetConnetion(testView4).setDetail("danger",10).createNotices("test title 1",0,"http://www.baidu.com")    // 节点2链接节点4
-  testView2.connectAndGetConnetion(testView3,{"danger":10,"normal":10}).createNotices("test title 1",1) //节点2链接节点3
+  // 
+  testView2.setClass("danger")  // 目前只支持三种 danger normal warnning
+  // 节点2 链接节点4 3 4 6 
+  //设置流量数 setDetail
+  //创建 createNotices 链接说明 第二个参数   0，1，2，3    3不显示任何图标只有说明 第三个参数 链接地址
+  testView2.connectAndGetConnetion(testView4).setDetail("danger",10).createNotices("test title 1",0,"http://www.baidu.com")    
+  testView2.connectAndGetConnetion(testView3,{"danger":10,"normal":10}).createNotices("test title 1test title 1test title 1test title 1",1) //节点2链接节点3
   testView2.connectAndGetConnetion(testView5,{"danger":10,"normal":10}).createNotices("test title 1",2) //节点2链接节点3
   testView2.connectAndGetConnetion(testView6,{"danger":10,"normal":10}).createNotices("test title 1",3) //节点2链接节点3
+  // 设置节点类型
   testView.setNodeType('users')
   testView2.setNodeType('service')
   testView3.setNodeType('storage')
   testView5.setNodeType('pipe')
   testView6.setNodeType('azure')
+
+
+
   testView.connectAndGetConnetion(testView2) //节点1链接节点2
           .createNotices("test title 1",4)   // 通知名 通知级别 是否有链接
 //          .createNotices("test title 2",2,"http://www.baidu.com")
@@ -33,12 +40,6 @@
   var region
   function run () {
    region = new Vizceral.EvaRegion(document.getElementById('viz')) 
-  //or region.setEntrtNode(testView)
-     // 只有这两部操作完成之后，EvaDataNode的属性变化才会被监听到
-       // var node = region.getNodeByNodeId(testView.id)
-       // console.log(testView.id)
-      
-
       region.on("objectHighlighted",function(type,nodeOrConnection,navtiveNode) {
         if(type == "connection") {
             console.log("this is a  conenction")
@@ -57,10 +58,10 @@
             console.log("nodeOrConnection is null",nodeOrConnection)
         }
      })
-
-
-
      region.setRootLevels(testView).show()
+    // 只有这两部操作完成之后，EvaDataNode的属性变化才会被监听到
+       // var node = region.getNodeByNodeId(testView.id)
+       // console.log(testView.id)
 
       setTimeout(function(){
       // 以下步骤自动刷新视图
