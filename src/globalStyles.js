@@ -58,7 +58,7 @@ class GlobalStyles {
       colorPageBackground: 'rgb(45, 45, 45)',
       colorPageBackgroundTransparent: 'rgba(45, 45, 45, 0)',
       colorBorderLines: 'rgb(137, 137, 137)',
-      colorArcBackground: 'rgb(60, 60, 60)',
+      colorArcBackground: 'rgb(186, 213, 237)',
       colorShapeDefault: 'rgb(127, 255, 0))'
     };
     this.shapesStyles = {

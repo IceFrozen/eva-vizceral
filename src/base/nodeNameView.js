@@ -68,7 +68,7 @@ class NodeNameView extends BaseView {
 
     this.updateLabel();
 
-    this.material = new THREE.MeshBasicMaterial({ map: this.nameTexture, side: THREE.DoubleSide, transparent: true });
+    this.material = new THREE.MeshBasicMaterial({map: this.nameTexture, side: THREE.DoubleSide, transparent: true });
     this.view = this.addChildElement(new THREE.PlaneBufferGeometry(this.nameCanvas.width, this.nameCanvas.height), this.material);
   }
 

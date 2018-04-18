@@ -51,29 +51,25 @@ function generateNoticeSVGs () {
       </svg>
       `
     ];
-
     _.each(warningNoticeImages, (image, i) => {
       image.src = `data:image/svg+xml;charset-utf-8,${encodeURIComponent(noticeIconSVG[i])}`;
     });
   }
 }
-
+generateNoticeSVGs(); // Do this at first construct so we can use the passed in colors for the notices
 class ConnectionNoticeView extends BaseView {
   constructor (connectionView) {
-    generateNoticeSVGs(); // Do this at first construct so we can use the passed in colors for the notices
     super(connectionView.object);
     this.connectionView = connectionView;
-
     this.severity = 1;
     const noticeSize = this.connectionView.object.graphRenderer === 'global' ? 105 : 48;
-
     // Create the canvas to build a sprite
     this.noticeCanvas = this.createCanvas(256, 256);
     this.noticeTexture = new THREE.Texture(this.noticeCanvas);
     this.material = new THREE.MeshBasicMaterial({ map: this.noticeTexture, side: THREE.DoubleSide, transparent: true });
     this.addChildElement(new THREE.PlaneBufferGeometry(noticeSize, noticeSize), this.material);
-    this.updateNoticeIcon();
     this.updatePosition();
+    this.updateNoticeIcon();
   }
 
   updateNoticeIcon () {
@@ -83,14 +79,11 @@ class ConnectionNoticeView extends BaseView {
       if (maxNotice) {
         severity = maxNotice.severity;
       }
-      if (severity === undefined) { severity = 3; }
-      if(severity > 3) {
-        severity = 3
-      }
+      if (severity === undefined || severity > 3) { severity = 3; }
       const noticeImage = warningNoticeImages[severity];
       const context = this.noticeCanvas.getContext('2d');
       context.clearRect(0, 0, this.noticeCanvas.width, this.noticeCanvas.height);
-      // notice icon
+      // notice icon     
       if(noticeImage){
         const offset = { x: (this.noticeCanvas.width - noticeImage.width) / 2, y: (this.noticeCanvas.height - noticeImage.height) / 2 };
         context.drawImage(noticeImage, offset.x, offset.y);
@@ -112,7 +105,8 @@ class ConnectionNoticeView extends BaseView {
   }
 
   refresh () {
-    this.updateLabel();
+    this.updatePosition();
+    this.updateNoticeIcon();
   }
 
   setOpacity (opacity) {

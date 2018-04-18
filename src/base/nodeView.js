@@ -57,7 +57,9 @@ class NodeView extends BaseView {
       this.borderMaterial.color.setStyle(chroma.mix(GlobalStyles.styles.colorPageBackground, GlobalStyles.styles.colorDonutInternalColor, opacity).css());
       this.meshes.innerCircle.geometry.colorsNeedUpdate = true;
     }
-
+    if(opacity === 1) {
+      this.refresh(true);
+    }
     if (this.nameView) {
       this.nameView.setOpacity(opacity);
     }

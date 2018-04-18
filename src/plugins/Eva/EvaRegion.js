@@ -95,6 +95,7 @@ class EvaRegion extends EventEmitter {
       self.emit("objectHighlighted",type,node,nativeNode) 
   })
     this.hasInit = true
+    this.setDefinitions()
   }
   genHtml() {
     this.canvasDom = document.createElement('canvas')
@@ -167,6 +168,16 @@ class EvaRegion extends EventEmitter {
       let isHightObject = args[0]?true:false
       this.setHightLightNode(nodeId,isHightObject)
       return 
+    }
+    if(eventSubType == "detailSwitch") {
+        let fn = this.vizceral.currentGraph.focusedNode
+        if(fn) {
+          fn.context = eventData.detailShow
+          if(fn.view) {
+            fn.view.updateText()
+          }
+        }
+        return 
     }
     this.update(eventSubType)
     return this
@@ -341,5 +352,72 @@ EvaRegion.transforData = function (data,nodeCollections,conCollections) {
     EvaRegion.transforData(data.nodes[i],nodeCollections,conCollections)
   }
 }
+
+
+
+
+EvaRegion.prototype.setDefinitions = function () {
+  if(!this.hasInit) {
+    return 
+  }
+  this.vizceral.updateDefinitions({
+    detailedNode: { 
+      volume: { 
+        default: { 
+          top: { header: '流量', data: 'data.volumePercent', format: '0.00%' },
+          bottom: { header: '错误率', data: 'data.classPercents.danger', format: '0.00%' },
+        },
+        focused: { // override for the region renderer
+          top: { header: '流量', data: 'data.volume', format: '0.0' },
+          bottom: { header: '错误率', data: 'data.classPercents.danger', format: '0.00%' },
+          // donut: {
+          //   top: { header: '流量', data: 'data.volume', format: '0.0' },
+          //   bottom: { header: '错误率', data: 'data.classPercents.danger', format: '0.00%' },
+          //   data: 'data.globalClassPercents',
+          //   indices: [{ key: 'danger' },{ key: 'warning' },{ key: 'normal'}]
+          // },
+          // arc: {
+          //   top: { header: '流量', data: 'data.volume', format: '0.0' },
+          //   bottom: { header: '错误率', data: 'data.volume', format: '0.00%' },
+          //   data: {
+          //     values: [ // Array of values
+          //       { name: 'danger', value: 30 }, // Values have a value, name, and an optional overriding class. If class is not present, uses name as class name.
+          //       { name: 'normal', value:70, class:'normal' }
+          //     ],
+          //     total: 100, // The total value to equal 100% of the arc graph
+          //     line: 0.9 // [optional] What percent, in decimal form, to put the optional marking line.
+          //   },
+          //   lineIndex: 'line'
+          // }
+        },
+        entry: { // override for the region renderer
+          top: { header: '流量', data: 'data.volume', format: '0.0' },
+          bottom: { header: '错误率', data: 'data.classPercents.danger', format: '0.00%' },
+          // donut: {
+          //   top: { header: '流量', data: 'data.volume', format: '0.0' },
+          //   bottom: { header: '错误率d', data: 'data.classPercents.danger', format: '0.00%' },
+          //   data: 'data.globalClassPercents',
+          //   indices: [{ key: 'danger' },{ key: 'warning' },{ key: 'normal'}]
+          // },
+          // arc: {
+          //   top: {  header: '流量', data: 'data.volume', format: '0.0' },
+          //   bottom: {header: '错误率', data: 'data.classPercents.danger', format: '0.0' },
+          //   data: {
+          //     values: [ // Array of values
+          //       { name: 'warning', value: 30,class:"warning" }, // Values have a value, name, and an optional overriding class. If class is not present, uses name as class name.
+          //       { name: 'normal', value:70, class:'normal' }
+          //     ],
+          //     total: 100, // The total value to equal 100% of the arc graph
+          //     line: 28 // [optional] What percent, in decimal form, to put the optional marking line.
+          //   },
+          //   //lineIndex: 'line'
+          // }
+        }
+      }
+    }
+  })
+}
+
+
 
 export default EvaRegion;

@@ -393,7 +393,6 @@ class TrafficGraph extends EventEmitter {
           nodesToRemove.forEach(node => this.removeNode(node));
           this.layoutValid = false;
         }
-
         const stateNodeMap = {};
         // Then create new nodes and update existing nodes. New nodes need to be
         // created before connections are attempted to be created between nodes.

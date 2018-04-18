@@ -19,7 +19,7 @@
 import _ from 'lodash';
 import * as THREE from 'three';
 import numeral from 'numeral';
-
+import chroma from 'chroma-js';
 import GlobalDefinitions from '../globalDefinitions';
 import GlobalStyles from '../globalStyles';
 import NodeView from '../base/nodeView';
@@ -61,14 +61,19 @@ class FocusedNodeView extends NodeView {
 
     // super.innerCircleMaterial = this.shape.material
     // super.borderMaterial = this.shape.bordermaterial
+    this.borderMaterial = new THREE.MeshBasicMaterial({transparent: true ,opacity:0});
+    this.innerCircleMaterial = this.borderMaterial
     this.meshes.outerBorder = this.addChildElement(this.shape.outerborder, this.borderMaterial);
     this.meshes.innerCircle = this.addChildElement(this.shape.innergeometry, this.innerCircleMaterial);
+    //TODO 
 
-
+    
     // this.meshes.outerBorder = this.addChildElement(NodeView.getOuterBorderGeometry(this.radius), this.borderMaterial);
     // this.meshes.innerCircle = this.addChildElement(NodeView.getInnerCircleGeometry(this.radius), this.innerCircleMaterial);
     
     this.meshes.innerCircle.position.setZ(-10);
+    
+
     this.meshes.donut = this.addChildElement(NodeView.getDonutGeometry(this.radius, this.innerRadius), this.donutMaterial, 'donut');
     this.meshes.innerBorder = this.addChildElement(NodeView.getInnerBorderGeometry(this.innerRadius), this.borderMaterial);
     this.meshes.innerBorder.position.setZ(100);
@@ -109,11 +114,11 @@ class FocusedNodeView extends NodeView {
     this.textTexture.minFilter = THREE.LinearFilter;
     this.textTexture.needsUpdate = true;
 
-    this.textMaterial = new THREE.MeshBasicMaterial({ map: this.textTexture, side: THREE.DoubleSide, transparent: true });
+    this.textMaterial = new THREE.MeshBasicMaterial({map: this.textTexture, side: THREE.FrontSide, transparent: true });
     const text = new THREE.Mesh(new THREE.PlaneBufferGeometry(this.textCanvas.width, this.textCanvas.height), this.textMaterial);
     this.container.add(text);
     this.addInteractiveChild(text, 'donut');
-    text.position.set(0, 0, this.depth + 1);
+    text.position.set(0, 0, 100);
   }
 
   updateText () {
@@ -128,7 +133,6 @@ class FocusedNodeView extends NodeView {
 
     // Reset the canvas to draw new text
     textContext.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
-
     if (this.loaded) {
       let topData;
       let bottomData;
@@ -148,12 +152,13 @@ class FocusedNodeView extends NodeView {
         topData = this.detailed.top;
         bottomData = this.detailed.bottom;
       }
-
       // Draw the top header to the canvas
+      textContext.fillStyle = GlobalStyles.styles.colorTraffic.normal;
+
       top += (this.headerFontSize / 2);
       if (topData) {
-        textContext.fillStyle = GlobalStyles.styles.colorNormalDimmed;
-        textContext.font = `${headerWeight} ${this.headerFontSize}px 'Source Sans Pro', sans-serif`;
+        //textContext.fillStyle = GlobalStyles.styles.colorNormalDimmed;
+        textContext.font = `${this.headerFontSize}px 'Source Sans Pro', sans-serif`;
         textContext.fillText(topData.header, this.textCanvas.width / 2, top);
       }
       top += (this.headerFontSize / 2);
@@ -161,9 +166,11 @@ class FocusedNodeView extends NodeView {
       // Draw the top metric to the canvas
       top += (this.metricFontSize / 2);
       if (topData) {
-        textContext.fillStyle = GlobalStyles.styles.colorTraffic.normal;
-        textContext.font = `${metricWeight} ${this.metricFontSize}px 'Source Sans Pro', sans-serif`;
+        //textContext.fillStyle = GlobalStyles.styles.colorTraffic.normal;
+        textContext.font = `${this.metricFontSize}px 'Source Sans Pro', sans-serif`;
         const topMetricDisplayValue = generateDisplayValue(_.get(this.object, topData.data), topData.format);
+
+         console.log("topMetricDisplayValue2",topMetricDisplayValue)
         textContext.fillText(topMetricDisplayValue, this.textCanvas.width / 2, top);
       }
       top += (this.metricFontSize / 2);
@@ -171,8 +178,8 @@ class FocusedNodeView extends NodeView {
       // Draw the second header to the canvas
       top += this.metricSpacing + (this.headerFontSize / 2);
       if (bottomData) {
-        textContext.fillStyle = GlobalStyles.styles.colorNormalDimmed;
-        textContext.font = `${headerWeight} ${this.headerFontSize}px 'Source Sans Pro', sans-serif`;
+        //textContext.fillStyle = GlobalStyles.styles.colorNormalDimmed;
+        textContext.font = `${this.headerFontSize}px 'Source Sans Pro', sans-serif`;
         textContext.fillText(bottomData.header, this.textCanvas.width / 2, top);
       }
       top += (this.headerFontSize / 2);
@@ -180,16 +187,16 @@ class FocusedNodeView extends NodeView {
       // Draw the second metric to the canvas
       top += (this.metricFontSize / 2);
       if (bottomData) {
-        textContext.fillStyle = GlobalStyles.getColorTraffic(this.object.getClass());
-        textContext.font = `${metricWeight} ${this.metricFontSize}px 'Source Sans Pro', sans-serif`;
+        //textContext.fillStyle = GlobalStyles.getColorTraffic(this.object.getClass());
+        textContext.font = `${this.metricFontSize}px 'Source Sans Pro', sans-serif`;
         const bottomMetricDisplayValue = generateDisplayValue(_.get(this.object, bottomData.data), bottomData.format);
         textContext.fillText(bottomMetricDisplayValue, this.textCanvas.width / 2, top);
       }
       top += (this.metricFontSize / 2);
     } else {
       // The node is still loading so show a loading message
-      textContext.fillStyle = GlobalStyles.styles.colorTraffic.normal;
-      textContext.font = `${metricWeight} ${this.metricFontSize}px 'Source Sans Pro', sans-serif`;
+      //textContext.fillStyle = GlobalStyles.styles.colorTraffic.normal;
+      textContext.font = `${this.metricFontSize}px 'Source Sans Pro', sans-serif`;
       top = ((this.canvasHeight / 2) - (((this.metricFontSize * 2)) / 2)) + 16;
       textContext.fillText('REGION', this.textCanvas.width / 2, top);
       top += this.metricSpacing + this.headerFontSize;
@@ -314,8 +321,7 @@ class FocusedNodeView extends NodeView {
       // remove the old arc segments
       _.each(this.arcMeterSegments, segment => this.container.remove(segment));
       this.arcMeterSegments.length = 0;
-
-      const arcData = _.get(this.object, this.detailed.arc.data, undefined);
+      const arcData = _.get(this.detailed,"arc.data", undefined);
       if (arcData) {
         // arc slices
         _.each(arcData.values, (value) => {
@@ -330,6 +336,7 @@ class FocusedNodeView extends NodeView {
         if (line) {
           let lineColor = GlobalStyles.rgba.colorDonutInternalColor;
           // figure out color of line
+          line = line / arcData.total
           if (line >= 1) {
             line = 1;
             lineColor = GlobalStyles.rgba.colorTraffic.normal;

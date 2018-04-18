@@ -23,6 +23,7 @@ class EvaDataNode extends EventEmitter {
     this.childNodes = []
     this.node_type = options.node_type
     this.connections = []
+    this.detailShow = "default"
     this._createOptaion = options
     this._nodeTag = []      // dataNode 标签类
     this._genTime = Date.now()
@@ -132,6 +133,18 @@ class EvaDataNode extends EventEmitter {
   getConnections () {
     return this.connections
   }
+  showDetail(name) {
+    if(!name) {
+      name = "default"
+    }
+    if(name !== "docunt" && name !== "arc"){
+      return
+    }
+
+    this.detailShow = name
+    this.emit("modify","detailSwitch",this)
+    return this 
+  }
   getChildren  (collectionArray) {
     collectionArray.push(this)
     if(this.childNodes.length > 0) {
@@ -146,7 +159,15 @@ class EvaDataNode extends EventEmitter {
     let selfEntryNode = {
       name:this.name,
       renderer:EvaDataNode.CONSTS.RENDERER.FOCUSEDCHILD,
-      node_type:this.node_type
+      node_type:this.node_type,
+      displayName:this.displayName ,
+      maxVolume:this.maxVolume,
+      class:this.class,
+      layout:this.layout ,
+      updated:this.updated,
+      nodes:childs,
+      connections:connections,
+      metadata:this.metadata
     }
     if(this.displayName) {
       selfEntryNode.displayName = this.displayName

@@ -35,7 +35,6 @@ class RegionNode extends Node {
   }
 
   render () {
-    // Set the default view renderer
     if (this.nodeView === 'focused') {
       this.view = new FocusedNodeView(this);
     } else {
