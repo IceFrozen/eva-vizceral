@@ -32,7 +32,7 @@ class ShapeParent {
   }
 
   _createOuterBorder (radius, curveSegments) {
-    console.log("_createOuterBorder create radius",radius)
+    console.log('_createOuterBorder create radius', radius);
     const border = new THREE.Shape();
     border.absarc(0, 0, radius * 3.2, 0, Math.PI * 2, false);
     const hole = new THREE.Shape();
@@ -42,7 +42,7 @@ class ShapeParent {
   }
 
   _createMaterial (rgb) {
-    return new THREE.MeshBasicMaterial({ color: rgb ,transparent: false});
+    return new THREE.MeshBasicMaterial({ color: rgb, transparent: false });
   }
 
   static getOrSet (obj, key, func) {

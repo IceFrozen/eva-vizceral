@@ -2,202 +2,279 @@
 
 ### Table of Contents
 
--   [\_](#_)
--   [objectHighlighted](#objecthighlighted)
--   [viewChanged](#viewchanged)
--   [nodeContextSizeChanged](#nodecontextsizechanged)
--   [matchesFound](#matchesfound)
--   [viewUpdated](#viewupdated)
--   [objectHovered](#objecthovered)
--   [constructor](#constructor)
--   [getStyles](#getstyles)
--   [updateStyles](#updatestyles)
--   [updateDefinitions](#updatedefinitions)
--   [updateData](#updatedata)
--   [setHighlightedNode](#sethighlightednode)
--   [setHighlightedConnection](#sethighlightedconnection)
--   [findNodes](#findnodes)
--   [setView](#setview)
--   [setModes](#setmodes)
--   [zoomOutViewLevel](#zoomoutviewlevel)
--   [getNode](#getnode)
--   [setFilters](#setfilters)
+-   [EvaConnection](#evaconnection)
+    -   [createNotices](#createnotices)
+    -   [clearNotics](#clearnotics)
+-   [EvaRegion](#evaregion)
+    -   [show](#show)
+    -   [update](#update)
+    -   [backToParentLevel](#backtoparentlevel)
+    -   [setRootLevels](#setrootlevels)
+    -   [getNodeByNodeId](#getnodebynodeid)
+    -   [getNodeByNodeName](#getnodebynodename)
+    -   [setHightLightNode](#sethightlightnode)
+    -   [setNodeData](#setnodedata)
+    -   [reload](#reload)
+    -   [toData](#todata)
+    -   [getConnection](#getconnection)
+    -   [addColors](#addcolors)
+-   [EvaDataNode](#evadatanode)
+    -   [setHightLight](#sethightlight)
+    -   [setClass](#setclass)
+    -   [setNodeType](#setnodetype)
+    -   [setMetadata](#setmetadata)
+    -   [getMetadata](#getmetadata)
+    -   [connect](#connect)
+    -   [connectAndGetConnetion](#connectandgetconnetion)
+    -   [getConnection](#getconnection-1)
+    -   [getConnections](#getconnections)
 
-## \_
+## EvaConnection
 
-Copyright 2016 Netflix, Inc.
+**Extends EventEmitter**
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-
-## objectHighlighted
-
-The `objectHighlighted` event is fired whenever an object is highlighted.
-`object.type` will be either 'node' or 'connection'
-
-**Properties**
-
--   `object` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The object that has been highlighted, or the highlighted object that has been updated.
-
-## viewChanged
-
-The `viewChanged` event is fired whenever the view changes
-
-**Properties**
-
--   `view` **[array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** The currently selected view (e.g. \[] for global, ['us-east-1'] for one node deep, ['us-east-1', 'api'] for two nodes deep)
-
-## nodeContextSizeChanged
-
-The `nodeContextSizeChanged` event is fired whenever the context panel size for node context size changes
-
-**Properties**
-
--   `dimensions` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The dimensions of the node context panels
-
-## matchesFound
-
-The `matchesFound` event is fired whenever nodes are found via findNodes().
-
-**Properties**
-
--   `matches` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The matches object { total, visible }
-
-## viewUpdated
-
-The `viewUpdated` event is fired whenever the current displayed graph's view updates.
-
-## objectHovered
-
-The `objectHovered` event is fired whenever on mouseover on a 'node' or 'connection' .
-`object.type` will be either 'node' or 'connection'. In case another 'node' or 'connection'
- is already in focus (because of click/highlight event), then this event won't be triggered.
-
-**Properties**
-
--   `object` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The object that has been hovered,
-
-## constructor
-
-Represents a Vizceral component.
+EvaConnection
 
 **Parameters**
 
--   `canvas` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** The canvas to render the graph onto; if not provided, will create a canvas accessible by this.renderer.domElement
--   `targetFramerate` **[Number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)?** Target frame rate to render at. Will not limit FPS if not provided or set to 0.
+-   `source` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 源节点name
+-   `target` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 目的节点name
+-   `metadata` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 私有数据
 
-## getStyles
+### createNotices
 
-Get an array of all possible defined styles
-
-Returns **[array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** Array of all possible styles
-
-## updateStyles
-
-Update the global styles
+创建通知 可创建多个
 
 **Parameters**
 
--   `styles`  
--   `An` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object map of style names to values
+-   `title` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 通知名称
+-   `severity` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** 通知级别 支持 0 1 2 3 >3则不显示图标
+-   `link` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 通知是否可以链接
 
-## updateDefinitions
+Returns **[EvaConnection](#evaconnection)** 
 
-Update the global definitions
+### clearNotics
 
-**Parameters**
+清空全部通知
 
--   `definitions`  
--   `An` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** object map of definitions. See the format and defaults in (<https://github.com/Netflix/Vizceral/wiki/Configuration#definitions-for-data-to-display>)
+## EvaRegion
 
-## updateData
+**Extends EventEmitter**
 
-Set the new set of traffic data to render. This is expected to be called
-with the complete set of traffic data anytime there is an update.
+EvaRegion (rootElement)
 
-**Parameters**
-
--   `trafficData`  
--   `data` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The traffic data that matches the format in (<https://github.com/Netflix/Vizceral/wiki/How-to-Use#graph-data-format>)
-
-## setHighlightedNode
-
-Sets the highlighted node.  If the node is undefined, clears any highlighting.
+const region = new Vizceral.EvaRegion(document.getElementById('viz'))
 
 **Parameters**
 
--   `node` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The node to highlight
+-   `rootElement` **dom** 节点 需要在哪里绘制图形
 
-## setHighlightedConnection
+### show
 
-Sets the highlighted connection.  If the connection is undefined, clears any highlighting.
+创建EvaRegion 用于update操作或者首次加载的绘图
 
-**Parameters**
+### update
 
--   `connection` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The connection to highlight
-
-## findNodes
-
-Highlight nodes that match searchString.  Searches the node name and the list
-of sub nodes, if nodes have one.
+更新操作
 
 **Parameters**
 
--   `searchString` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** The string to match against the nodes.
+-   `resaon`  
 
-Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** { total, totalMatches, visible, visibleMatches }
+Returns **[EvaRegion](#evaregion)** EvaRegion
 
-## setView
+### backToParentLevel
 
-Set the current view of the component to the passed in array. If the passed
-in array does not match an existing node at the passed in depth, the component will try
-each level up the array until it finds a match, defaulting to the top level
-view.
+返回上层结构
 
-Ex:
-\[] - show the base graph view
-['us-east-1'] - show the graph view for 'us-east-1' if it exists
-['us-east-1', 'api'] - show the view for the api node in the us-east-1 graph if it exists
+Returns **[EvaRegion](#evaregion)** EvaRegion
+
+### setRootLevels
+
+设置跟路径
 
 **Parameters**
 
--   `viewArray` **[array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** the array containing the view to set. (optional, default `[]`)
--   `objectNameToHighlight` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a node or connection to set as highlighted in the current viewArray
+-   `EvaDataNods` **EvaDataNods** 需要显示的根路径节点
 
-## setModes
+Returns **[EvaRegion](#evaregion)** EvaRegion
 
-Set the current modes of vizceral
+### getNodeByNodeId
 
-**Parameters**
-
--   `modes`  
-
-## zoomOutViewLevel
-
-If zoomed into a node or a service, zoom out one level up.
-If in the global view, this is a noop.
-
-## getNode
-
-Get a specific node object
+根据name 获取 EvaDataNode 对象
 
 **Parameters**
 
--   `viewArray` **[array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)** e.g. [ node1, node2 ]
+-   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** EvaDataNode name
 
-## setFilters
+Returns **[EvaDataNode](#evadatanode)** EvaDataNode
 
-Set the set of filters to apply along with their current values.
+### getNodeByNodeName
+
+根据name 获取 EvaDataNode 对象
 
 **Parameters**
 
--   `filters` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** The filters that match the format in (<https://github.com/Netflix/Vizceral/wiki/Configuration#filters>)
+-   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** EvaDataNode 根据name
+
+Returns **[EvaDataNode](#evadatanode)** EvaDataNode
+
+### setHightLightNode
+
+设置高亮节点
+
+**Parameters**
+
+-   `nodename` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** EvaDataNode name
+-   `hightOrHidden` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 是否高亮 true 高亮 false 取消高亮
+
+Returns **[EvaRegion](#evaregion)** EvaRegion
+
+### setNodeData
+
+加载节点数据json
+
+**Parameters**
+
+-   `datas` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 节点数据json  详情见example
+
+Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** EvaRegion
+
+### reload
+
+重载数据 用于不同结构的json 格式
+
+**Parameters**
+
+-   `datas` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 节点数据json
+
+Returns **[EvaRegion](#evaregion)** EvaRegion
+
+### toData
+
+转换成json数据
+
+### getConnection
+
+获取链接
+
+**Parameters**
+
+-   `sourceDataName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 起点 EvaDataNode name
+-   `targetDataName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 终点 EvaDataNode name
+
+Returns **[EvaConnection](#evaconnection)** EvaConnection
+
+### addColors
+
+转换成json数据
+
+**Parameters**
+
+-   `colors` **objects** 增加颜色 例子 addColors({hello: 'rgb(91, 91, 91)'})
+
+Returns **[EvaRegion](#evaregion)** EvaRegion
+
+## EvaDataNode
+
+**Extends EventEmitter**
+
+EvaDataNode (name,options)布局对象
+
+**Parameters**
+
+-   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** dataNode name 唯一
+-   `options` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** options.displayName 节点名 显示名字
+    options.maxVolume   例子密度  越大 粒子速度 越小 越分散
+    options.class       类别 normal  danger  warning 三种类别 可以自定义
+    options.layout      （ltrTree）树形结构  支持dns 结构 ring结构 ringCenter
+    options.metadata      用于资深私有数据结构
+
+### setHightLight
+
+设置高亮
+
+**Parameters**
+
+-   `bool` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 是否高亮 true or false
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### setClass
+
+设置颜色
+
+**Parameters**
+
+-   `className` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 是否高亮  类别 normal  danger  warning 三种类别 可以自定义 需要 EvaRegion.addColors 支持
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### setNodeType
+
+设置节点图像 此方法不能动态改变 需要在show 方法之前设置
+
+**Parameters**
+
+-   `nodeType` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 目前支持users service storage pipe azure 四种
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### setMetadata
+
+设置用户私有数据
+
+**Parameters**
+
+-   `key` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 私有key
+-   `value` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 私有v
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### getMetadata
+
+获取用户数据
+
+**Parameters**
+
+-   `key` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### connect
+
+链接节点
+
+**Parameters**
+
+-   `dataNode` **[EvaDataNode](#evadatanode)** 节点类
+-   `streamData` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 链接流量显示 例子 {"danger":10,"normal":10}
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### connectAndGetConnetion
+
+链接节点
+
+**Parameters**
+
+-   `dataNode` **[EvaDataNode](#evadatanode)** 节点类
+-   `streamData` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 链接流量显示 {"danger":10,"normal":10}
+
+Returns **[EvaConnection](#evaconnection)** 
+
+### getConnection
+
+获取链接
+
+**Parameters**
+
+-   `targetDataName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 目地节点 name
+
+Returns **[EvaConnection](#evaconnection)** 
+
+### getConnections
+
+获全部取链接
+
+Returns **\[[EvaConnection](#evaconnection)]** 

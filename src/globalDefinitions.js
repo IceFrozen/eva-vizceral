@@ -30,7 +30,8 @@ class GlobalDefinitions {
               indices: [
                 { key: 'danger' },
                 { key: 'warning' },
-                { key: 'normal', class: 'normalDonut' }
+                { key: 'normal', class: 'normalDonut' },
+                { key: 'default' }
               ]
             },
             arc: {}

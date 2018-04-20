@@ -34,7 +34,7 @@ class NodeView extends BaseView {
     this.donutInternalColor = GlobalStyles.rgba.colorDonutInternalColor;
     this.donutInternalColorThree = new THREE.Color(this.donutInternalColor.r, this.donutInternalColor.g, this.donutInternalColor.b);
     this.borderColor = GlobalStyles.getColorTrafficRGBA(node.getClass());
-    this.shape = ShapesFactory.getShape(node)
+    this.shape = ShapesFactory.getShape(node);
     // if(this.shape){
     //   console.log("node.view.shape.material",this.shape.material)
     //   this.borderMaterial = this.shape.bordermaterial
@@ -44,20 +44,21 @@ class NodeView extends BaseView {
     //   this.borderMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color(this.borderColor.r, this.borderColor.g, this.borderColor.b), transparent: true, opacity: this.borderColor.a });
     //   this.innerCircleMaterial = new THREE.MeshBasicMaterial({ color: this.donutInternalColorThree,transparent :true});
     // }
-    this.borderMaterial = this.shape.outerborder_material
-    this.innerCircleMaterial = this.shape.innergeometry_material
+    this.borderMaterial = this.shape.outerborder_material;
+    this.innerCircleMaterial = this.shape.innergeometry_material;
   }
 
   setOpacity (opacity) {
     super.setOpacity(opacity);
+    this.innerCircleMaterial.opacity = opacity * this.borderColor.a;
     this.borderMaterial.opacity = opacity * this.borderColor.a;
     // Fade the inner node color to background color since setting opacity will show the particles hiding behind the node.
     if (!this.highlight) {
       this.innerCircleMaterial.color.setStyle(chroma.mix(GlobalStyles.styles.colorPageBackground, GlobalStyles.styles.colorDonutInternalColor, opacity).css());
-      this.borderMaterial.color.setStyle(chroma.mix(GlobalStyles.styles.colorPageBackground, GlobalStyles.styles.colorDonutInternalColor, opacity).css());
+      this.borderMaterial.color.setStyle(chroma.mix(GlobalStyles.styles.colorDonutInternalColor, GlobalStyles.styles.colorDonutInternalColor, opacity).css());
       this.meshes.innerCircle.geometry.colorsNeedUpdate = true;
     }
-    if(opacity === 1) {
+    if (opacity === 1) {
       this.refresh(true);
     }
     if (this.nameView) {
@@ -105,14 +106,14 @@ class NodeView extends BaseView {
         if (this.meshes.innerBorder) { this.meshes.innerBorder.geometry.colorsNeedUpdate = true; }
       } else {
         if (this.getOpacity() === 1) {
-            const  borderColorInshape = this.shape.getShapeColor(this.object,this.highlight)
-            this.innerCircleMaterial.color.setRGB(borderColorInshape.r, borderColorInshape.g, borderColorInshape.b);
-            this.meshes.innerCircle.geometry.colorsNeedUpdate = true;
-            this.borderMaterial.color.setRGB(borderColor.r, borderColor.g, borderColor.b);       
+          const borderColorInshape = this.shape.getShapeColor(this.object, this.highlight);
+          this.innerCircleMaterial.color.setRGB(borderColorInshape.r, borderColorInshape.g, borderColorInshape.b);
+          this.meshes.innerCircle.geometry.colorsNeedUpdate = true;
+          this.borderMaterial.color.setRGB(borderColor.r, borderColor.g, borderColor.b);
         }
-        
-        if (this.meshes.innerBorder) { 
-          this.meshes.innerBorder.geometry.colorsNeedUpdate = true; 
+
+        if (this.meshes.innerBorder) {
+          this.meshes.innerBorder.geometry.colorsNeedUpdate = true;
         }
       }
       if (this.nameView) {
@@ -223,7 +224,7 @@ class NodeView extends BaseView {
       const borderHole = new THREE.Path();
       borderHole.absarc(0, 0, radius, 0, Math.PI * 2, true);
       border.holes.push(borderHole);
-      return new THREE.ShapeGeometry(border,NodeView.curveSegments);
+      return new THREE.ShapeGeometry(border, NodeView.curveSegments);
     });
   }
 
@@ -254,7 +255,7 @@ class NodeView extends BaseView {
       const holePath = new THREE.Path();
       holePath.absarc(0, 0, innerRadius, 0, Math.PI * 2, true);
       arcShape.holes.push(holePath);
-      return new THREE.ShapeGeometry(arcShape,NodeView.curveSegments);
+      return new THREE.ShapeGeometry(arcShape, NodeView.curveSegments);
     });
   }
 
@@ -264,7 +265,7 @@ class NodeView extends BaseView {
       const dotRadius = radius * 0.5;
       noticeShape.moveTo(dotRadius, 0);
       noticeShape.absarc(0, 0, dotRadius, 0, 2 * Math.PI, false);
-      return new THREE.ShapeGeometry(noticeShape,  NodeView.curveSegments);
+      return new THREE.ShapeGeometry(noticeShape, NodeView.curveSegments);
     });
   }
 }

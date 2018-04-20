@@ -1,73 +1,84 @@
-/*
-  EvaRgion 对象
 
+import EventEmitter from 'events';
+import EvaNotices from './EvaNotices';
+import _ from 'lodash';
+/**
+  EvaConnection
+   * @constructor
+   * @param {string} source 源节点name
+   * @param {string} target 目的节点name
+   * @param {object} metadata 私有数据
 */
-
-import EventEmitter from 'events'
-// import EvaDataNode  from "./EvaDataNode"
-import EvaNotices  from "./EvaNotices"
-import _ from 'lodash'
-
 class EvaConnection extends EventEmitter {
-  constructor (source,target,metadata) {
+
+  constructor (source, target, metadata) {
     super();
-    this.source = source
-    this.target =  target
-    this.metrics = metadata?metadata:{}
-    this._tag = []          // 链接标签类
-    this.notices = []
-    this.id = source + '-' + target
+    this.source = source;
+    this.target = target;
+    this.metrics = metadata || {};
+    this._tag = [];          // 链接标签类
+    this.notices = [];
+    this.id = `${source}-${target}`;
   }
   getId () {
-    return this.id
+    return this.id;
   }
-  createNotices (title,severity,link) {
-    let evaNotice = new EvaNotices(title,severity,link)
-    this.notices.push(evaNotice)
-    this.emit("modify","createNotices",this,evaNotice)
-    return this
+  /**
+   * 创建通知 可创建多个
+   *
+   * @param {string} title 通知名称
+   * @param {number} severity 通知级别 支持 0 1 2 3 >3则不显示图标
+   * @param {string} link 通知是否可以链接
+   * @return {EvaConnection}
+   */
+  createNotices (title, severity, link) {
+    const evaNotice = new EvaNotices(title, severity, link);
+    this.notices.push(evaNotice);
+    this.emit('modify', 'createNotices', this, evaNotice);
+    return this;
   }
   showNotices () {
-    // 显示问题
-    
   }
+  /**
+   * 清空全部通知
+   */
   clearNotics () {
     // TODO remove all listen
-    this.notices = []
-    this.notices.every( n => n.removeAllListeners())
-    this.emit("modify","clearNotics",this)
-    return this
+    this.notices = [];
+    this.notices.every(n => n.removeAllListeners());
+    this.emit('modify', 'clearNotics', this);
+    return this;
   }
   getNotices () {
-    return this.notices
+    return this.notices;
   }
   getFormatData () {
-    let notices = this.notices.map(m => m.getFormatData())
+    const notices = this.notices.map(m => m.getFormatData());
     return {
-      source:this.source,
-      target:this.target,
-      metrics:this.metrics,
-      notices:notices
-    }
+      source: this.source,
+      target: this.target,
+      metrics: this.metrics,
+      notices: notices
+    };
   }
-  setHightLight() {
-    return this
+  setHightLight () {
+    return this;
   }
-  setDetail (key,value) {
-    value = _.toNumber(value)
-    if(!_.isNumber(value)) {
-      throw new Error("value must be number tyle")
+  setDetail (key, value) {
+    value = _.toNumber(value);
+    if (!_.isNumber(value)) {
+      throw new Error('value must be number tyle');
     }
     // TODO 验证
-    this.metrics[key] = value
-    this.emit("modify","setDetail",this,key,value)
-    return this
+    this.metrics[key] = value;
+    this.emit('modify', 'setDetail', this, key, value);
+    return this;
   }
   setDetails (metrics) {
-    for(let key in metrics) {
-      this.setDetail(key,metrics[key])
+    for (const key in metrics) {
+      this.setDetail(key, metrics[key]);
     }
-    return this
+    return this;
   }
 }
 

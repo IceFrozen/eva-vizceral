@@ -21,14 +21,13 @@ ShapesFactory.registerShape = function (shapeName, shapeClass) {
   }
 };
 
-ShapesFactory.getShape = function (node) { 
+ShapesFactory.getShape = function (node) {
   const shapeName = node.node_type;
   if (ShapesFactory.shapes[shapeName]) {
     return new ShapesFactory.shapes[shapeName](node);
   }
   return new ShapesFactory.shapes.default(node);
 };
-
 
 
 export default ShapesFactory;

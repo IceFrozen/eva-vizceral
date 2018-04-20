@@ -72,10 +72,10 @@ class GraphObject extends EventEmitter {
   }
 
   getView () {
-    if (this.view === undefined) { 
+    if (this.view === undefined) {
       // 修改第一次没有notices 的bug
-      this.render(); 
-      this.view.refresh(true); 
+      this.render();
+      this.view.refresh(true);
     }
     return this.view;
   }

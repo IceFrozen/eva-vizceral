@@ -11,7 +11,7 @@ var config = {
   entry: './src/index.js',
   output: {
     path: './dist',
-    filename: options.optimizeMinimize ? 'vizceral.min.js' : 'vizceral.js',
+    filename: options.optimizeMinimize ? 'vizceral_eva.min.js' : 'vizceral_eva.js',
     library: 'Vizceral',
     libraryTarget: 'umd',
     umdNamedDefine: true

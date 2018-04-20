@@ -17,8 +17,10 @@
  */
 import _ from 'lodash';
 import chroma from 'chroma-js';
+import globalDetinitions from './globalDefinitions';
 
 const Console = console;
+
 
 function getRGBA (color) {
   const chromaColor = chroma(color);
@@ -42,12 +44,12 @@ class GlobalStyles {
         warning: 'rgb(268, 185, 73)',
         danger: 'rgb(255, 53, 53)'
       },
-      colorNodeStatus: {
-        default: 'rgb(127, 255, 237)',
-        normal: 'rgb(127, 255, 237)',
-        warning: 'rgb(268, 185, 73)',
-        danger: 'rgb(255, 53, 53)'
-      },
+      // colorNodeStatus: {
+      //   default: 'rgb(127, 255, 237)',
+      //   normal: 'rgb(127, 255, 237)',
+      //   warning: 'rgb(268, 185, 73)',
+      //   danger: 'rgb(255, 53, 53)'
+      // },
       colorNormalDimmed: 'rgb(101, 117, 128)',
       colorBackgroundDark: 'rgb(35, 35, 35)',
       colorLabelBorder: 'rgb(16, 17, 18)',
@@ -62,15 +64,15 @@ class GlobalStyles {
       colorShapeDefault: 'rgb(127, 255, 0))'
     };
     this.shapesStyles = {
-        colorShapeDefault: 'rgb(35, 35, 35)',
-        colorShapeBorder: 'rgb(255, 53, 53)',     
-        colorShapePipe: 'rgb(10, 10, 255)',
-        colorShapeAzure: 'rgb(91, 91, 255)', 
-        colorShapeStorage: 'rgb(10, 200, 10)', 
-        colorShapeService: 'rgb(50, 50, 250)', 
-        colorShapeUsers:'rgb(120, 120, 120)',
-        colorShapeUser:'rgb(35, 35, 35)'
-     };
+      colorShapeDefault: 'rgb(35, 35, 35)',
+      colorShapeBorder: 'rgb(255, 53, 53)',
+      colorShapePipe: 'rgb(10, 10, 255)',
+      colorShapeAzure: 'rgb(91, 91, 255)',
+      colorShapeStorage: 'rgb(10, 200, 10)',
+      colorShapeService: 'rgb(50, 50, 250)',
+      colorShapeUsers: 'rgb(120, 120, 120)',
+      colorShapeUser: 'rgb(35, 35, 35)'
+    };
 
     this.updateComputedStyles();
   }
@@ -110,7 +112,6 @@ class GlobalStyles {
     this.styles.colorTrafficHighlighted = _.reduce(this.styles.colorTraffic, (acc, value, key) => {
       if (styles && styles.colorTrafficHighlighted && styles.colorTrafficHighlighted[key]) {
         acc[key] = styles.colorTrafficHighlighted[key];
-	
       } else {
         acc[key] = chroma(value).brighten(3).css();
       }
@@ -123,7 +124,7 @@ class GlobalStyles {
       colorConnectionLine: getRGBA(this.styles.colorConnectionLine),
       colorDonutInternalColor: getRGBA(this.styles.colorDonutInternalColor),
       colorPageBackground: getRGBA(this.styles.colorPageBackground),
-      colorShapeDefault:getRGBA(this.styles.colorShapeDefault),
+      colorShapeDefault: getRGBA(this.styles.colorShapeDefault),
       colorTraffic: _.reduce(this.styles.colorTraffic, (acc, value, key) => {
         acc[key] = getRGBA(value);
         return acc;
@@ -133,6 +134,15 @@ class GlobalStyles {
         return acc;
       }, {}),
     };
+    // 更改 globalDetinitions 默认文件.
+    const arrayKey = [];
+    for (const key in this.styles.colorTraffic) {
+      arrayKey.push({ key: key, class: key });
+    }
+    const mergeRoot = globalDetinitions.definitions.detailedNode.volume;
+    const keyArryToMerget = ['default.donut', 'default.arc', 'focused.donut', 'focused.arc', 'entry.donut', 'entry.arc'];
+    keyArryToMerget.filter(key => _.size(_.get(mergeRoot, `${key}.indices`, {})))
+    .forEach(key => _.set(mergeRoot, `${key}.indices`, _.merge(_.get(mergeRoot, `${key}.indices`, {}), arrayKey)));
   }
 }
 

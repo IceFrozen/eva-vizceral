@@ -37,7 +37,6 @@ import RendererUtils from './rendererUtils';
 import MoveNodeInteraction from './moveNodeInteraction';
 
 
-
 /**
 * The `objectHovered` event is fired whenever on mouseover on a 'node' or 'connection' .
 * `object.type` will be either 'node' or 'connection'. In case another 'node' or 'connection'
@@ -76,7 +75,6 @@ import MoveNodeInteraction from './moveNodeInteraction';
 *
 * @event viewUpdated
 */
-
 
 
 // These are a static size and ratio for graph placement.  The element itself can resize.
@@ -331,12 +329,11 @@ class Vizceral extends EventEmitter {
   }
 
   onDocumentDoubleClick (event) {
-    let node = this.calculateIntersectedObject(event.center.x, event.center.y);
+    const node = this.calculateIntersectedObject(event.center.x, event.center.y);
     this.currentGraph.handleIntersectedObjectDoubleClick();
-    if(!node) {
-      this.emit("onDocumentDoubleClick")
+    if (!node) {
+      this.emit('onDocumentDoubleClick');
     }
-
   }
 
   getNearestValidGraph (viewArray) {
@@ -440,12 +437,12 @@ class Vizceral extends EventEmitter {
     if (!this.currentGraph || !_.isEqual(newGraph.graphIndex, this.currentGraph.graphIndex)) {
       const difference = this.currentGraph ? (newGraph.graphIndex.length - this.currentGraph.graphIndex.length) : 0;
       if (difference === -1) {
-        //this.zoomOutOfNode();
+        // this.zoomOutOfNode();
       } else if (difference === 1) {
-        //this.zoomIntoNode(newGraph.name);
+        // this.zoomIntoNode(newGraph.name);
       } else {
-        
-        //this.selectGraph(newGraph, redirectedFrom);
+
+        // this.selectGraph(newGraph, redirectedFrom);
       }
       this.selectGraph(newGraph, redirectedFrom);
       this.calculateMouseOver();
@@ -647,7 +644,6 @@ class Vizceral extends EventEmitter {
   }
 
   zoomOutOfNode () {
-     
     if (this.currentGraph && this.currentGraph !== this.getGraph(this.rootGraphName)) {
       const parentGraph = this.currentGraph.parentGraph;
       if (parentGraph) {
@@ -831,6 +827,6 @@ class Vizceral extends EventEmitter {
 }
 
 
-export * from './plugins/Eva' 
+export * from './plugins/Eva';
 export default Vizceral;
 export * from './base';

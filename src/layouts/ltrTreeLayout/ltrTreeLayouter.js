@@ -145,18 +145,3 @@ const weightSort = function (a, b) {
   }
 }());
 
-/*
-nodes: [
-  {
-    name: 'nodename',
-    position: [ 0, 0 ]  // optional
-    depth: 2  // computed
-  }
-]
-edges: [
-  {
-    source: 'nodename',
-    target: 'nodename'
-  }
-]
-*/

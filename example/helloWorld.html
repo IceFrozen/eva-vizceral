@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <script src="./js/vizceral_eva.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/vizceral_eva.css" />
+  <script>
+  var region
+  var dataNode1 = new Vizceral.EvaDataNode("dataNode1")   
+  var dataNode2 = new Vizceral.EvaDataNode("dataNode2")   
+  var dataNode3 = new Vizceral.EvaDataNode("dataNode3")
+  dataNode1
+    .connectAndGetConnetion(dataNode2)
+    .setDetail("danger",10)
+    .createNotices("i am notices",0,"http://www.baidu.com")
+
+  dataNode2
+  .connectAndGetConnetion(dataNode3,{"danger":100,"normal":10})
+  .createNotices("I am notice",1)
+ 
+  function run () {
+    region = new Vizceral.EvaRegion(document.getElementById('viz'))
+    region.setRootLevels(dataNode1).show()
+  }     
+</script>
+</head>
+  <body onload='run()'>
+    <div id="viz"></div>
+  </body>
+</html>

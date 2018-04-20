@@ -36,9 +36,9 @@ class FocusedTrafficGraph extends TrafficGraph {
   handleIntersectedObjectClick () {
     if (!this.intersectedObject || (this.intersectedObject instanceof this.ConnectionClass)) {
       this.highlightObject(this.intersectedObject);
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 
   handleIntersectedObjectDoubleClick () {
@@ -46,9 +46,9 @@ class FocusedTrafficGraph extends TrafficGraph {
       const graphIndex = this.graphIndex.slice(0, -1);
       graphIndex.push(this.intersectedObject.getName());
       this.emit('setView', graphIndex);
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "vizceral",
-  "version": "4.6.0",
+  "version": "4.6.1",
   "description": "Intuitive animated traffic graph visualization using webgl. If a graph of nodes and edges with data about traffic volume is provided, it will render a traffic graph animating the connection volume between nodes.",
   "main": "dist/vizceral.js",
   "repository": {
@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "npm run watch",
-    "doc": "documentation build ./src/vizceral.js --shallow -f md > USAGE.md",
+    "doc": "documentation build ./src/plugins/Eva/**.js --shallow -f md > USAGE.md",
     "lint": "eslint src --fix",
     "build": "npm run doc && npm run build:js",
     "build:js": "webpack --bail && webpack --bail -p",

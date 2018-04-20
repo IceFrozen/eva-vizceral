@@ -83,12 +83,12 @@ class ConnectionNoticeView extends BaseView {
       const noticeImage = warningNoticeImages[severity];
       const context = this.noticeCanvas.getContext('2d');
       context.clearRect(0, 0, this.noticeCanvas.width, this.noticeCanvas.height);
-      // notice icon     
-      if(noticeImage){
+      // notice icon
+      if (noticeImage) {
         const offset = { x: (this.noticeCanvas.width - noticeImage.width) / 2, y: (this.noticeCanvas.height - noticeImage.height) / 2 };
         context.drawImage(noticeImage, offset.x, offset.y);
       }
-     
+
       this.noticeTexture.needsUpdate = true;
     }
   }

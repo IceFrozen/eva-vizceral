@@ -35,7 +35,6 @@ function getNoticeElement () {
 }
 
 
-
 class Notices {
   showNotices (container, notices) {
     const noticeElement = getNoticeElement();

@@ -48,7 +48,7 @@ class LTRTreeLayout {
   }
 
   cachePositions (nodeKey, edgeKey, positions) {
-    // mark7 TODO 
+    // mark7 TODO
     this.cache.push({
       nodeKey: nodeKey,
       edgeKey: edgeKey,
@@ -73,7 +73,7 @@ class LTRTreeLayout {
     const edgeKey = workerGraph.edges.map(edge => edge.source + edge.target).sort();
     const nodeKey = workerGraph.nodes.map(node => node.name).sort();
 
-    const existingPositions = null//this.findPositions(nodeKey, edgeKey);
+    const existingPositions = null;// this.findPositions(nodeKey, edgeKey);
     if (existingPositions) {
       this.layoutPositions(graph, existingPositions);
       layoutComplete();

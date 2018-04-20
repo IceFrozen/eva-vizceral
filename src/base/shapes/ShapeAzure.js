@@ -5,10 +5,11 @@ import ShapesFactory from '../ShapesFactory';
 import ShapeParent from './ShapeParent';
 import NodeView from '../nodeView';
 import ShapesUtils from '../ShapesUtils';
+
 class ShapeAzure {
   constructor (node) {
     this.customNode = {};
-    this.node = node
+    this.node = node;
     this.customNode.innergeometry = this._createInnerGeometry(18, 32);
     this.customNode.outerborder = this._createOuterBorder(25, 32);
     this.customNode.innergeometry_material = this._createMaterial(node);
@@ -18,7 +19,7 @@ class ShapeAzure {
   }
 
   _createInnerGeometry (radius, curveSegments) {
-     const polyPath = [
+    const polyPath = [
       '0,3,14,35,23,42,14,3,0,3',
       '20,23,24,42,42,0,10,1,35,5,20,23'
     ];
@@ -39,16 +40,16 @@ class ShapeAzure {
     const borderHole = new THREE.Path();
     borderHole.absarc(0, 0, radius, 0, Math.PI * 2, true);
     border.holes.push(borderHole);
-    return new THREE.ShapeGeometry(border,curveSegments);
+    return new THREE.ShapeGeometry(border, curveSegments);
   }
 
   _createMaterial (node) {
     const materialColor = GlobalStyles.styles.colorTraffic[node.getClass()];
-    return  new THREE.MeshBasicMaterial({ color: materialColor});
+    return new THREE.MeshBasicMaterial({ color: materialColor });
   }
-  getShapeColor (node,highlight) {
+  getShapeColor (node, highlight) {
     const borderColor = GlobalStyles.getColorTrafficRGBA(node.getClass(), highlight);
-    return borderColor
+    return borderColor;
   }
 
 }

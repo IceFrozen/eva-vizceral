@@ -1,1 +1,1 @@
-export * from "./vizceral"
+export * from './vizceral';

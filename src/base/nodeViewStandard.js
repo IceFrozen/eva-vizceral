@@ -39,15 +39,15 @@ class NodeViewStandard extends NodeView {
     // super.borderMaterial = this.shape.bordermaterial
     this.meshes.outerBorder = this.addChildElement(this.shape.outerborder, this.shape.outerborder_material);
     this.meshes.innerCircle = this.addChildElement(this.shape.innergeometry, this.shape.innergeometry_material);
-    //this.meshes.innerCircle = this.addChildElement(NodeView.getInnerCircleGeometry(radius), this.innerCircleMaterial);
-/*    
+    // this.meshes.innerCircle = this.addChildElement(NodeView.getInnerCircleGeometry(radius), this.innerCircleMaterial);
+/*
     this.meshes.outerBorder = this.addChildElement(NodeView.getOuterBorderGeometry(radius), this.borderMaterial);
-   
+
 */
     // const borderColor = GlobalStyles.getColorTrafficRGBA("danger", false);
     // console.log("super",super.innerCircleMaterial)
-    //super.innerCircleMaterial.color.setRGB(borderColor.r, borderColor.g, borderColor.b);
-   
+    // super.innerCircleMaterial.color.setRGB(borderColor.r, borderColor.g, borderColor.b);
+
     this.meshes.noticeDot = this.addChildElement(NodeView.getNoticeDotGeometry(radius), this.dotMaterial);
     this.refreshNotices();
 
@@ -64,7 +64,7 @@ class NodeViewStandard extends NodeView {
   }
 
   getShape () {
-    return this.shape
+    return this.shape;
   }
   refreshNotices () {
     if (this.object.hasNotices()) {

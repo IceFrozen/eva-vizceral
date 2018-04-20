@@ -21,7 +21,7 @@ import ShapesUtils from '../ShapesUtils';
 class ShapeStorage {
   constructor (node) {
     this.customNode = {};
-    this.node = node
+    this.node = node;
     this.customNode.innergeometry = this._createInnerGeometry(18, 32);
     this.customNode.outerborder = this._createOuterBorder(20, 32);
     this.customNode.innergeometry_material = this._createMaterial(node);
@@ -52,9 +52,9 @@ class ShapeStorage {
   _createMaterial (rgb) {
     return new THREE.MeshBasicMaterial({ color: rgb });
   }
-   getShapeColor (node,highlight) {
+  getShapeColor (node, highlight) {
     const borderColor = GlobalStyles.getColorTrafficRGBA(node.getClass(), highlight);
-    return borderColor
+    return borderColor;
   }
 
 }

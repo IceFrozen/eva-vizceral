@@ -251,7 +251,7 @@ class ConnectionView extends BaseView {
 
     // Add the connection notice
     this.noticeView = new ConnectionNoticeView(this);
-    this.noticeView.refresh(true)
+    this.noticeView.refresh(true);
     this.validateNotices();
 
 

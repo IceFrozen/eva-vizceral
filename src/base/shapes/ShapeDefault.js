@@ -8,7 +8,7 @@ import NodeView from '../nodeView';
 class ShapeDefault {
   constructor (node) {
     this.customNode = {};
-    this.node = node
+    this.node = node;
     this.customNode.innergeometry = this._createInnerGeometry(18, 32);
     this.customNode.outerborder = this._createOuterBorder(20, 32);
     this.customNode.innergeometry_material = this._createMaterial(node);
@@ -18,40 +18,36 @@ class ShapeDefault {
   }
 
   _createInnerGeometry (radius, curveSegments) {
-  
-            const circleShape = new THREE.Shape();
-            circleShape.moveTo(radius, 0);
-            circleShape.absarc(0, 0, radius, 0, 2 * Math.PI, false);
+    const circleShape = new THREE.Shape();
+    circleShape.moveTo(radius, 0);
+    circleShape.absarc(0, 0, radius, 0, 2 * Math.PI, false);
             // const holeShape = new THREE.Shape();
             // holeShape.moveTo(radius, 0);
             // holeShape.absarc(0, 0, radius-2, 0, 2 * Math.PI, false);
             // circleShape.holes.push(holeShape);
-            return new THREE.ShapeGeometry(circleShape, curveSegments);
-      
+    return new THREE.ShapeGeometry(circleShape, curveSegments);
   }
 
   _createOuterBorder (radius, curveSegments) {
- 
     const border = new THREE.Shape();
     border.absarc(0, 0, radius + 2, 0, Math.PI * 2, false);
     const borderHole = new THREE.Path();
     borderHole.absarc(0, 0, radius, 0, Math.PI * 2, true);
     border.holes.push(borderHole);
-    return new THREE.ShapeGeometry(border,curveSegments);
-  
+    return new THREE.ShapeGeometry(border, curveSegments);
   }
 
   _createMaterial (node) {
     const materialColor = GlobalStyles.styles.colorTraffic[node.getClass()];
-    return  new THREE.MeshBasicMaterial({ color: materialColor});
+    return new THREE.MeshBasicMaterial({ color: materialColor });
   }
-  getShapeColor (node,highlight) {
+  getShapeColor (node, highlight) {
     const borderColor = GlobalStyles.getColorTrafficRGBA(node.getClass(), highlight);
-    return borderColor
+    return borderColor;
   }
 
 }
-  ShapesFactory.registerShape('default', ShapeDefault);
+ShapesFactory.registerShape('default', ShapeDefault);
 
 export default ShapeDefault;
 
