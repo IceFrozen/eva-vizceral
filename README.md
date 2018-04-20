@@ -21,8 +21,8 @@
 
 	使用方法2
 		1. git clone https://http://git.intra.weibo.com/im/eva-vizceral.git
-		2. cd eva-vizceral/disk
-		3. 浏览器引入 app.css 和 vizceral_eva.min.js
+		2. cd eva-vizceral/example
+		3. 浏览器引入 example/css/vizceral_eva.css 和  example/js/vizceral_eva.min.js
 
 ## Example
 ```html
