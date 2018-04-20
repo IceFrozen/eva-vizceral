@@ -32,7 +32,6 @@ class ShapeParent {
   }
 
   _createOuterBorder (radius, curveSegments) {
-    console.log('_createOuterBorder create radius', radius);
     const border = new THREE.Shape();
     border.absarc(0, 0, radius * 3.2, 0, Math.PI * 2, false);
     const hole = new THREE.Shape();

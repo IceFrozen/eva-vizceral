@@ -1,6 +1,5 @@
-
-import EventEmitter from 'events';
 import EvaNotices from './EvaNotices';
+import EventEmitter from 'events';
 import _ from 'lodash';
 /**
   EvaConnection

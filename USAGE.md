@@ -5,6 +5,16 @@
 -   [EvaConnection](#evaconnection)
     -   [createNotices](#createnotices)
     -   [clearNotics](#clearnotics)
+-   [EvaDataNode](#evadatanode)
+    -   [setHightLight](#sethightlight)
+    -   [setClass](#setclass)
+    -   [setNodeType](#setnodetype)
+    -   [setMetadata](#setmetadata)
+    -   [getMetadata](#getmetadata)
+    -   [connect](#connect)
+    -   [connectAndGetConnetion](#connectandgetconnetion)
+    -   [getConnection](#getconnection)
+    -   [getConnections](#getconnections)
 -   [EvaRegion](#evaregion)
     -   [show](#show)
     -   [update](#update)
@@ -16,18 +26,8 @@
     -   [setNodeData](#setnodedata)
     -   [reload](#reload)
     -   [toData](#todata)
-    -   [getConnection](#getconnection)
-    -   [addColors](#addcolors)
--   [EvaDataNode](#evadatanode)
-    -   [setHightLight](#sethightlight)
-    -   [setClass](#setclass)
-    -   [setNodeType](#setnodetype)
-    -   [setMetadata](#setmetadata)
-    -   [getMetadata](#getmetadata)
-    -   [connect](#connect)
-    -   [connectAndGetConnetion](#connectandgetconnetion)
     -   [getConnection](#getconnection-1)
-    -   [getConnections](#getconnections)
+    -   [addColors](#addcolors)
 
 ## EvaConnection
 
@@ -56,6 +56,110 @@ Returns **[EvaConnection](#evaconnection)**
 ### clearNotics
 
 清空全部通知
+
+## EvaDataNode
+
+**Extends EventEmitter**
+
+EvaDataNode (name,options)布局对象
+
+**Parameters**
+
+-   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** dataNode name 唯一
+-   `options` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** options.displayName 节点名 显示名字
+    options.maxVolume   例子密度  越大 粒子速度 越小 越分散
+    options.class       类别 normal  danger  warning 三种类别 可以自定义
+    options.layout      （ltrTree）树形结构  支持dns 结构 ring结构 ringCenter
+    options.metadata      用于资深私有数据结构
+
+### setHightLight
+
+设置高亮
+
+**Parameters**
+
+-   `bool` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 是否高亮 true or false
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### setClass
+
+设置颜色
+
+**Parameters**
+
+-   `className` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 是否高亮  类别 normal  danger  warning 三种类别 可以自定义 需要 EvaRegion.addColors 支持
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### setNodeType
+
+设置节点图像 此方法不能动态改变 需要在show 方法之前设置
+
+**Parameters**
+
+-   `nodeType` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 目前支持users service storage pipe azure 四种
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### setMetadata
+
+设置用户私有数据
+
+**Parameters**
+
+-   `key` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 私有key
+-   `value` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 私有v
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### getMetadata
+
+获取用户数据
+
+**Parameters**
+
+-   `key` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### connect
+
+链接节点
+
+**Parameters**
+
+-   `dataNode` **[EvaDataNode](#evadatanode)** 节点类
+-   `streamData` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 链接流量显示 例子 {"danger":10,"normal":10}
+
+Returns **[EvaDataNode](#evadatanode)** 
+
+### connectAndGetConnetion
+
+链接节点
+
+**Parameters**
+
+-   `dataNode` **[EvaDataNode](#evadatanode)** 节点类
+-   `streamData` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 链接流量显示 {"danger":10,"normal":10}
+
+Returns **[EvaConnection](#evaconnection)** 
+
+### getConnection
+
+获取链接
+
+**Parameters**
+
+-   `targetDataName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 目地节点 name
+
+Returns **[EvaConnection](#evaconnection)** 
+
+### getConnections
+
+获全部取链接
+
+Returns **\[[EvaConnection](#evaconnection)]** 
 
 ## EvaRegion
 
@@ -174,107 +278,3 @@ Returns **[EvaConnection](#evaconnection)** EvaConnection
 -   `colors` **objects** 增加颜色 例子 addColors({hello: 'rgb(91, 91, 91)'})
 
 Returns **[EvaRegion](#evaregion)** EvaRegion
-
-## EvaDataNode
-
-**Extends EventEmitter**
-
-EvaDataNode (name,options)布局对象
-
-**Parameters**
-
--   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** dataNode name 唯一
--   `options` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** options.displayName 节点名 显示名字
-    options.maxVolume   例子密度  越大 粒子速度 越小 越分散
-    options.class       类别 normal  danger  warning 三种类别 可以自定义
-    options.layout      （ltrTree）树形结构  支持dns 结构 ring结构 ringCenter
-    options.metadata      用于资深私有数据结构
-
-### setHightLight
-
-设置高亮
-
-**Parameters**
-
--   `bool` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 是否高亮 true or false
-
-Returns **[EvaDataNode](#evadatanode)** 
-
-### setClass
-
-设置颜色
-
-**Parameters**
-
--   `className` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 是否高亮  类别 normal  danger  warning 三种类别 可以自定义 需要 EvaRegion.addColors 支持
-
-Returns **[EvaDataNode](#evadatanode)** 
-
-### setNodeType
-
-设置节点图像 此方法不能动态改变 需要在show 方法之前设置
-
-**Parameters**
-
--   `nodeType` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 目前支持users service storage pipe azure 四种
-
-Returns **[EvaDataNode](#evadatanode)** 
-
-### setMetadata
-
-设置用户私有数据
-
-**Parameters**
-
--   `key` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 私有key
--   `value` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 私有v
-
-Returns **[EvaDataNode](#evadatanode)** 
-
-### getMetadata
-
-获取用户数据
-
-**Parameters**
-
--   `key` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 
-
-Returns **[EvaDataNode](#evadatanode)** 
-
-### connect
-
-链接节点
-
-**Parameters**
-
--   `dataNode` **[EvaDataNode](#evadatanode)** 节点类
--   `streamData` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 链接流量显示 例子 {"danger":10,"normal":10}
-
-Returns **[EvaDataNode](#evadatanode)** 
-
-### connectAndGetConnetion
-
-链接节点
-
-**Parameters**
-
--   `dataNode` **[EvaDataNode](#evadatanode)** 节点类
--   `streamData` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 链接流量显示 {"danger":10,"normal":10}
-
-Returns **[EvaConnection](#evaconnection)** 
-
-### getConnection
-
-获取链接
-
-**Parameters**
-
--   `targetDataName` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 目地节点 name
-
-Returns **[EvaConnection](#evaconnection)** 
-
-### getConnections
-
-获全部取链接
-
-Returns **\[[EvaConnection](#evaconnection)]** 

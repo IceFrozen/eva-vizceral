@@ -4,7 +4,7 @@ import EvaConnection from './EvaConnection';
 class EvaNotices extends EventEmitter {
   constructor (title, severity, link) {
     super();
-    this.title = title,
+    this.title = title;
     this.severity = severity;
     this.link = link;
   }

@@ -19,7 +19,7 @@
 import _ from 'lodash';
 import * as THREE from 'three';
 import numeral from 'numeral';
-import chroma from 'chroma-js';
+// import chroma from 'chroma-js';
 import GlobalDefinitions from '../globalDefinitions';
 import GlobalStyles from '../globalStyles';
 import NodeView from '../base/nodeView';
@@ -128,8 +128,8 @@ class FocusedNodeView extends NodeView {
       return;
     }
     const textContext = this.textCanvas.getContext('2d');
-    const headerWeight = 600;
-    const metricWeight = 700;
+    // const headerWeight = 600;
+    // const metricWeight = 700;
     let top = 0;
 
     // Reset the canvas to draw new text
@@ -170,8 +170,6 @@ class FocusedNodeView extends NodeView {
         // textContext.fillStyle = GlobalStyles.styles.colorTraffic.normal;
         textContext.font = `${this.metricFontSize}px 'Source Sans Pro', sans-serif`;
         const topMetricDisplayValue = generateDisplayValue(_.get(this.object, topData.data), topData.format);
-
-        console.log('topMetricDisplayValue2', topMetricDisplayValue);
         textContext.fillText(topMetricDisplayValue, this.textCanvas.width / 2, top);
       }
       top += (this.metricFontSize / 2);

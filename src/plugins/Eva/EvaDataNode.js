@@ -73,7 +73,7 @@ class EvaDataNode extends EventEmitter {
       this.renderer = EvaDataNode.CONSTS.DEAULT.RENDERER;
     }
     if (this.name == null) {
-      console.error(this);
+      // console.error(this);
       throw new Error("dataNode's name is required!");
     }
     if (!this.displayName) {
@@ -113,7 +113,7 @@ class EvaDataNode extends EventEmitter {
    * @return {EvaDataNode}
    */
   getMetadata (key) {
-    return this.metadata[key] = value;
+    return this.metadata[key];
   }
   setParentDataNode (dataNode) {
     if (!(dataNode instanceof EvaDataNode)) {
@@ -193,7 +193,7 @@ class EvaDataNode extends EventEmitter {
       name = 'default';
     }
     if (name !== 'docunt' && name !== 'arc') {
-      return;
+      return this;
     }
 
     this.detailShow = name;

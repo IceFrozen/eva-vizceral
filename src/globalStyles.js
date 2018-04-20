@@ -137,7 +137,7 @@ class GlobalStyles {
     // 更改 globalDetinitions 默认文件.
     const arrayKey = [];
     for (const key in this.styles.colorTraffic) {
-      arrayKey.push({ key: key, class: key });
+        arrayKey.push({ key: key, class: key });
     }
     const mergeRoot = globalDetinitions.definitions.detailedNode.volume;
     const keyArryToMerget = ['default.donut', 'default.arc', 'focused.donut', 'focused.arc', 'entry.donut', 'entry.arc'];

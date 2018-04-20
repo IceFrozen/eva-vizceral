@@ -20,7 +20,6 @@ import * as THREE from 'three';
 import NodeView from './nodeView';
 import NodeNameView from './nodeNameView';
 import GlobalStyles from '../globalStyles';
-import ShapesFactory from './ShapesFactory';
 import './shapes/CommonShapes';
 
 const radius = 16;

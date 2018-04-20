@@ -2,8 +2,6 @@ import * as THREE from 'three';
 import GlobalStyles from '../../globalStyles';
 import ShapesFactory from '../ShapesFactory';
 import ShapesUtils from '../ShapesUtils';
-import ShapeParent from './ShapeParent';
-import NodeView from '../nodeView';
 
 class ShapeUsers {
   constructor (node) {

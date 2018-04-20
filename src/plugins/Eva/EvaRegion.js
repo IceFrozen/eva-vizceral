@@ -1,28 +1,30 @@
+import generateUuid from 'generate-uuid';
 import EventEmitter from 'events';
 import Vizceral from '../../vizceral';
 import EvaDataNode from './EvaDataNode';
-import generateUuid from 'generate-uuid';
-import TWEEN from 'tween.js';
+
+const Console = console;
+// import TWEEN from 'tween.js';
  /**
-   * EvaRegion (rootElement)
-   *
-   * const region = new Vizceral.EvaRegion(document.getElementById('viz'))
-   * @constructor
-   * @param {dom} rootElement 节点 需要在哪里绘制图形
-   *
-   */
+	 * EvaRegion (rootElement)
+	 *
+	 * const region = new Vizceral.EvaRegion(document.getElementById('viz'))
+	 * @constructor
+	 * @param {dom} rootElement 节点 需要在哪里绘制图形
+	 *
+	 */
 class EvaRegion extends EventEmitter {
   constructor (rootElement) {
-  	 super();
-  	this.hasInit = false;
-  	this.canvasDom = null;
+		 super();
+    this.hasInit = false;
+    this.canvasDom = null;
     this.noticeDom = null;
     this.rootElement = rootElement;
-  	this.id = generateUuid();
-  	this.vizceral = null;
-  	this.perfNow = 0;
+    this.id = generateUuid();
+    this.vizceral = null;
+    this.perfNow = 0;
     this._reload = false;
-  	this.vizstatus = {};
+    this.vizstatus = {};
     this.entryNode = [];
     this.childNodes = [];
     this.perfNow = getPerformanceNow();
@@ -31,9 +33,9 @@ class EvaRegion extends EventEmitter {
     this.init();
   }
   init () {
-   	if (this.hasInit) {
-     return;
-   }
+    if (this.hasInit) {
+		 return;
+	 }
     this.genHtml();
     if (!this.canvasDom) {
       throw new Error('the dom div must be add!!');
@@ -45,23 +47,10 @@ class EvaRegion extends EventEmitter {
     this.vizceral.on('viewChanged', (view) => {
       this.currentView = view;
       self._updateNav();
-      console.log(view);
       self.emit('viewChanged', view);
     });
-    this.vizceral.on('onDocumentDoubleClick', (_) => {
-      // if(!self.currentView){
-      //   return
-      // }
-      // let tmppush = []
-      // // TODO bug 类
-      // console.log(self.currentView)
-      // let index = self.currentView.view.length - 1
-      // for(let i = 0;i < index;i++){
-      //   tmppush.push(self.currentView.view[i])
-      // }
-      // console.log(tmppush)
-      // this.vizceral.setView(tmppush)
-
+    this.vizceral.on('onDocumentDoubleClick', (data) => {
+      this.emit('onDocumentDoubleClick', data);
     });
     this.vizceral.on('objectHighlighted', (nativeNode) => {
       let node = false;
@@ -74,12 +63,12 @@ class EvaRegion extends EventEmitter {
         const targetName = nativeNode.target.name;
         const sourceNode = self.getNodeByNodeName(sourceName);
         node = sourceNode.getConnection(sourceName, targetName);
-      } else if (nativeNode.type == 'node') {
+      } else if (nativeNode.type === 'node') {
         type = 'node';
         node = self.getNodeByNodeName(nativeNode.name);
       } else {
         type = 'unknow';
-        console.warn('objectHighlighted node is un know:', nativeNode);
+        Console.warn('objectHighlighted node is un know:', nativeNode);
       }
       self.emit('objectHighlighted', type, node, nativeNode);
     });
@@ -130,9 +119,9 @@ class EvaRegion extends EventEmitter {
     }).join('&gt;');
     this.navDom.innerHTML = c;
   }
-  /**
-   * 创建EvaRegion 用于update操作或者首次加载的绘图
-   */
+	/**
+	 * 创建EvaRegion 用于update操作或者首次加载的绘图
+	 */
   show () {
     if (this.hasInit) {
       this.init();
@@ -141,15 +130,14 @@ class EvaRegion extends EventEmitter {
     return this;
   }
   _onEvent (eventName, func) {
-    console.warn('not support');
+    Console.warn('not support');
     return this;
   }
-  /**
-   * 更新操作
-   * @returns {EvaRegion} EvaRegion
-   */
+	/**
+	 * 更新操作
+	 * @returns {EvaRegion} EvaRegion
+	 */
   update (resaon) {
-    console.log('update:', resaon);
     this.vizceral.updateData(this.toData());
     const initialView = this.vizceral.checkInitialView();
     if (!initialView.view) {
@@ -180,11 +168,11 @@ class EvaRegion extends EventEmitter {
     this.update(eventSubType);
     return this;
   }
-  /**
-   * 返回上层结构
-   *
-   * @returns {EvaRegion}  EvaRegion
-   */
+	/**
+	 * 返回上层结构
+	 *
+	 * @returns {EvaRegion}  EvaRegion
+	 */
   backToParentLevel () {
     if (!this.currentView || !this.currentView.view) {
       return;
@@ -194,13 +182,13 @@ class EvaRegion extends EventEmitter {
     this.changeView(tmp, null);
     return this;
   }
-  /**
-   * 设置跟路径
-   *
-   * @param {EvaDataNods} EvaDataNods 需要显示的根路径节点
-   *
-   * @returns {EvaRegion} EvaRegion
-   */
+	/**
+	 * 设置跟路径
+	 *
+	 * @param {EvaDataNods} EvaDataNods 需要显示的根路径节点
+	 *
+	 * @returns {EvaRegion} EvaRegion
+	 */
   setRootLevels (...EvaDataNods) {
     const children = [];
     for (const dataNode of EvaDataNods) {
@@ -233,42 +221,42 @@ class EvaRegion extends EventEmitter {
     }
     return this;
   }
-   /**
-   * 根据name 获取 EvaDataNode 对象
-   *
-   * @param {string} name EvaDataNode name
-   *
-   * @returns {EvaDataNode} EvaDataNode
-   */
+	 /**
+	 * 根据name 获取 EvaDataNode 对象
+	 *
+	 * @param {string} name EvaDataNode name
+	 *
+	 * @returns {EvaDataNode} EvaDataNode
+	 */
   getNodeByNodeId (name) {
     return this.childNodes.find(node => node.name == name);
   }
-   /**
-   * 根据name 获取 EvaDataNode 对象
-   *
-   * @param {string} name EvaDataNode 根据name
-   *
-   * @returns {EvaDataNode} EvaDataNode
-   */
+	 /**
+	 * 根据name 获取 EvaDataNode 对象
+	 *
+	 * @param {string} name EvaDataNode 根据name
+	 *
+	 * @returns {EvaDataNode} EvaDataNode
+	 */
   getNodeByNodeName (name) {
     return this.childNodes.find(node => node.name == name);
   }
-  /**
-   * 设置高亮节点
-   *
-   * @param {string} nodename EvaDataNode name
-   * @param {boolean} hightOrHidden 是否高亮 true 高亮 false 取消高亮
-   * @returns {EvaRegion} EvaRegion
-   */
+	/**
+	 * 设置高亮节点
+	 *
+	 * @param {string} nodename EvaDataNode name
+	 * @param {boolean} hightOrHidden 是否高亮 true 高亮 false 取消高亮
+	 * @returns {EvaRegion} EvaRegion
+	 */
   setHightLightNode (nodename, hightOrHidden) {
     if (!this.vizceral) {
-      console.warn('this.vizceral is not exist');
+      Console.warn('this.vizceral is not exist');
       return this;
     }
     let nodeName;
     const node = this.getNodeByNodeName(nodename);
     if (!node) {
-      console.warn('the node is not exist nodename:', nodename);
+      Console.warn('the node is not exist nodename:', nodename);
     }
     if (hightOrHidden) {
       nodeName = this.vizceral.getNode([node.name]);
@@ -277,7 +265,6 @@ class EvaRegion extends EventEmitter {
     return this;
   }
   changeView (view, hightObject) {
-    console.log('view,hightObject', view, hightObject);
     this.vizceral.setView(view, hightObject);
     return this;
   }
@@ -285,12 +272,12 @@ class EvaRegion extends EventEmitter {
   setRegionArea () {
     return this;
   }
-  /**
-   * 加载节点数据json
-   *
-   * @param {object} datas 节点数据json  详情见example
-   * @returns {object} EvaRegion
-   */
+	/**
+	 * 加载节点数据json
+	 *
+	 * @param {object} datas 节点数据json  详情见example
+	 * @returns {object} EvaRegion
+	 */
   setNodeData (...datas) {
     const children = [];
     const connections = [];
@@ -307,7 +294,7 @@ class EvaRegion extends EventEmitter {
       const sourceNode = children.find(child => child.name === sourceName);
       const targetNode = children.find(child => child.name === targetName);
       if (!sourceNode || !targetNode) {
-        console.warn('error in pass the json data source:', conn.sourceNode, conn.targetNode, conn);
+        Console.warn('error in pass the json data source:', conn.sourceNode, conn.targetNode, conn);
         continue;
       }
       const connection = sourceNode.connectAndGetConnetion(targetNode, conn.metrics);
@@ -321,12 +308,12 @@ class EvaRegion extends EventEmitter {
     this.setChildren(children);
     return this;
   }
-  /**
-   * 重载数据 用于不同结构的json 格式
-   *
-   * @param {object} datas 节点数据json
-   * @returns {EvaRegion} EvaRegion
-   */
+	/**
+	 * 重载数据 用于不同结构的json 格式
+	 *
+	 * @param {object} datas 节点数据json
+	 * @returns {EvaRegion} EvaRegion
+	 */
   reload (...datas) {
     if (this._reload) {
       return;
@@ -338,10 +325,10 @@ class EvaRegion extends EventEmitter {
     this._reload = false;
     return this;
   }
-  /**
-   * 转换成json数据
-   *
-   */
+	/**
+	 * 转换成json数据
+	 *
+	 */
   toData () {
     if (this.childNodes.length <= 0) {
       return {};
@@ -349,10 +336,10 @@ class EvaRegion extends EventEmitter {
     const entryNode = this.childNodes[0];
     const connections = this.childNodes.map((datanode, index) => datanode.getConnections());
     connections.push([]);
-    const connectionItem = connections.reduce((c1, c2) => c1.concat(c2)).map(connectionItem => connectionItem.getFormatData());
+    const connectionItems = connections.reduce((c1, c2) => c1.concat(c2)).map(connectionItem => connectionItem.getFormatData());
 
     const nodes = this.childNodes.map((datanode, index) => datanode.getFormatData());
-    // TODO
+		// TODO
     return {
       renderer: entryNode.renderer,
       name: entryNode.name,
@@ -363,25 +350,25 @@ class EvaRegion extends EventEmitter {
       updated: entryNode.updated,
       node_type: entryNode.node_type,
       nodes: nodes,
-      connections: connectionItem,
+      connections: connectionItems,
       metadata: entryNode.metadata
     };
   }
-  /**
-   * 获取链接
-   * @param {string} sourceDataName 起点 EvaDataNode name
-   * @param {string} targetDataName 终点 EvaDataNode name
-   * @returns {EvaConnection} EvaConnection
-   */
+	/**
+	 * 获取链接
+	 * @param {string} sourceDataName 起点 EvaDataNode name
+	 * @param {string} targetDataName 终点 EvaDataNode name
+	 * @returns {EvaConnection} EvaConnection
+	 */
   getConnection (sourceDataName, targetDataName) {
     const node = this.getNodeByNodeId(sourceDataName);
     return node.getConnection(targetDataName);
   }
-  /**
-   * 转换成json数据
-   * @param {objects} colors 增加颜色 例子 addColors({hello: 'rgb(91, 91, 91)'})
-   * @returns {EvaRegion} EvaRegion
-   */
+	/**
+	 * 转换成json数据
+	 * @param {objects} colors 增加颜色 例子 addColors({hello: 'rgb(91, 91, 91)'})
+	 * @returns {EvaRegion} EvaRegion
+	 */
   addColors (colors) {
     const style = { colorTraffic: colors };
     if (!this.hasInit) {
@@ -422,48 +409,48 @@ EvaRegion.prototype.initDefinitions = function () {
         focused: { // override for the region renderer
           top: { header: '流量', data: 'data.volume', format: '0.0' },
           bottom: { header: '错误率', data: 'data.classPercents.danger', format: '0.00%' },
-          // donut: {
-          //   top: { header: '流量', data: 'data.volume', format: '0.0' },
-          //   bottom: { header: '错误率', data: 'data.classPercents.danger', format: '0.00%' },
-          //   data: 'data.globalClassPercents',
-          //   indices: [{ key: 'danger' },{ key: 'warning' },{ key: 'normal'}]
-          // },
-          // arc: {
-          //   top: { header: '流量', data: 'data.volume', format: '0.0' },
-          //   bottom: { header: '错误率', data: 'data.volume', format: '0.00%' },
-          //   data: {
-          //     values: [ // Array of values
-          //       { name: 'danger', value: 30 }, // Values have a value, name, and an optional overriding class. If class is not present, uses name as class name.
-          //       { name: 'normal', value:70, class:'normal' }
-          //     ],
-          //     total: 100, // The total value to equal 100% of the arc graph
-          //     line: 0.9 // [optional] What percent, in decimal form, to put the optional marking line.
-          //   },
-          //   lineIndex: 'line'
-          // }
+					// donut: {
+					//   top: { header: '流量', data: 'data.volume', format: '0.0' },
+					//   bottom: { header: '错误率', data: 'data.classPercents.danger', format: '0.00%' },
+					//   data: 'data.globalClassPercents',
+					//   indices: [{ key: 'danger' },{ key: 'warning' },{ key: 'normal'}]
+					// },
+					// arc: {
+					//   top: { header: '流量', data: 'data.volume', format: '0.0' },
+					//   bottom: { header: '错误率', data: 'data.volume', format: '0.00%' },
+					//   data: {
+					//     values: [ // Array of values
+					//       { name: 'danger', value: 30 }, // Values have a value, name, and an optional overriding class. If class is not present, uses name as class name.
+					//       { name: 'normal', value:70, class:'normal' }
+					//     ],
+					//     total: 100, // The total value to equal 100% of the arc graph
+					//     line: 0.9 // [optional] What percent, in decimal form, to put the optional marking line.
+					//   },
+					//   lineIndex: 'line'
+					// }
         },
         entry: { // override for the region renderer
           top: { header: '流量', data: 'data.volume', format: '0.0' },
           bottom: { header: '错误率', data: 'data.classPercents.danger', format: '0.00%' },
-          // donut: {
-          //   top: { header: '流量', data: 'data.volume', format: '0.0' },
-          //   bottom: { header: '错误率d', data: 'data.classPercents.danger', format: '0.00%' },
-          //   data: 'data.globalClassPercents',
-          //   indices: [{ key: 'danger' },{ key: 'warning' },{ key: 'normal'}]
-          // },
-          // arc: {
-          //   top: {  header: '流量', data: 'data.volume', format: '0.0' },
-          //   bottom: {header: '错误率', data: 'data.classPercents.danger', format: '0.0' },
-          //   data: {
-          //     values: [ // Array of values
-          //       { name: 'warning', value: 30,class:"warning" }, // Values have a value, name, and an optional overriding class. If class is not present, uses name as class name.
-          //       { name: 'normal', value:70, class:'normal' }
-          //     ],
-          //     total: 100, // The total value to equal 100% of the arc graph
-          //     line: 28 // [optional] What percent, in decimal form, to put the optional marking line.
-          //   },
-          //   //lineIndex: 'line'
-          // }
+					// donut: {
+					//   top: { header: '流量', data: 'data.volume', format: '0.0' },
+					//   bottom: { header: '错误率d', data: 'data.classPercents.danger', format: '0.00%' },
+					//   data: 'data.globalClassPercents',
+					//   indices: [{ key: 'danger' },{ key: 'warning' },{ key: 'normal'}]
+					// },
+					// arc: {
+					//   top: {  header: '流量', data: 'data.volume', format: '0.0' },
+					//   bottom: {header: '错误率', data: 'data.classPercents.danger', format: '0.0' },
+					//   data: {
+					//     values: [ // Array of values
+					//       { name: 'warning', value: 30,class:"warning" }, // Values have a value, name, and an optional overriding class. If class is not present, uses name as class name.
+					//       { name: 'normal', value:70, class:'normal' }
+					//     ],
+					//     total: 100, // The total value to equal 100% of the arc graph
+					//     line: 28 // [optional] What percent, in decimal form, to put the optional marking line.
+					//   },
+					//   //lineIndex: 'line'
+					// }
         }
       }
     }
@@ -482,7 +469,6 @@ const getPerformanceNow = function () {
           return perfNow;
         }
       } catch (e) {
-          // do nothing
       }
     }
   }
