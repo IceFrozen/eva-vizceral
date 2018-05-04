@@ -80,7 +80,8 @@ class LTRTreeLayout {
     } else {
       const layoutWorker = LayoutWorker();
       const layoutWorkerComplete = (event) => {
-        this.cachePositions(nodeKey, edgeKey, event.data);
+        //TODO 内存泄漏
+        //this.cachePositions(nodeKey, edgeKey, event.data);
         this.layoutPositions(graph, event.data);
         layoutComplete();
         layoutWorker.removeEventListener('message', layoutWorkerComplete);

@@ -31,6 +31,9 @@ class GraphObject extends EventEmitter {
     return this.name;
   }
 
+  setRendUtils (rendererUtilsInstance) {
+    this.rendererUtilsInstance = rendererUtilsInstance
+  }
   getDisplayName () {
     return this.displayName || this.name;
   }

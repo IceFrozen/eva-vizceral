@@ -60,7 +60,7 @@ class TrafficGraph extends EventEmitter {
     this.volume = { max: 0, current: 0 };
 
     this.layout = new Layout();
-
+    this.renderUtilsInstance = null
     if (parentGraph) {
       this.graphIndex = parentGraph.graphIndex.slice();
       this.graphIndex.push(name);
@@ -96,6 +96,9 @@ class TrafficGraph extends EventEmitter {
   onAsyncLayoutCompleted () {
   }
 
+  setRendUtils (renderUtilsInstance) {
+    this.renderUtilsInstance = renderUtilsInstance
+  }
   /**
    * If the graph is the currently viewed graph, update the state of the view, apply the search
    * string, and make sure to highlight any node that is supposed to be highlighted. Emit that
@@ -322,7 +325,7 @@ class TrafficGraph extends EventEmitter {
     if (this.intersectedObject && this.intersectedObject.hasNotices()) {
       this.intersectedObject.showNotices();
     } else {
-      Notices.hideNotices();
+      Notices.hideNotices(this.renderUtilsInstance);
     }
 
     return changed;
@@ -401,6 +404,7 @@ class TrafficGraph extends EventEmitter {
           let node = this.nodes[stateNode.name];
           if (!node) {
             node = new this.NodeClass(stateNode, this.entryNode);
+            node.setRendUtils(this.renderUtilsInstance)
             node.updatePosition(stateNode.position, index);
             this.nodes[stateNode.name] = node;
             this.layoutValid = false;
@@ -538,7 +542,9 @@ class TrafficGraph extends EventEmitter {
         Console.warn(`Attempted to create a connection from source node '${connectionData.source}' with a target node that does not yet exist: '${connectionData.target}'`);
       }
       if (source && target) {
-        return new this.ConnectionClass({ source: source, target: target, data: connectionData });
+        let connection = new this.ConnectionClass({ source: source, target: target, data: connectionData });
+        connection.setRendUtils(this.renderUtilsInstance)
+        return connection
       }
     } else {
       Console.warn(`Attempted to create a connection with a missing source (${connectionData.source}) and/or target (${connectionData.target})`);

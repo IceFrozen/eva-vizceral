@@ -35,6 +35,7 @@ import RingLayout from './layouts/ringLayout';
 
 import RendererUtils from './rendererUtils';
 import MoveNodeInteraction from './moveNodeInteraction';
+import Stats from './plugins/Stats/Stats';
 
 
 /**
@@ -105,6 +106,8 @@ class Vizceral extends EventEmitter {
     this.renderer.domElement.style.height = '100%';
     this.geometry = new THREE.Geometry();
 
+    this.stats = null
+    this.rendererUtils = new RendererUtils(this)
     // Camera
     this.camera = new THREE.OrthographicCamera(0, 0, 0, 0, 1, 60000);
     this.cameraTarget = new THREE.Vector3(0, 0, 0);
@@ -112,8 +115,8 @@ class Vizceral extends EventEmitter {
     this.camera.lookAt(this.cameraTarget);
 
     // Populate renderer utils with the renderer and the camera
-    RendererUtils.setCamera(this.camera);
-    RendererUtils.setRenderer(this.renderer);
+    this.rendererUtils.setCamera(this.camera);
+    this.rendererUtils.setRenderer(this.renderer);
 
     // Update the size of the renderer and the camera perspective
     // this.renderer.setSize(width, height);
@@ -197,6 +200,22 @@ class Vizceral extends EventEmitter {
     GlobalDefinitions.updateDefinitions(definitions);
   }
 
+  setDebuggerMode (open) {
+    //stats 
+    if(!open){
+      let stats = this.stats
+      this.stats = null
+      if(stats) stats.dom.remove()
+      stats = null
+      return 
+    } 
+    this.stats = new Stats();
+    this.stats.domElement.style.position = 'absolute';
+    this.stats.domElement.style.left = '100px';
+    this.stats.domElement.style.top = '100px';
+    document.body.appendChild(this.stats.dom );
+  }
+
   _attachGraphHandlers (graph) {
     graph.on('nodeContextSizeChanged', dimensions => this.emit('nodeContextSizeChanged', dimensions));
     graph.on('objectHighlighted', highlightedObject => this.emit('objectHighlighted', highlightedObject));
@@ -219,7 +238,8 @@ class Vizceral extends EventEmitter {
             Console.log(`Attempted to create a graph with a layout type that does not exist: ${graphData.layout}. Using default layout for graph type.`);
           }
           graph = new (this.renderers[graphData.renderer])(graphData.name, mainView, parentGraph, width, height, this.layouts[graphData.layout], graphData.entryNode);
-          this._attachGraphHandlers(graph);
+          graph.setRendUtils(this.rendererUtils)
+          this._attachGraphHandlers(graph); // 绑定事件用
           graph.setFilters(this.filters);
           graph.showLabels(this.options.showLabels);
           parent.graphs[graphData.name] = graph;
@@ -772,11 +792,12 @@ class Vizceral extends EventEmitter {
       this.lastRenderAt = nextRenderAt;
     }
     this.render(time);
+     
   }
 
   render (time) {
     TWEEN.update(time);
-
+    if(this.stats) this.stats.begin()
     // Check size
     if ((this.renderer.domElement.offsetWidth !== 0 && this.width !== this.renderer.domElement.offsetWidth) ||
         (this.renderer.domElement.offsetHeight !== 0 && this.height !== this.renderer.domElement.offsetHeight)) {
@@ -786,6 +807,9 @@ class Vizceral extends EventEmitter {
     this.camera.lookAt(this.cameraTarget);
     if (this.currentGraph) { this.currentGraph.update(time); }
     this.renderer.render(this.scene, this.camera);
+    if(this.stats) this.stats.end()
+    
+
   }
 
   updateBoundingRectCache () {
@@ -813,7 +837,7 @@ class Vizceral extends EventEmitter {
       w = graphWidth;
     }
 
-    RendererUtils.setScale(scale);
+    this.rendererUtils.setScale(scale);
 
     this.camera.left = w / -2;
     this.camera.right = w / 2;

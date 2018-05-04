@@ -194,7 +194,7 @@ class Node extends GraphObject {
   }
 
   showNotices () {
-    if (this.view) { Notices.showNotices(this.view.container, this.notices); }
+    if (this.view) { Notices.showNotices(this.view.container, this.notices,this.rendererUtilsInstance); }
   }
 
 

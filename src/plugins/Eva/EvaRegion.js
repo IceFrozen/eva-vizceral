@@ -79,8 +79,8 @@ class EvaRegion extends EventEmitter {
     this.canvasDom = document.createElement('canvas');
     this.navDom = document.createElement('div');
     this.navDom.className = 'nav';
-    this.navDom.setAttribute('id', 'vizceral-nav');
-    this.canvasDom.setAttribute('id', 'vizceral');
+    this.navDom.setAttribute('id', 'vizceral-nav' + this.id);
+    this.canvasDom.setAttribute('id', 'vizceral' + this.id);
     this.noticeDom = document.createElement('div');
     this.noticeDom.className = 'vizceral-notice';
     this.rootElement.append(this.navDom);
@@ -129,6 +129,17 @@ class EvaRegion extends EventEmitter {
     this.update();
     return this;
   }
+  /**
+   * 设置性能监控
+   * @param {boolean} isDebuggerShow 是否启动性能监控图标
+   * @returns {EvaRegion} EvaRegion
+   */
+   setDebugger (isDebuggerShow) {
+    if(this.vizceral){
+      this.vizceral.setDebuggerMode(isDebuggerShow)
+    }
+    return this
+   }
   _onEvent (eventName, func) {
     Console.warn('not support');
     return this;
@@ -139,12 +150,10 @@ class EvaRegion extends EventEmitter {
 	 */
   update (resaon) {
     this.vizceral.updateData(this.toData());
-    const initialView = this.vizceral.checkInitialView();
-    if (!initialView.view) {
-      this.vizceral.setView();
-    }
     if (this.currentView) {
       this.vizceral.setView(this.currentView.view, this.currentView.hightObject);
+    }else{
+      this.vizceral.setView();
     }
     return this;
   }

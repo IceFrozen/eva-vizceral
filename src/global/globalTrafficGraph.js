@@ -42,7 +42,7 @@ class GlobalTrafficGraph extends TrafficGraph {
 
   validateContextDiv (name) {
     if (!this.contextDivs[name]) {
-      const parentDiv = RendererUtils.getParent();
+      const parentDiv = this.rendererUtils.getParent();
       if (parentDiv) {
         this.contextDivs[name] = document.createElement('div');
         this.contextDivs[name].style.position = 'absolute';
@@ -54,7 +54,7 @@ class GlobalTrafficGraph extends TrafficGraph {
 
   removeContextDiv (name) {
     if (this.contextDivs[name]) {
-      const parentDiv = RendererUtils.getParent();
+      const parentDiv = this.rendererUtils.getParent();
       if (parentDiv) {
         parentDiv.removeChild(this.contextDivs[name]);
         this.contextDivs[name] = undefined;
@@ -147,7 +147,7 @@ class GlobalTrafficGraph extends TrafficGraph {
     const dimensions = {};
     _.each(this.nodes, (node, key) => {
       const labelView = node.getView().nameView ? node.getView().nameView.container : undefined;
-      const newDimensions = RendererUtils.toScreenPosition(labelView, 'BL');
+      const newDimensions = this.rendererUtils.toScreenPosition(labelView, 'BL');
       if (newDimensions) {
         const oldDimensions = node.getView().getLabelScreenDimensions();
         if (!_.isEqual(newDimensions, oldDimensions) || force) {

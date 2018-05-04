@@ -32,7 +32,6 @@ class Connection extends GraphObject {
     this.target.addIncomingConnection(this);
 
     this.name = `${this.source.name}--${this.target.name}`;
-
     this.update(options.data);
     this.loaded = true;
   }
@@ -97,7 +96,7 @@ class Connection extends GraphObject {
   }
 
   showNotices () {
-    if (this.view && this.view.noticeView) { Notices.showNotices(this.view.noticeView.container, this.notices); }
+    if (this.view && this.view.noticeView) { Notices.showNotices(this.view.noticeView.container, this.notices,this.rendererUtilsInstance); }
   }
 
   connectedTo (nodeName) {

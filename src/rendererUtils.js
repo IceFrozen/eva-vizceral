@@ -20,8 +20,9 @@ import * as THREE from 'three';
 const Console = console;
 
 class RendererUtils {
-  constructor () {
+  constructor (viz) {
     this.scale = 1;
+    this.viz = viz
   }
 
   setRenderer (renderer) {
@@ -118,7 +119,7 @@ class RendererUtils {
       Console.error('Attempted to getParent() using RendererUtils without a renderer. Make sure to setRenderer() before getParent()');
       return undefined;
     }
-
+    console.log(this.renderer.domElement)
     if (this.renderer.domElement) {
       return this.renderer.domElement.parentElement;
     }
@@ -126,4 +127,4 @@ class RendererUtils {
   }
 }
 
-export default new RendererUtils();
+export default RendererUtils;

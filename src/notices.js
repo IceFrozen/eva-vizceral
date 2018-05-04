@@ -21,8 +21,8 @@ import RendererUtils from './rendererUtils';
 
 const Console = console;
 
-function getNoticeElement () {
-  const noticeParentElement = RendererUtils.getParent();
+function getNoticeElement (rendererUtilsInstance) {
+  const noticeParentElement = rendererUtilsInstance.getParent();
   if (noticeParentElement) {
     const noticeElement = noticeParentElement.querySelector('.vizceral-notice');
     if (!noticeElement) {
@@ -36,11 +36,11 @@ function getNoticeElement () {
 
 
 class Notices {
-  showNotices (container, notices) {
-    const noticeElement = getNoticeElement();
+  showNotices (container, notices,rendererUtilsInstance) {
+    const noticeElement = getNoticeElement(rendererUtilsInstance);
     if (!noticeElement) { return; }
 
-    const screenPosition = RendererUtils.toScreenPosition(container, 'TL');
+    const screenPosition = rendererUtilsInstance.toScreenPosition(container, 'TL');
 
     // Clear any old notices
     while (noticeElement.hasChildNodes()) {
@@ -74,10 +74,10 @@ class Notices {
     noticeElement.style.left = `${screenPosition.x}px`;
   }
 
-  hideNotices () {
+  hideNotices (rendererUtils) {
     // When using vizceral in a web component, there are cases when the vizceral component does not
     // have a parent yet. Make sure we have a parent before continuing.
-    const noticeElement = getNoticeElement();
+    const noticeElement = getNoticeElement(rendererUtils);
     if (!noticeElement) { return; }
     noticeElement.style.display = 'none';
   }
