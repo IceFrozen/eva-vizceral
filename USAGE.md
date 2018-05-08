@@ -17,6 +17,7 @@
     -   [getConnections](#getconnections)
 -   [EvaRegion](#evaregion)
     -   [show](#show)
+    -   [setDebugger](#setdebugger)
     -   [update](#update)
     -   [backToParentLevel](#backtoparentlevel)
     -   [setRootLevels](#setrootlevels)
@@ -39,7 +40,7 @@ EvaConnection
 
 -   `source` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 源节点name
 -   `target` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 目的节点name
--   `metadata` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 私有数据
+-   `metadata` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 私有数据 (optional, default `{}`)
 
 ### createNotices
 
@@ -177,6 +178,16 @@ const region = new Vizceral.EvaRegion(document.getElementById('viz'))
 
 创建EvaRegion 用于update操作或者首次加载的绘图
 
+### setDebugger
+
+设置性能监控
+
+**Parameters**
+
+-   `isDebuggerShow` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** 是否启动性能监控图标
+
+Returns **[EvaRegion](#evaregion)** EvaRegion
+
 ### update
 
 更新操作
@@ -184,6 +195,7 @@ const region = new Vizceral.EvaRegion(document.getElementById('viz'))
 **Parameters**
 
 -   `resaon`  
+-   `forceClear`  
 
 Returns **[EvaRegion](#evaregion)** EvaRegion
 
