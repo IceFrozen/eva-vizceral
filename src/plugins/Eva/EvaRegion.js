@@ -49,10 +49,33 @@ class EvaRegion extends EventEmitter {
       self._updateNav();
       self.emit('viewChanged', view);
     });
-    this.vizceral.on('onDocumentDoubleClick', (data) => {
-      this.emit('onDocumentDoubleClick', data);
+    this.vizceral.on('befroeObjectHighlighted', (nativeNode,isSelect) => {
+      let node = false;
+      let type = 'node';
+      if (nativeNode.type == 'connection') {
+        type = 'connection';
+        const sourceName = nativeNode.source.name;
+        const targetName = nativeNode.target.name;
+        const sourceNode = self.getNodeByNodeName(sourceName);
+        if(sourceNode){
+          node = sourceNode.getConnection(targetName);
+          if(!node) {
+            type = 'unknow';
+          }
+        }else{
+          type = 'unknow';
+        }
+      } else if (nativeNode.type === 'node') {
+        type = 'node';
+        node = self.getNodeByNodeName(nativeNode.name);
+      } else {
+        type = 'unknow';
+        Console.warn('objectHighlighted node is un know:', nativeNode);
+      }
+      this.emit("befroeObjectHighlighted",type, node, nativeNode,isSelect)
+
     });
-    this.vizceral.on('objectHighlighted', (nativeNode) => {
+    this.vizceral.on('objectHighlighted', (nativeNode,graph) => {
       let node = false;
       let type = 'node';
       if (!nativeNode) {
@@ -62,7 +85,11 @@ class EvaRegion extends EventEmitter {
         const sourceName = nativeNode.source.name;
         const targetName = nativeNode.target.name;
         const sourceNode = self.getNodeByNodeName(sourceName);
-        node = sourceNode.getConnection(sourceName, targetName);
+        if(!sourceNode){
+          type = 'cancel';
+        }else{      
+          node = sourceNode.getConnection(targetName);
+        }
       } else if (nativeNode.type === 'node') {
         type = 'node';
         node = self.getNodeByNodeName(nativeNode.name);
@@ -102,7 +129,12 @@ class EvaRegion extends EventEmitter {
     }
     const complier = _.template('<span>{{name}}</span>');
     const self = this;
-    const tmp = _.cloneDeep(this.currentView.view);
+    let tmp = _.cloneDeep(this.currentView.view);
+    // console.log(this.vizceral.__parentTrafficData)
+    // this.vizceral.__parentTrafficData.map(data=>data.name)
+    // .forEach(data => {
+    //   tmp.unshift(data)
+    // })
     tmp.unshift('[back]');
     const c = tmp.map((data, index) => {
       let name = data;
@@ -148,8 +180,8 @@ class EvaRegion extends EventEmitter {
 	 * 更新操作
 	 * @returns {EvaRegion} EvaRegion
 	 */
-  update (resaon) {
-    this.vizceral.updateData(this.toData());
+  update (resaon,forceClear) {
+    this.vizceral.updateData(this.toData(),forceClear);
     if (this.currentView) {
       this.vizceral.setView(this.currentView.view, this.currentView.hightObject);
     }else{
@@ -307,6 +339,9 @@ class EvaRegion extends EventEmitter {
         continue;
       }
       const connection = sourceNode.connectAndGetConnetion(targetNode, conn.metrics);
+      if(conn.class = 'region' && conn.region) {
+        connection.setRegionData(conn.region)
+      }
       if (conn.notices) {
         for (let j = 0; j < conn.notices.length; j++) {
           const notice = conn.notices[j];
@@ -330,7 +365,7 @@ class EvaRegion extends EventEmitter {
     this._reload = true;
     this.currentView = undefined;
     this.setNodeData(...datas);
-    this.update(true);
+    this.update(true,true);
     this._reload = false;
     return this;
   }
@@ -346,6 +381,7 @@ class EvaRegion extends EventEmitter {
     const connections = this.childNodes.map((datanode, index) => datanode.getConnections());
     connections.push([]);
     const connectionItems = connections.reduce((c1, c2) => c1.concat(c2)).map(connectionItem => connectionItem.getFormatData());
+
 
     const nodes = this.childNodes.map((datanode, index) => datanode.getFormatData());
 		// TODO

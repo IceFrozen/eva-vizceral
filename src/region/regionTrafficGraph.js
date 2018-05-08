@@ -67,12 +67,14 @@ class RegionTrafficGraph extends TrafficGraph {
       // Or if clicked on a connection, highlight.
       this.highlightObject(this.intersectedObject);
     }
+    return this
   }
 
-  handleIntersectedObjectDoubleClick () {
+  handleIntersectedObjectDoubleClick (node) {
     if (this.intersectedObject && this.intersectedObject.graphRenderer === 'region') {
       super.handleIntersectedObjectDoubleClick();
     }
+    return this
   }
 
   getSelectedNode () {

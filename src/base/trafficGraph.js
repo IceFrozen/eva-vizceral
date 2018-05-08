@@ -262,10 +262,14 @@ class TrafficGraph extends EventEmitter {
   highlightObject (objectToHighlight, force) {
     if (this.highlightedObject !== objectToHighlight || force) {
       // clear search string
+
       this.searchString = '';
       this.highlightedObject = objectToHighlight;
       this.highlightConnectedNodes(objectToHighlight);
       const nodeName = objectToHighlight ? objectToHighlight instanceof this.NodeClass && objectToHighlight.getName() : undefined;
+      _.each(this.connections, (node) => {
+        node.getView().setHighlight(nodeName === node.getName());
+      });
       _.each(this.nodes, (node) => {
         node.getView().setHighlight(nodeName === node.getName());
       });
@@ -273,11 +277,9 @@ class TrafficGraph extends EventEmitter {
       _.each(this.connections, (connection) => {
         connection.getView().setHighlight(connectionName === connection.getName());
       });
-
       this.emit('objectHighlighted', objectToHighlight);
     }
   }
-
   handleIntersectedObjectClick () {
 
   }
@@ -285,6 +287,13 @@ class TrafficGraph extends EventEmitter {
   handleIntersectedObjectDoubleClick () {
     const graphIndex = this.graphIndex.slice(0);
     graphIndex.push(this.intersectedObject.getName());
+    if(this.intersectedObject instanceof this.ConnectionClass){
+      if(this.intersectedObject.class =='region'){
+        this.emit('addTrafficData', this.intersectedObject.region);
+      }
+    }
+
+
     this.emit('setView', graphIndex);
   }
 

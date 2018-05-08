@@ -83,6 +83,7 @@ class NodeView extends BaseView {
       this.refresh(true);
       this.updatePosition();
     }
+    return this.highlight
   }
 
   // separate refresh just for focused since it's a good subset of refresh

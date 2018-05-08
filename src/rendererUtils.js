@@ -119,7 +119,6 @@ class RendererUtils {
       Console.error('Attempted to getParent() using RendererUtils without a renderer. Make sure to setRenderer() before getParent()');
       return undefined;
     }
-    console.log(this.renderer.domElement)
     if (this.renderer.domElement) {
       return this.renderer.domElement.parentElement;
     }

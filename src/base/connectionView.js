@@ -243,7 +243,8 @@ class ConnectionView extends BaseView {
       depthTest: true,
       depthWrite: false,
       transparent: true,
-      opacity: 0
+      opacity: 0,
+      color: 0xffffff
     });
     this.interactiveLine = new THREE.Line(this.interactiveLineGeometry, this.interactiveLineMaterial);
     this.addInteractiveChild(this.interactiveLine);
@@ -326,10 +327,14 @@ class ConnectionView extends BaseView {
   setHighlight (highlight) {
     // TODO: Actually highlight the connection
     if (this.highlight !== highlight) {
-      this.highlight = highlight;
+        this.highlight = highlight;
+        this.interactiveLineMaterial.transparent = !highlight  //高亮
       // this.refresh(true);
       // this.updatePosition();
     }
+
+
+
   }
 
   updatePosition (depthOnly) {

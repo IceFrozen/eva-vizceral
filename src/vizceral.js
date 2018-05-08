@@ -105,7 +105,7 @@ class Vizceral extends EventEmitter {
     this.renderer.domElement.style.width = '100%';
     this.renderer.domElement.style.height = '100%';
     this.geometry = new THREE.Geometry();
-
+    this.version = 0
     this.stats = null
     this.rendererUtils = new RendererUtils(this)
     // Camera
@@ -113,7 +113,7 @@ class Vizceral extends EventEmitter {
     this.cameraTarget = new THREE.Vector3(0, 0, 0);
     this.camera.position.set(0, 0, 600);
     this.camera.lookAt(this.cameraTarget);
-
+    this.__parentTrafficData = []
     // Populate renderer utils with the renderer and the camera
     this.rendererUtils.setCamera(this.camera);
     this.rendererUtils.setRenderer(this.renderer);
@@ -146,7 +146,6 @@ class Vizceral extends EventEmitter {
     singleTap.requireFailure([doubleTap]);
     this.hammertime.on('doubletap', event => this.onDocumentDoubleClick(event), false);
     this.hammertime.on('singletap', event => this.onDocumentClick(event), false);
-
     this.graphs = {};
     this.options = {
       showLabels: true,
@@ -218,9 +217,10 @@ class Vizceral extends EventEmitter {
 
   _attachGraphHandlers (graph) {
     graph.on('nodeContextSizeChanged', dimensions => this.emit('nodeContextSizeChanged', dimensions));
-    graph.on('objectHighlighted', highlightedObject => this.emit('objectHighlighted', highlightedObject));
+    graph.on('objectHighlighted', (highlightedObject) => this.emit('objectHighlighted', highlightedObject));
     graph.on('setView', view => this.setView(view));
     graph.on('viewUpdated', () => this.emit('viewUpdated'));
+    graph.on('addTrafficData', (data) => this.addTrafficData(data));
   }
 
   createGraph (graphData, mainView, parentGraph, width, height) {
@@ -272,7 +272,10 @@ class Vizceral extends EventEmitter {
    *
    * @param {object} data The traffic data that matches the format in (https://github.com/Netflix/Vizceral/wiki/How-to-Use#graph-data-format)
    */
-  updateData (trafficData) {
+  updateData (trafficData,clear) {
+    if(clear) {
+      this.__parentTrafficData = []
+    }
     if (trafficData && trafficData.nodes) {
       this.trafficData = trafficData;
       this.rootGraphName = trafficData.name;
@@ -283,7 +286,19 @@ class Vizceral extends EventEmitter {
       }
 
       this.updateGraph(this.currentGraph);
+      this.version+=1
     }
+  }
+
+  /**
+   * 在父节点加入子节点
+   * with the complete set of traffic data anytime there is an update.
+   *
+   * @param {object} data The traffic data that matches the format in (https://github.com/Netflix/Vizceral/wiki/How-to-Use#graph-data-format)
+   */
+  addTrafficData (trafficData) {
+    this.__parentTrafficData.push(this.trafficData)
+    this.updateData(trafficData)
   }
 
   /**
@@ -346,17 +361,23 @@ class Vizceral extends EventEmitter {
     if (this.currentGraph) {
       this.currentGraph.handleIntersectedObjectClick();
     }
+    
   }
 
   onDocumentDoubleClick (event) {
     const node = this.calculateIntersectedObject(event.center.x, event.center.y);
-    this.currentGraph.handleIntersectedObjectDoubleClick();
+    this.currentGraph.handleIntersectedObjectDoubleClick(node);
     if (!node) {
       this.emit('onDocumentDoubleClick');
     }
+
   }
 
   getNearestValidGraph (viewArray) {
+    if(viewArray.length == 0 && this.__parentTrafficData.length >0) {
+      this.updateData(this.__parentTrafficData.pop())
+    }
+
     let newGraph = this.getGraph(this.rootGraphName);
     if (newGraph) {
       viewArray.every((nodeName) => {
@@ -437,7 +458,7 @@ class Vizceral extends EventEmitter {
    * @param {array} viewArray the array containing the view to set.
    * @param {string} objectNameToHighlight a node or connection to set as highlighted in the current viewArray
    */
-  setView (viewArray = [], objectNameToHighlight) {
+  setView (viewArray = [], objectNameToHighlight,viewType) {
     let redirectedFrom;
     // If nothing has been selected yet, it's the initial node
     if (!this.currentGraph) {

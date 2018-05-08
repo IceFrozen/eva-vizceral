@@ -69,10 +69,8 @@ class LTRTreeLayout {
       nodes: _.map(graph.nodes, node => ({ name: node.getName(), position: node.position, size: node.size, weight: node.depth, metadata: node.metadata })),
       edges: _.map(graph.connections, connection => ({ source: connection.source.getName(), target: connection.target.getName() }))
     };
-
     const edgeKey = workerGraph.edges.map(edge => edge.source + edge.target).sort();
     const nodeKey = workerGraph.nodes.map(node => node.name).sort();
-
     const existingPositions = null;// this.findPositions(nodeKey, edgeKey);
     if (existingPositions) {
       this.layoutPositions(graph, existingPositions);

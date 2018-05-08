@@ -30,7 +30,7 @@ class Connection extends GraphObject {
 
     this.source.addOutgoingConnection(this);
     this.target.addIncomingConnection(this);
-
+    this.region = options.data.region
     this.name = `${this.source.name}--${this.target.name}`;
     this.update(options.data);
     this.loaded = true;

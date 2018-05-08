@@ -113,6 +113,8 @@ const weightSort = function (a, b) {
     ltrTreeLayouter.prototype.layout = function (data) {
       const options = data.options || {};
       const graph = new Graph(data.graph.nodes, data.graph.edges); // Build a simple graph object
+
+      
       graph.removeSameEdges(); // Remove edges that have same source and target
       AcyclicFAS.remove(graph); // Remove acyclic links
       Ranker.longestPathRanking(graph); // Run a longest path algorithm to build a layout baseline

@@ -10,14 +10,16 @@ import _ from 'lodash';
 */
 class EvaConnection extends EventEmitter {
 
-  constructor (source, target, metadata) {
+  constructor (source, target, metadata={}) {
     super();
     this.source = source;
     this.target = target;
     this.metrics = metadata || {};
+    this.class = "normal"
     this._tag = [];          // 链接标签类
     this.notices = [];
     this.id = `${source}-${target}`;
+    this.region = undefined
   }
   getId () {
     return this.id;
@@ -57,11 +59,17 @@ class EvaConnection extends EventEmitter {
       source: this.source,
       target: this.target,
       metrics: this.metrics,
-      notices: notices
+      notices: notices,
+      class:this.class,
+      region:this.region
     };
   }
   setHightLight () {
     return this;
+  }
+  setRegionData (regionData) {
+    this.region = regionData
+    this.class = "region"
   }
   setDetail (key, value) {
     value = _.toNumber(value);
