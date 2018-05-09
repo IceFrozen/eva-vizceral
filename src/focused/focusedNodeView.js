@@ -435,6 +435,9 @@ class FocusedNodeView extends NodeView {
     super.cleanup();
     this.donutMaterial.dispose();
     this.innerBorderMaterial.dispose();
+    this.shape.cleanup()
+    if(this.borderMaterial) this.borderMaterial.dispose();
+    if(this.innerCircleMaterial)  this.innerCircleMaterial.dispose();
   }
 }
 
