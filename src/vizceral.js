@@ -218,7 +218,7 @@ class Vizceral extends EventEmitter {
   _attachGraphHandlers (graph) {
     graph.on('nodeContextSizeChanged', dimensions => this.emit('nodeContextSizeChanged', dimensions));
     graph.on('objectHighlighted', (highlightedObject) => this.emit('objectHighlighted', highlightedObject));
-    graph.on('setView', view => this.setView(view));
+    graph.on('setView', (view,highlighte,type) => this.setView(view,highlighte,type));
     graph.on('viewUpdated', () => this.emit('viewUpdated'));
     graph.on('addTrafficData', (data) => this.addTrafficData(data));
   }
@@ -284,10 +284,10 @@ class Vizceral extends EventEmitter {
       if (this.initialView) {
         this.setView(this.initialView, this.initialObjectToHighlight);
       }
-
-      this.updateGraph(this.currentGraph);
       this.version+=1
+      return this.updateGraph(this.currentGraph);
     }
+    return undefined
   }
 
   /**
@@ -374,10 +374,7 @@ class Vizceral extends EventEmitter {
   }
 
   getNearestValidGraph (viewArray) {
-    if(viewArray.length == 0 && this.__parentTrafficData.length >0) {
-      this.updateData(this.__parentTrafficData.pop())
-    }
-
+    
     let newGraph = this.getGraph(this.rootGraphName);
     if (newGraph) {
       viewArray.every((nodeName) => {
@@ -470,7 +467,11 @@ class Vizceral extends EventEmitter {
       objectNameToHighlight = initialView.highlighted;
       redirectedFrom = initialView.redirectedFrom;
     }
-
+    let isViewChnaged = false
+    if(this.currentGraph && !this.currentGraph.parentGraph && viewArray.length == 0 && this.__parentTrafficData.length >0 && viewType !== 'connection') {
+        isViewChnaged = true
+        this.updateData(this.__parentTrafficData.pop())
+    }
     const newGraph = this.getNearestValidGraph(viewArray);
 
     // If the view changed, set it.
@@ -489,6 +490,9 @@ class Vizceral extends EventEmitter {
       this.calculateMouseOver();
     }
 
+    if(viewType == 'connection' || isViewChnaged) {
+      this.emit('viewChanged', { view: this.currentGraph.graphIndex, graph: this.currentGraph, redirectedFrom: redirectedFrom });
+    }
     // If passed in an object to highlight, try to highlight.
     if (objectNameToHighlight) {
       const objectToHighlight = newGraph.getGraphObject(objectNameToHighlight);
@@ -558,6 +562,12 @@ class Vizceral extends EventEmitter {
         this.currentGraph.highlightObject(undefined);
       } else if (this.currentGraph.graphIndex.length > 0) {
         this.setView(this.currentGraph.graphIndex.slice(0, -1));
+      }else if(this.currentGraph.graphIndex.length == 0) {
+        if(this.__parentTrafficData.length >0) {
+            let trafficData = this.__parentTrafficData.pop()
+            this.updateData(trafficData)
+            this.emit('viewChanged', { view: this.currentGraph.graphIndex, graph: this.currentGraph, redirectedFrom: null });
+        }
       }
     }
   }

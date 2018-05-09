@@ -287,14 +287,14 @@ class TrafficGraph extends EventEmitter {
   handleIntersectedObjectDoubleClick () {
     const graphIndex = this.graphIndex.slice(0);
     graphIndex.push(this.intersectedObject.getName());
+    let viewType = 'node'
     if(this.intersectedObject instanceof this.ConnectionClass){
       if(this.intersectedObject.class =='region'){
         this.emit('addTrafficData', this.intersectedObject.region);
+        viewType = 'connection'
       }
     }
-
-
-    this.emit('setView', graphIndex);
+    this.emit('setView', graphIndex,null,viewType);
   }
 
   showLabels (showLabels) {
@@ -390,6 +390,7 @@ class TrafficGraph extends EventEmitter {
     if (state && Object.keys(state).length > 0) {
       // it's important to update entryNode when we're switching views
       this.entryNode = state.entryNode;
+      this.name = state.name
       // If this is the first update, run it, otherwise, only update if it's the current graph
       if (this.current || force) {
         // first, remove nodes that aren't in the new state

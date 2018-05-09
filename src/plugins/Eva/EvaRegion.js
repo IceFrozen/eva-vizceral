@@ -114,7 +114,7 @@ class EvaRegion extends EventEmitter {
     this.rootElement.append(this.canvasDom);
     this.rootElement.append(this.noticeDom);
     const self = this;
-    this.navDom.addEventListener('click', () => {
+    this.navDom.addEventListener('click', (data) => {
       self.backToParentLevel();
     });
     if (this.rootElement.className) {
@@ -129,13 +129,17 @@ class EvaRegion extends EventEmitter {
     }
     const complier = _.template('<span>{{name}}</span>');
     const self = this;
-    let tmp = _.cloneDeep(this.currentView.view);
-    // console.log(this.vizceral.__parentTrafficData)
-    // this.vizceral.__parentTrafficData.map(data=>data.name)
-    // .forEach(data => {
-    //   tmp.unshift(data)
-    // })
+    let tmp = [] 
+    console.log("this.vizceral.__parentTrafficData",this.vizceral.__parentTrafficData)
+    this.vizceral.__parentTrafficData.map(data=>data.name)
+    .forEach(data => {
+      tmp.unshift(data)
+    })
+    let views = _.cloneDeep(this.currentView.view);
+    tmp = tmp.reverse().concat(views)
     tmp.unshift('[back]');
+  
+
     const c = tmp.map((data, index) => {
       let name = data;
       if (index !== 0) {
@@ -215,9 +219,11 @@ class EvaRegion extends EventEmitter {
 	 * @returns {EvaRegion}  EvaRegion
 	 */
   backToParentLevel () {
-    if (!this.currentView || !this.currentView.view) {
+    
+    if (!this.currentView) {
       return;
     }
+    
     const tmp = _.cloneDeep(this.currentView.view);
     tmp.pop();
     this.changeView(tmp, null);
@@ -306,7 +312,8 @@ class EvaRegion extends EventEmitter {
     return this;
   }
   changeView (view, hightObject) {
-    this.vizceral.setView(view, hightObject);
+    this.vizceral.zoomOutViewLevel()
+    //this.vizceral.setView(view, hightObject);
     return this;
   }
 
