@@ -63,8 +63,37 @@ class LTRTreeLayout {
       }
     });
   }
+  /*
+    排版单线程版本 用于调试
+  */
+  run (graph, dimensions, layoutComplete) { 
+    const LTRTreeLayouter = require('./ltrTreeLayouter.js');
+    const workerGraph = {
+      nodes: _.map(graph.nodes, node => ({ name: node.getName(), position: node.position, size: node.size, weight: node.depth, metadata: node.metadata })),
+      edges: _.map(graph.connections, connection => ({ source: connection.source.getName(), target: connection.target.getName() }))
+    };
+    const  ltrTreeLayouter = new LTRTreeLayouter();
+    
+    console.log("workerGraph",workerGraph)
 
-  run (graph, dimensions, layoutComplete) {
+    let nodePositions = ltrTreeLayouter.layout({ graph: workerGraph, dimensions: dimensions, entryNode: graph.entryNode, options: graph.options });
+    
+    const halfWidth = dimensions.width / 2;
+    const halfHeight = dimensions.height / 2;
+    let nodeName;
+    for (nodeName in nodePositions) {
+      if ({}.hasOwnProperty.call(nodePositions, nodeName)) {
+        nodePositions[nodeName].x -= halfWidth;
+        nodePositions[nodeName].y -= halfHeight;
+      }
+    }
+    this.layoutPositions(graph, nodePositions);
+    layoutComplete();
+  }
+
+
+
+  _run (graph, dimensions, layoutComplete) {
     const workerGraph = {
       nodes: _.map(graph.nodes, node => ({ name: node.getName(), position: node.position, size: node.size, weight: node.depth, metadata: node.metadata })),
       edges: _.map(graph.connections, connection => ({ source: connection.source.getName(), target: connection.target.getName() }))

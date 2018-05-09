@@ -130,7 +130,7 @@ class EvaRegion extends EventEmitter {
     const complier = _.template('<span>{{name}}</span>');
     const self = this;
     let tmp = [] 
-    console.log("this.vizceral.__parentTrafficData",this.vizceral.__parentTrafficData)
+    console.log("__parentTrafficData",this.vizceral.__parentTrafficData)
     this.vizceral.__parentTrafficData.map(data=>data.name)
     .forEach(data => {
       tmp.unshift(data)

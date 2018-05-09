@@ -62,6 +62,12 @@ class NodeViewStandard extends NodeView {
     }
   }
 
+  cleanup() {
+    super.cleanup()
+    this.shape.cleanup()
+    this.dotMaterial.dispose()
+  }
+
   getShape () {
     return this.shape;
   }

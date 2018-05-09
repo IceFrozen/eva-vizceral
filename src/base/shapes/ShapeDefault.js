@@ -12,9 +12,18 @@ class ShapeDefault {
     this.customNode.innergeometry_material = this._createMaterial(node);
     this.customNode.outerborder_material = this._createMaterial(node);
     this.customNode.getShapeColor = this.getShapeColor;
+    this.customNode.cleanup = this.cleanup
     return this.customNode;
   }
 
+  cleanup () {
+    if(this.innergeometry_material){
+      this.innergeometry_material.dispose();
+    }
+     if(this.innergeometry_material){
+      this.outerborder_material.dispose();
+    }
+  }
   _createInnerGeometry (radius, curveSegments) {
     const circleShape = new THREE.Shape();
     circleShape.moveTo(radius, 0);

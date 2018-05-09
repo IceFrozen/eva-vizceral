@@ -13,6 +13,7 @@ class ShapeAzure {
     this.customNode.innergeometry_material = this._createMaterial(node);
     this.customNode.outerborder_material = this._createMaterial(node);
     this.customNode.getShapeColor = this.getShapeColor;
+    this.customNode.cleanup = this.cleanup
     return this.customNode;
   }
 

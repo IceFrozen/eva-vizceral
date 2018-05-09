@@ -27,9 +27,17 @@ class ShapeStorage {
     this.customNode.innergeometry_material = this._createMaterial(node);
     this.customNode.outerborder_material = this._createMaterial(node);
     this.customNode.getShapeColor = this.getShapeColor;
+    this.customNode.cleanup = this.cleanup
     return this.customNode;
   }
-
+  cleanup () {
+    if(this.innergeometry_material){
+      this.innergeometry_material.dispose();
+    }
+     if(this.innergeometry_material){
+      this.outerborder_material.dispose();
+    }
+  }
   _createInnerGeometry (radius, curveSegments) {
     const polyPath = [
       '23,28,19,28.1,11.9,28.8,6.2,30.1,2.7,31.9,2,33,2,31,2,29,2.4,27.8,5.5,25.6,11,24,18.4,23.1,22.5,23,26.6,23.1,34,24,39.5,25.6,42.6,27.8,43,29,43,31,43,33,42.3,31.9,39.1,30.1,33.8,28.8,26.9,28.1,23,28,23,28',
