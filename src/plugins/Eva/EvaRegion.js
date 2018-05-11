@@ -390,7 +390,9 @@ class EvaRegion extends EventEmitter {
     const connectionItems = connections.reduce((c1, c2) => c1.concat(c2)).map(connectionItem => connectionItem.getFormatData());
 
 
-    const nodes = this.childNodes.map((datanode, index) => datanode.getFormatData());
+    const nodes = this.childNodes
+    .filter(evanode => evanode.name !== entryNode.name)
+    .map((datanode, index) => datanode.getFormatData());
 		// TODO
     return {
       renderer: entryNode.renderer,

@@ -27,6 +27,8 @@ class EvaDataNode extends EventEmitter {
     this.updated = options.updated ? options.updated : Date.now();         // 更新时间戳 目前没用
     this.parentNodes = [];
     this.childNodes = [];
+    this.Aggregation = []
+    this.AggregationId = options.aggregationId
     this.node_type = options.node_type;
     this.connections = [];
     this.detailShow = 'default';
@@ -34,7 +36,19 @@ class EvaDataNode extends EventEmitter {
     this._nodeTag = [];      // dataNode 标签类
     this._genTime = Date.now();
     this.metadata = options.metadata;    // 用于资深私有数据
+    this._addChildNodes(options.nodes)
     this.checkDataNode();
+  }
+  _addChildNodes(nodes) {
+    if(!_.isArray(nodes)){
+      return 
+    }
+    let self = this
+    nodes.map(node => new EvaDataNode(node.name,node))
+    .forEach(evaNode => {
+      evaNode.setParentDataNode(self)
+      self.setNode(evaNode)
+    })
   }
   /**
    *  设置高亮
@@ -222,6 +236,8 @@ class EvaDataNode extends EventEmitter {
       updated: this.updated,
       nodes: childs,
       connections: connections,
+      Aggregation:this.Aggregation,
+      aggregationId:this.aggregationId,
       metadata: this.metadata
     };
     if (this.displayName) {
