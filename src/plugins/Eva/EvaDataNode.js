@@ -27,8 +27,8 @@ class EvaDataNode extends EventEmitter {
     this.updated = options.updated ? options.updated : Date.now();         // 更新时间戳 目前没用
     this.parentNodes = [];
     this.childNodes = [];
-    this.Aggregation = []
-    this.AggregationId = options.aggregationId
+    this.Aggregation = options.Aggregation || []
+    this.aggregationId = options.aggregationId
     this.node_type = options.node_type;
     this.connections = [];
     this.detailShow = 'default';
@@ -149,9 +149,7 @@ class EvaDataNode extends EventEmitter {
       this.childNodes.push(dataNode);
       dataNode.setParentDataNode(this);
     }
-    if (this.childNodes.length > 0) {
-      this.renderer = EvaDataNode.CONSTS.RENDERER.REGION;
-    } else {
+    if (this.childNodes.length === 0) {
       this.renderer = EvaDataNode.CONSTS.RENDERER.FOCUSEDCHILD;
     }
     return this;
@@ -227,7 +225,7 @@ class EvaDataNode extends EventEmitter {
     const childs = this.childNodes.map(dataNodeItem => dataNodeItem.getFormatData());
     const selfEntryNode = {
       name: this.name,
-      renderer: EvaDataNode.CONSTS.RENDERER.FOCUSEDCHILD,
+      renderer: this.renderer,
       node_type: this.node_type,
       displayName: this.displayName,
       maxVolume: this.maxVolume,
@@ -255,6 +253,8 @@ class EvaDataNode extends EventEmitter {
       layout: this.layout,
       updated: this.updated,
       nodes: childs,
+      Aggregation:this.Aggregation,
+      aggregationId:this.aggregationId,
       connections: connections,
       metadata: this.metadata
     };

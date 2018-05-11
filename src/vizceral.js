@@ -32,7 +32,7 @@ import LTRTreeLayout from './layouts/ltrTreeLayout';
 import RegionTrafficGraph from './region/regionTrafficGraph';
 import RingCenterLayout from './layouts/ringCenterLayout';
 import RingLayout from './layouts/ringLayout';
-
+import AggregationTrafficGraph from './plugins/aggregation/AggregationTrafficGraph';
 import RendererUtils from './rendererUtils';
 import MoveNodeInteraction from './moveNodeInteraction';
 import Stats from './plugins/Stats/Stats';
@@ -158,7 +158,8 @@ class Vizceral extends EventEmitter {
       region: RegionTrafficGraph,
       focused: FocusedTrafficGraph,
       focusedChild: FocusedChildTrafficGraph,
-      dns: DnsTrafficGraph
+      dns: DnsTrafficGraph,
+      Aggregation:AggregationTrafficGraph
     };
     this.moveNodeInteraction = new MoveNodeInteraction(this);
     this.layouts = {

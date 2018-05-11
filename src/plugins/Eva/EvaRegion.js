@@ -394,19 +394,9 @@ class EvaRegion extends EventEmitter {
     .filter(evanode => evanode.name !== entryNode.name)
     .map((datanode, index) => datanode.getFormatData());
 		// TODO
-    return {
-      renderer: entryNode.renderer,
-      name: entryNode.name,
-      displayName: entryNode.displayName,
-      maxVolume: entryNode.maxVolume,
-      class: entryNode.class,
-      layout: entryNode.layout,
-      updated: entryNode.updated,
-      node_type: entryNode.node_type,
-      nodes: nodes,
-      connections: connectionItems,
-      metadata: entryNode.metadata
-    };
+    let result = entryNode.getFormatData()
+    result.connections = connectionItems
+    return result
   }
 	/**
 	 * 获取链接

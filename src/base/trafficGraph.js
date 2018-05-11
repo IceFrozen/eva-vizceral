@@ -58,7 +58,6 @@ class TrafficGraph extends EventEmitter {
     this.NodeClass = NodeClass;
     this.ConnectionClass = ConnectionClass;
     this.volume = { max: 0, current: 0 };
-
     this.layout = new Layout();
     this.renderUtilsInstance = null
     if (parentGraph) {
@@ -413,7 +412,7 @@ class TrafficGraph extends EventEmitter {
           stateNodeMap[stateNode.name] = true;
           let node = this.nodes[stateNode.name];
           if (!node) {
-            node = new this.NodeClass(stateNode, this.entryNode);
+            node = new this.NodeClass(stateNode, this.entryNode,state);
             node.setRendUtils(this.renderUtilsInstance)
             node.updatePosition(stateNode.position, index);
             this.nodes[stateNode.name] = node;

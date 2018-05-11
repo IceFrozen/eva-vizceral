@@ -18,10 +18,8 @@
 import _ from 'lodash';
 
 import LayoutWorker from 'worker?inline!./ltrTreeLayoutWorker'; // eslint-disable-line import/no-extraneous-dependencies, import/extensions
-class LTRTreeLayout {
-  constructor () {
-    this.cache = [];
-  }
+class EvaLTRTreeLayout {
+  constructor () {}
 
   findPositions (nodeKey, edgeKey) {
     return this.cache.find((layout) => {
@@ -75,6 +73,7 @@ class LTRTreeLayout {
     const LTRTreeLayouter = require('./ltrTreeLayouter')
     const  ltrTreeLayouter = new LTRTreeLayouter();
     let nodePositions = ltrTreeLayouter.layout({ graph: workerGraph, dimensions: dimensions, entryNode: graph.entryNode, options: graph.options });
+    console.log("EvaGroupLTRTreeLayouter",workerGraph)
     const halfWidth = dimensions.width / 2;
     const halfHeight = dimensions.height / 2;
     let nodeName;
@@ -87,6 +86,9 @@ class LTRTreeLayout {
     this.layoutPositions(graph, nodePositions);
     layoutComplete();
   }
+
+
+
   __run (graph, dimensions, layoutComplete) {
     const workerGraph = {
       nodes: _.map(graph.nodes, node => ({ name: node.getName(), position: node.position, size: node.size, weight: node.depth, metadata: node.metadata })),
@@ -114,4 +116,4 @@ class LTRTreeLayout {
   }
 }
 
-export default LTRTreeLayout;
+export default EvaLTRTreeLayout;
