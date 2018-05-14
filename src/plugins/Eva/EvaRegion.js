@@ -391,11 +391,12 @@ class EvaRegion extends EventEmitter {
 
 
     const nodes = this.childNodes
-    .filter(evanode => evanode.name !== entryNode.name)
     .map((datanode, index) => datanode.getFormatData());
 		// TODO
     let result = entryNode.getFormatData()
     result.connections = connectionItems
+    result.nodes = nodes
+    result.renderer = 'region'
     return result
   }
 	/**

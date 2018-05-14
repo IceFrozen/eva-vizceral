@@ -224,19 +224,7 @@ class EvaDataNode extends EventEmitter {
   // body...
     const childs = this.childNodes.map(dataNodeItem => dataNodeItem.getFormatData());
     const selfEntryNode = {
-      name: this.name,
-      renderer: this.renderer,
-      node_type: this.node_type,
-      displayName: this.displayName,
-      maxVolume: this.maxVolume,
-      class: this.class,
-      layout: this.layout,
-      updated: this.updated,
-      nodes: childs,
-      connections: connections,
-      Aggregation:this.Aggregation,
-      aggregationId:this.aggregationId,
-      metadata: this.metadata
+      name: "INTERNET"
     };
     if (this.displayName) {
       selfEntryNode.displayName = this.displayName;
