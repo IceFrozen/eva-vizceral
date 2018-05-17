@@ -401,17 +401,18 @@ class EvaRegion extends EventEmitter {
 
 
     const nodes = this.childNodes
-    //.filter(evanode => evanode.name !== entryNode.name)
     .map((datanode, index) => datanode.getFormatData());
 		// TODO
     let result = entryNode.getFormatData()
     result.connections = connectionItems
     result.nodes = nodes
+
     if(entryNode.Aggregation.length > 0) {
        result.renderer = 'Aggregation'
      }else{
       result.renderer = 'region'
      }
+
     return result
   }
 	/**

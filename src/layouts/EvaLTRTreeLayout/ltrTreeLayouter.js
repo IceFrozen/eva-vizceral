@@ -111,6 +111,7 @@ const weightSort = function (a, b) {
       const graph = new Graph(data.graph.nodes, data.graph.edges); // Build a simple graph object
 
       graph.removeSameEdges(); // Remove edges that have same source and target
+      // 删除肺循环链接
       AcyclicFAS.remove(graph); // Remove acyclic links
       Ranker.longestPathRanking(graph); // Run a longest path algorithm to build a layout baseline
       // TODO: Rank the nodes from the dropped same edges...
