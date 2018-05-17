@@ -21,6 +21,7 @@ const minimumLength = 1;
 
 function longestPathRanking (graph) {
   const visited = {};
+  const visited2 = [];
 
   function dfs (nodeName) {
     const node = graph.getNode(nodeName);
@@ -28,7 +29,7 @@ function longestPathRanking (graph) {
     if (!_.has(visited, nodeName)) {
       visited[nodeName] = true;
 
-      let rank = _.min(_.map(graph.outgoingEdges(nodeName), edge => dfs(edge.target) - minimumLength));
+      let rank = _.max(_.map(graph.outgoingEdges(nodeName), edge => dfs(edge.target) - minimumLength));
       if (rank === undefined) {
         rank = 0;
       }
@@ -36,22 +37,112 @@ function longestPathRanking (graph) {
     }
     return node.rank;
   }
+  let resultFinal = []
+  function dfs2(nodename,top) {
 
-  _.each(graph.entryNodes(), dfs);
+      const node = graph.getNode(nodename);
+      let result = _.filter(graph.outgoingEdges(nodename), edge => edge.source == nodename)
+      .map(edge => edge.target)
+      
+      if(!top) {
+        top = [nodename]
+      }
+      
+      for(let i =0;i< result.length;i++) {
+          let resultTop = _.cloneDeep(top)
+          resultTop.push(result[i])
+          dfs2(result[i],resultTop)
+      }
+      if(result.length === 0) {
+        resultFinal.push(top)
+      }
+  }
+
+  _.each(graph.entryNodes(), nodeName=> dfs2(nodeName));
+  
+  //console.log("resultFinal",resultFinal)
+
+  resultFinal.sort(function (item1,item2) {
+    return item1.length<item2.length
+  })
+  //找出最长的排序
+
+
+  const groupMap = {}
+  resultFinal.forEach(array => {  
+      for(let i = 0; i < array.length;i++){
+        let nodename = array[i]
+        const node = graph.getNode(nodename);
+        let aggregationId = node.aggregationId
+        let rank = i
+        if(groupMap[aggregationId] == null){
+            groupMap[aggregationId] = rank
+        }else{
+          rank = groupMap[aggregationId]
+        }
+        if(i != 0) {
+          const parentNode = graph.getNode(array[i-1])
+          if(parentNode) {
+            if(rank < parentNode.rank + 1){
+              rank = parentNode.rank + 1
+            }
+          }
+        }
+        node.rank = rank
+      }
+  })
+  //console.log(groupMap)
 }
 
 function normalizeRanks (graph) {
-  let i;
-  let lowestRank = Infinity;
-  // First make the ranks positive
-  for (i = 0; i < graph.nodes.length; i++) {
-    if (graph.nodes[i].rank < lowestRank) {
-      lowestRank = graph.nodes[i].rank;
-    }
+  // for (let i = 0; i < graph.nodes.length; i++) {
+  //   console.log(graph.nodes[i].name,graph.nodes[i].rank,graph.nodes[i].aggregationId)
+  // }
+  return
+  let group = {}
+  let maxRank = {}
+  for (let i = 0; i < graph.nodes.length; i++) {
+      let aggregationId = graph.nodes[i].aggregationId
+      let node = graph.nodes[i]
+      if(!aggregationId){
+        continue;
+      }
+
+      if(group[aggregationId] === undefined){
+          maxRank[aggregationId] = -1
+      } 
+      group[aggregationId] = []
+      group[aggregationId].push(graph.nodes[i])
+      if(maxRank[aggregationId] < node.rank){
+        maxRank[aggregationId]  = node.rank
+      }
   }
-  for (i = 0; i < graph.nodes.length; i++) {
-    graph.nodes[i].rank -= lowestRank;
-  }
+
+  for(const key in group) {
+      let nodes  = group[key]
+      _.each(nodes,(node)=>{
+        let aggregationId = node.aggregationId
+        let maxRankLevel = maxRank[aggregationId]
+        if(!aggregationId || maxRankLevel === undefined) {
+          return 
+        }
+        if(node.rank < maxRankLevel){
+          node.rank = maxRankLevel
+        }
+      })
+     
+  } 
+  // let i;
+  // let lowestRank = Infinity;
+  // // First make the ranks positive
+  // for (i = 0; i < graph.nodes.length; i++) {
+  //   if (graph.nodes[i].rank < lowestRank) {
+  //     lowestRank = graph.nodes[i].rank;
+  //   }
+  // }
+  // for (i = 0; i < graph.nodes.length; i++) {
+  //   graph.nodes[i].rank -= lowestRank;
+  // }
 }
 function forcePrimaryRankPromotions (graph, entryNodeName = 'INTERNET') {
   let entryNodes = graph.entryNodes();
@@ -62,7 +153,7 @@ function forcePrimaryRankPromotions (graph, entryNodeName = 'INTERNET') {
   }
   for (let i = 0; i < entryNodes.length; i++) {
     const entryNode = graph.getNode(entryNodes[i]);
-    entryNode.rank = 0;
+    //entryNode.rank = 0;
   }
 }
 
@@ -77,7 +168,7 @@ function forceSecondaryRankPromotions (graph, entryNodeName = 'INTERNET') {
     const outgoingNodes = graph.outgoingNodes(entryNodes[i]);
     for (let j = 0; j < outgoingNodes.length; j++) {
       const node = graph.getNode(outgoingNodes[j]);
-      node.rank = 1;
+      //node.rank = 1;
     }
   }
 }

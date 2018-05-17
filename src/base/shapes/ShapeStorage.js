@@ -31,12 +31,10 @@ class ShapeStorage {
     return this.customNode;
   }
   cleanup () {
-    if(this.innergeometry_material){
-      this.innergeometry_material.dispose();
-    }
-     if(this.innergeometry_material){
-      this.outerborder_material.dispose();
-    }
+    this.innergeometry_material.dispose();
+    this.outerborder_material.dispose();
+    this.innergeometry.dispose()
+    this.outerborder.dispose()
   }
   _createInnerGeometry (radius, curveSegments) {
     const polyPath = [

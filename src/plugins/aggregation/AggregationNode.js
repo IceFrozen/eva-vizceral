@@ -18,6 +18,7 @@
 import FocusedNodeView from '../../focused/focusedNodeView';
 import Node from '../../base/node';
 import NodeViewStandard from '../../base/nodeViewStandard';
+import AggregationInfo from './AggregationInfo';
 
 class AggregationNode extends Node {
   constructor (node,entryNode,state) {

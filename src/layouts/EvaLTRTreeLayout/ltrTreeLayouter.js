@@ -35,9 +35,11 @@ const weightSort = function (a, b) {
       // Build the map of nodes to their levels
       let nodesSortedByDepth = [];
       let index;
+   
       for (index in graph.nodes) {
         if ({}.hasOwnProperty.call(graph.nodes, index)) {
           const node = graph.nodes[index];
+        
           nodesSortedByDepth[node.rank] = nodesSortedByDepth[node.rank] || [];
           nodesSortedByDepth[node.rank].push(node);
         }
@@ -78,11 +80,11 @@ const weightSort = function (a, b) {
       let yOffset = -35;
 
       function setPositions (column, nodesAtDepth, xDelta) {
+       
         const curXDelta = xDelta * column;
         const yDelta = dimensions.height / (nodesAtDepth.length + 1);
         const needsYOffset = yDelta < lastYDelta ? lastYDelta % yDelta < 1 : yDelta % lastYDelta < 1;
         if (needsYOffset) { yOffset = -yOffset; }
-
         for (let j = 0; j < nodesAtDepth.length; j++) {
           const curYDelta = (yDelta * (j + 1)) + (needsYOffset ? yOffset : 0);
           nodePositions[nodesAtDepth[j].name] = { x: curXDelta, y: curYDelta };
@@ -101,7 +103,6 @@ const weightSort = function (a, b) {
           setPositions(i, nodesSortedByDepth[i], xDelta);
         }
       }
-
       return nodePositions;
     }
 
@@ -109,7 +110,6 @@ const weightSort = function (a, b) {
       const options = data.options || {};
       const graph = new Graph(data.graph.nodes, data.graph.edges); // Build a simple graph object
 
-      
       graph.removeSameEdges(); // Remove edges that have same source and target
       AcyclicFAS.remove(graph); // Remove acyclic links
       Ranker.longestPathRanking(graph); // Run a longest path algorithm to build a layout baseline
@@ -125,6 +125,7 @@ const weightSort = function (a, b) {
       }
 
       const nodesSortedByDepth = sortNodesByDepth(graph);
+   
       sortNodesWithinDepth(nodesSortedByDepth);
       const nodePositions = positionNodes(nodesSortedByDepth, data.dimensions);
       return nodePositions;

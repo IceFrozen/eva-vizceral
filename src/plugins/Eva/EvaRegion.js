@@ -30,6 +30,7 @@ class EvaRegion extends EventEmitter {
     this.perfNow = getPerformanceNow();
     this.data = {};
     this.currentView = undefined;
+    this.Aggregation = []
     this.init();
   }
   init () {
@@ -372,7 +373,7 @@ class EvaRegion extends EventEmitter {
     this._reload = true;
     this.currentView = undefined;
     this.setNodeData(...datas);
-    this.update(true,true);
+    this.vizceral.reload(this.toData())
     this._reload = false;
     return this;
   }
@@ -380,6 +381,15 @@ class EvaRegion extends EventEmitter {
 	 * 转换成json数据
 	 *
 	 */
+  setAggregation(Aggregations) {
+    this.Aggregation = Aggregations
+  }
+
+
+   /**
+   * 转换成json数据
+   *
+   */
   toData () {
     if (this.childNodes.length <= 0) {
       return {};
@@ -391,11 +401,17 @@ class EvaRegion extends EventEmitter {
 
 
     const nodes = this.childNodes
-    .filter(evanode => evanode.name !== entryNode.name)
+    //.filter(evanode => evanode.name !== entryNode.name)
     .map((datanode, index) => datanode.getFormatData());
 		// TODO
     let result = entryNode.getFormatData()
     result.connections = connectionItems
+    result.nodes = nodes
+    if(entryNode.Aggregation.length > 0) {
+       result.renderer = 'Aggregation'
+     }else{
+      result.renderer = 'region'
+     }
     return result
   }
 	/**

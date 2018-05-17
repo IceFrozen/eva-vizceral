@@ -16,7 +16,12 @@ class ShapeAzure {
     this.customNode.cleanup = this.cleanup
     return this.customNode;
   }
-
+  cleanup () {
+    this.innergeometry_material.dispose();
+    this.outerborder_material.dispose();
+    this.innergeometry.dispose()
+    this.outerborder.dispose()
+  }
   _createInnerGeometry (radius, curveSegments) {
     const polyPath = [
       '0,3,14,35,23,42,14,3,0,3',

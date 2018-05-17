@@ -67,13 +67,12 @@ class EvaLTRTreeLayout {
   run (graph, dimensions, layoutComplete) { 
     
     const workerGraph = {
-      nodes: _.map(graph.nodes, node => ({ name: node.getName(), position: node.position, size: node.size, weight: node.depth, metadata: node.metadata })),
-      edges: _.map(graph.connections, connection => ({ source: connection.source.getName(), target: connection.target.getName() }))
+      nodes: _.map(graph.nodes, node => ({ name: node.getName(), position: node.position, size: node.size, weight: node.depth,metadata: node.metadata,aggregationId:node.aggregationId,Aggregation:node.Aggregation})),
+      edges: _.map(graph.connections, connection => ({ source: connection.source.getName(), target: connection.target.getName() })),
     };
     const LTRTreeLayouter = require('./ltrTreeLayouter')
     const  ltrTreeLayouter = new LTRTreeLayouter();
     let nodePositions = ltrTreeLayouter.layout({ graph: workerGraph, dimensions: dimensions, entryNode: graph.entryNode, options: graph.options });
-    console.log("EvaGroupLTRTreeLayouter",workerGraph)
     const halfWidth = dimensions.width / 2;
     const halfHeight = dimensions.height / 2;
     let nodeName;

@@ -214,6 +214,7 @@ class NodeView extends BaseView {
 
   cleanup () {
     if (this.nameView) { this.nameView.cleanup(); }
+    if(this.shape) {this.shape.cleanup()}
     this.borderMaterial.dispose();
     this.innerCircleMaterial.dispose();
   }

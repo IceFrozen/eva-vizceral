@@ -480,11 +480,10 @@ class Vizceral extends EventEmitter {
     if (!this.currentGraph || !_.isEqual(newGraph.graphIndex, this.currentGraph.graphIndex)) {
       const difference = this.currentGraph ? (newGraph.graphIndex.length - this.currentGraph.graphIndex.length) : 0;
       if (difference === -1) {
-        // this.zoomOutOfNode();
+        //this.zoomOutOfNode();
       } else if (difference === 1) {
-        // this.zoomIntoNode(newGraph.name);
+        //this.zoomIntoNode(newGraph.name);
       } else {
-
         // this.selectGraph(newGraph, redirectedFrom);
       }
       this.selectGraph(newGraph, redirectedFrom);
@@ -843,7 +842,7 @@ class Vizceral extends EventEmitter {
     
 
   }
-
+  
   updateBoundingRectCache () {
     this.boundingRect = this.renderer.domElement.getBoundingClientRect();
   }
@@ -879,6 +878,29 @@ class Vizceral extends EventEmitter {
     this.camera.updateProjectionMatrix();
 
     this.updateBoundingRectCache();
+  }
+  // 重新reload 数据
+  reload(trafficData) {
+    if (trafficData && trafficData.nodes) {
+      let currentOldGraph = this.currentGraph
+      _.forEach(this.graphs,(graph) => {
+          graph.removeAllListeners()
+          if(graph.cleanup){
+            graph.cleanup()
+          }
+          graph.setCurrent(false)
+          this.__parentTrafficData = []
+      })
+      this.graphs = {};
+      this.trafficData = trafficData;
+      this.rootGraphName = trafficData.name;
+      this.setCurrentGraph(this.getGraph())
+      this.currentGraph = undefined
+      this.scene.remove(currentOldGraph.view.container);
+      this.updateGraph(this.currentGraph);
+      this.setView()
+    }
+
   }
 }
 

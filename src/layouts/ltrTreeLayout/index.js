@@ -66,7 +66,7 @@ class LTRTreeLayout {
     排版单线程版本 用于调试
     TODO
   */
-  run (graph, dimensions, layoutComplete) { 
+  __run (graph, dimensions, layoutComplete) { 
     
     const workerGraph = {
       nodes: _.map(graph.nodes, node => ({ name: node.getName(), position: node.position, size: node.size, weight: node.depth, metadata: node.metadata })),
@@ -87,7 +87,7 @@ class LTRTreeLayout {
     this.layoutPositions(graph, nodePositions);
     layoutComplete();
   }
-  __run (graph, dimensions, layoutComplete) {
+  run (graph, dimensions, layoutComplete) {
     const workerGraph = {
       nodes: _.map(graph.nodes, node => ({ name: node.getName(), position: node.position, size: node.size, weight: node.depth, metadata: node.metadata })),
       edges: _.map(graph.connections, connection => ({ source: connection.source.getName(), target: connection.target.getName() }))

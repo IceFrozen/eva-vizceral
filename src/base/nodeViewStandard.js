@@ -47,6 +47,7 @@ class NodeViewStandard extends NodeView {
     // console.log("super",super.innerCircleMaterial)
     // super.innerCircleMaterial.color.setRGB(borderColor.r, borderColor.g, borderColor.b);
 
+    //TODO 内存泄漏 不会 常驻内存
     this.meshes.noticeDot = this.addChildElement(NodeView.getNoticeDotGeometry(radius), this.dotMaterial);
     this.refreshNotices();
 
@@ -66,6 +67,10 @@ class NodeViewStandard extends NodeView {
     super.cleanup()
     this.shape.cleanup()
     this.dotMaterial.dispose()
+    //nameView的cleanup 方法 super 已经释放 为了防止内存泄漏 这里在释放一次
+    if(this.nameView){
+      this.nameView.cleanup()
+    }
   }
 
   getShape () {

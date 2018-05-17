@@ -20,13 +20,13 @@ import _ from 'lodash';
 
 const Console = console;
 
-function Graph (nodes, edges) {
+function Graph (nodes, edges,Aggregation) {
   this.validateData(nodes, edges);
 
 
   this.nodes = nodes;
   this.edges = edges;
-
+  this.Aggregation = Aggregation
   this._entryNodeMap = this.nodes.reduce((val, node) => {
     val[node.name] = true;
     return val;
@@ -110,6 +110,10 @@ Graph.prototype.incomingNodes = function (nodeName) {
 Graph.prototype.outgoingEdges = function (nodeName) {
   return this._outgoingEdges[nodeName] || [];
 };
+
+
+
+
 
 Graph.prototype.entryNodes = function () {
   if (this._entryNodeMap !== undefined) {

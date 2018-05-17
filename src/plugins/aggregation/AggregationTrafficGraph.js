@@ -3,6 +3,8 @@ import EvaLTRTreeLayout from '../../layouts/EvaLTRTreeLayout';
 import AggregationConnection from './AggregationConnection';
 import AggregationNode from './AggregationNode';
 import TrafficGraph from '../../base/trafficGraph';
+import AggregationInfo from './AggregationInfo';
+
 
 const Console = console;
 /**
@@ -23,6 +25,7 @@ class AggregationTrafficGraph extends TrafficGraph {
     this._layoutTimeoutId = null;
     this._numberOfRunningAsyncLayoutTasks = 0;
     this._onAsyncLayoutTimeout_func = this._onAsyncLayoutTimeout.bind(this);
+    this.aggregationInfo = new AggregationInfo(this.view)
   }
 
   updateVisibleInfo () {
@@ -38,10 +41,12 @@ class AggregationTrafficGraph extends TrafficGraph {
         if (!this.intersectedObject) {
           // If we are not hovering over anything, clear the highlighting
           this.highlightConnectedNodes(undefined);
+          if(this.aggregationInfo) this.aggregationInfo.highlight(this.intersectedObject)
         } else if (this.intersectedObject instanceof this.NodeClass ||
                     this.intersectedObject instanceof this.ConnectionClass) {
           this.emit('objectHovered', this.intersectedObject);
           this.highlightConnectedNodes(this.intersectedObject);
+           if(this.aggregationInfo) this.aggregationInfo.highlight(this.intersectedObject)
         }
       }
     }
@@ -67,6 +72,12 @@ class AggregationTrafficGraph extends TrafficGraph {
     return this
   }
 
+  highlightObject (objectToHighlight, force) {
+    super.highlightObject(objectToHighlight, force)
+    if(this.aggregationInfo){
+      this.aggregationInfo.highlightObject(objectToHighlight, force)
+    }
+  }
   getSelectedNode () {
     return this.nodes[this.nodeName];
   }
@@ -92,7 +103,9 @@ class AggregationTrafficGraph extends TrafficGraph {
       this._relayout();
     }
   }
-
+  update() {
+    super.update()
+  }
   _onAsyncLayoutBegin () {
     this._numberOfRunningAsyncLayoutTasks += 1;
     this._clearLayoutTimeoutId();
@@ -117,7 +130,13 @@ class AggregationTrafficGraph extends TrafficGraph {
   computeShouldParticleSystemBeEnabled () {
     return super.computeShouldParticleSystemBeEnabled() && this._numberOfRunningAsyncLayoutTasks === 0;
   }
-
+  cleanup (force) {
+    if(force){
+      if(this.aggregationInfo){
+        this.aggregationInfo.cleanup()
+      }
+    }
+  }
   onAsyncLayoutCompleted () {
     super.onAsyncLayoutCompleted();
     if (this._numberOfRunningAsyncLayoutTasks > 0) {
@@ -127,6 +146,7 @@ class AggregationTrafficGraph extends TrafficGraph {
       }
       this.updateIsParticleSystemEnabled();
     }
+    this.aggregationInfo.updateArea()
   }
 }
 
