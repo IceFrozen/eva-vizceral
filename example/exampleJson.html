@@ -1,6 +1,6 @@
 <html>
   <head>
-    <script src="./js/vizceral_eva.min.js"></script>
+    <script src="../dist/vizceral_eva.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/vizceral_eva.css" />
     <script src="./js/testData.js"></script>
 <script>
@@ -10,26 +10,26 @@
     var testDataArray = [nodeView1,nodeView2]
     var count = 0
     var onInit = function () {
-    region = new Vizceral.EvaRegion(document.getElementById('viz')) 
-    region.setNodeData(nodeView2).show()
-     // 只有这两部操作完成之后，EvaDataNode的属性变化才会被监听到
-     region.on("objectHighlighted",function(type,nodeOrConnection,navtiveNode) {
-        if(type == "connection") {
-            console.log("this is a  conenction")
-            console.log(type,nodeOrConnection,navtiveNode)
-            console.log("nodeOrConnection is EvaConnection",nodeOrConnection)
-        }
-        if(type == "node") {
-            console.log("this is a node")
-            console.log(type,nodeOrConnection,navtiveNode)
-            console.log("nodeOrConnection is evaNode",nodeOrConnection)
-        }
-        if(type == "cancel"){
-            console.log("this is a node")
-            console.log(type,nodeOrConnection,navtiveNode)
-            console.log("nodeOrConnection is null",nodeOrConnection)
-        }
-     })
+      region = new Vizceral.EvaRegion(document.getElementById('viz')) 
+      region.setNodeData(nodeView2).show()
+      // 只有这两部操作完成之后，EvaDataNode的属性变化才会被监听到
+      // region.on("objectHighlighted",function(type,nodeOrConnection,navtiveNode) {
+      //   if(type == "connection") {
+      //       console.log("this is a  conenction")
+      //       console.log(type,nodeOrConnection,navtiveNode)
+      //       console.log("nodeOrConnection is EvaConnection",nodeOrConnection)
+      //   }
+      //   if(type == "node") {
+      //       console.log("this is a node")
+      //       console.log(type,nodeOrConnection,navtiveNode)
+      //       console.log("nodeOrConnection is evaNode",nodeOrConnection)
+      //   }
+      //   if(type == "cancel"){
+      //       console.log("this is a node")
+      //       console.log(type,nodeOrConnection,navtiveNode)
+      //       console.log("nodeOrConnection is null",nodeOrConnection)
+      //   }
+     //})
   }
 </script>
 
@@ -38,7 +38,7 @@
 
 
   <body onload='onInit()'>
-      <input type="button" onclick="region.reload(testDataArray[count++%2])" value="changeView">
+      <input type="button" onclick="region.reload(testDataArray[count++%2])">
       <div id = "viz">
         
       </div>

@@ -26,6 +26,7 @@
     -   [setHightLightNode](#sethightlightnode)
     -   [setNodeData](#setnodedata)
     -   [reload](#reload)
+    -   [setAggregation](#setaggregation)
     -   [toData](#todata)
     -   [getConnection](#getconnection-1)
     -   [addColors](#addcolors)
@@ -265,6 +266,14 @@ Returns **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 -   `datas` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** 节点数据json
 
 Returns **[EvaRegion](#evaregion)** EvaRegion
+
+### setAggregation
+
+转换成json数据
+
+**Parameters**
+
+-   `Aggregations`  
 
 ### toData
 
