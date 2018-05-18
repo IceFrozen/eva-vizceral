@@ -49,7 +49,6 @@ class AggregationInfo extends BaseView {
     this.nodeName = "test"
     this.nodeView = nodeView;
     this.lines = []
-    this.interactiveLineGeometries = []
     this.buffer = Math.max(0 * 0.3, 25);
     this.color2 = new THREE.Color( 0xFF0000 );
     this.borderOffset = 30
@@ -59,15 +58,15 @@ class AggregationInfo extends BaseView {
     // 说明
     this.keyLocation = {}
     this.nameCanvas = this.nodeView.createCanvas(200, this.fontSize + 10);
-    //this.nameTexture = new THREE.Texture(this.nameCanvas);
+    this.nameTexture = new THREE.Texture(this.nameCanvas);
     // this.nameTexture.minFilter = THREE.LinearFilter;
     //this.updateLabel();
     this.interactiveLineMaterial = new THREE.LineBasicMaterial({
       depthTest: true,
       depthWrite: false,
-      //transparent: false,
-      //opacity: 0,
-      color: 0xfffff1
+      transparent: true,
+      opacity: 0.3,
+      color: 0xfffff1 
     });
     this.nodeView.container.add(this.container);
     this.material = new THREE.MeshBasicMaterial({transparent: true })
@@ -81,13 +80,11 @@ class AggregationInfo extends BaseView {
     return this.nodeName
   }
   updateArea () {
-    
     const canDraw = this.sortNodes()
     this.cleanLine()
     if(!canDraw) {
       return 
     }
-    let one = 0
     _.forEach(this.keyLocation,(location,key)=>{
       this.genArea(key,{x:location.left[0],y:location.left[1]},location.width,location.height)
     })
@@ -97,16 +94,6 @@ class AggregationInfo extends BaseView {
     //情况线
  
 
-    const context = this.nameCanvas.getContext('2d');
-    // TODO 这里调整 字体大小
-    // Label Width
-    //this.resizeCanvas(this.nameCanvas, 400, 400);
-    // label color
-    context.fillStyle = 'rgba(255, 255, 255, 0)';
-    const labelColor = GlobalStyles.getColorTraffic('normal', this.highlight);
-    roundRect(context, 1000, 1000, 1000, 1000, 3, GlobalStyles.styles.colorLabelBorder, labelColor);
-
-  
 
     // if (this.view) {
     //   this.applyPosition(100,100,100);
@@ -150,7 +137,6 @@ class AggregationInfo extends BaseView {
 
   setOpacity (opacity) {
     super.setOpacity(opacity);
-    this.material.opacity = opacity;
   } 
   // 排序node 找出各个地方的起点和重点
   sortNodes () {
@@ -180,8 +166,8 @@ class AggregationInfo extends BaseView {
         let left_y = (_.maxBy(nodes, (node) => node.position.y)).position.y + this.borderOffset;
         let right_x = (_.maxBy(nodes, (node) => node.position.x)).position.x + this.borderOffset;
         let right_y = (_.minBy(nodes, (node) => node.position.y)).position.y - this.borderOffset;
-        let width = Math.abs(right_x - left_x) //this.borderOffset
-        let height  = Math.abs(right_y - left_y) //+ this.borderOffset
+        let width = Math.abs(right_x - left_x) 
+        let height  = Math.abs(right_y - left_y)
         this.keyLocation[key] = {
           left:[left_x,left_y],
           right:[right_x,right_y],
@@ -194,11 +180,39 @@ class AggregationInfo extends BaseView {
     }
     return false
   }
-
+  getDisplayName () {
+    return  "test"
+  }
   /*
     生成机房信息
   */
-  genDecText () {}
+  genDecText () {
+
+
+    const context = this.nameCanvas.getContext('2d');
+    // TODO 这里调整 字体大小
+    const fontSize = this.fixedWidth ? 30 : 30;
+
+    const font = `${fontSize}px 'Source Sans Pro', sans-serif`;
+    context.font = font;
+
+    // Label Width
+    this.defaultLabelWidth = this.fixedWidth ? 260 : context.measureText(this.getDisplayName(true)).width + 16;
+    const labelWidth = this.fixedWidth ? 260 : context.measureText(this.getDisplayName()).width + 16;
+    if (labelWidth !== this.labelWidth) { this.labelWidth = labelWidth; }
+    this.resizeCanvas(this.nameCanvas, this.labelWidth, fontSize + 10);
+
+    // label color
+    console.log(this.nameCanvas.width,this.nameCanvas.height)
+    const labelColor = GlobalStyles.getColorTraffic('normal', this.highlight);
+    roundRect(context, 0, 0, this.nameCanvas.width, this.nameCanvas.height, 3, GlobalStyles.styles.colorLabelBorder, labelColor);
+    context.fillStyle = GlobalStyles.styles.colorLabelText;
+    context.fillText(this.getDisplayName(), this.nameCanvas.width / 2, this.nameCanvas.height / 2);
+    this.nameTexture.needsUpdate = true;
+  
+
+
+  }
   /*
     生成机房的图
   */
@@ -215,16 +229,15 @@ class AggregationInfo extends BaseView {
     this.container.add(leftline);
     this.container.add(downline);
     this.container.add(upline);
-    this.lineMapToGropuId = {
-      groupId:groupId,
-      lineUUIDs:[upline.uuid,leftline.uuid,downline.uuid,rightline.uuid]
-    }
+    //this.genDecText()
+    this.lineMapToGropuId[groupId]=[upline.uuid,leftline.uuid,downline.uuid,rightline.uuid]
   }
 
   cleanLine () {
     for(let i = 0; i< this.lines.length;i++) {
       this.container.remove(this.lines[i])
-      this.interactiveLineGeometries[i].dispose()
+      this.lines[i].material.dispose()
+      this.lines[i].geometry.dispose()
     }
     this.interactiveLineMaterial.dispose()
     this.material.dispose()
@@ -238,23 +251,60 @@ class AggregationInfo extends BaseView {
     鼠标移动到某个上边
   */
   highlight(mouseOnObject) {
-    if(mouseOnObject instanceof AggregationNode){
 
-    }else if(mouseOnObject instanceof AggregationConnection){
+    let nodes = []
 
-    }else {
-
+    const filter = (connection) => {
+      if(!connection){
+        return 
+      }
+      if(connection.source){
+        nodes.push(connection.source)
+      }
+      if(connection.target){
+        nodes.push(connection.target)
+      }
     }
+    if(mouseOnObject instanceof AggregationNode){
+        nodes.push(mouseOnObject)
+        _.each(mouseOnObject.outgoingConnections,filter)
+        _.each(mouseOnObject.incomingConnections,filter)
+    }else if(mouseOnObject instanceof AggregationConnection){
+        filter(mouseOnObject)
+    }else {
+      console.log("nothings",mouseOnObject)
+      nodes = []
+    }
+    nodes = _.uniq(nodes.filter((node)=>node.aggregationId).map((node)=>node.aggregationId))
+    this._hightlingArea(nodes)
   }
 
-  _hightlingArea (groupId) {
-
+  _hightlingArea (groupIds) {
+    let self = this
+    _.forEach(this.lineMapToGropuId,(uuids,groupId)=>{
+        if(groupIds.includes(groupId)){
+          self._hightlingLine(uuids,true)
+        }else{
+          self._hightlingLine(uuids,false)
+        }
+    })
   }
   /*
     
   */
-  _hightlingLine (uuid,hight) {
-
+  _hightlingLine (uuids,hight) {
+    let opacity = 2
+    let transparent = hight
+    if(!hight) {
+      opacity = 0.3
+    }
+    _.each(this.lines,(line)=> {
+        if(uuids.includes(line.uuid)){
+          line.material.transparent = !transparent
+          line.material.linewidth  = opacity
+        }
+    })
+    //console.log(this.interactiveLineMaterial)
   }
 
   // 节点高亮
@@ -267,11 +317,10 @@ class AggregationInfo extends BaseView {
   */
   genLine (startPoint,endPoint) {
     const interactiveLineGeometry = new THREE.Geometry();
-    const interactiveLine = new THREE.Line(interactiveLineGeometry, this.interactiveLineMaterial);
+    const interactiveLine = new THREE.Line(interactiveLineGeometry, this.interactiveLineMaterial.clone());
     interactiveLine.geometry.vertices[0] = startPoint;
     interactiveLine.geometry.vertices[1] = endPoint;
     this.lines.push(interactiveLine)
-    this.interactiveLineGeometries.push(interactiveLineGeometry)
     this.addInteractiveChild(interactiveLine);
     return interactiveLine
   }
@@ -280,6 +329,7 @@ class AggregationInfo extends BaseView {
     this.interactiveLineMaterial.dispose()
     this.material.dispose()
     this.cleanLine()
+    this.nameTexture.dispose()
     this.nodeView.container.remove(this.container)
    
   }

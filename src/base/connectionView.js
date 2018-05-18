@@ -71,14 +71,23 @@ void main() {
 `;
 
 
-const baseShaderMaterial = new THREE.ShaderMaterial({
-  uniforms: {},
-  vertexShader: trafficVertexShader,
-  fragmentShader: trafficFragmentShader,
-  blending: THREE.NormalBlending,
+// const baseShaderMaterial = new THREE.ShaderMaterial({
+//   uniforms: {},
+//   vertexShader: trafficVertexShader,
+//   fragmentShader: trafficFragmentShader,
+//   blending: THREE.NormalBlending,
+//   depthTest: true,
+//   depthWrite: false,
+//   transparent: true
+// });
+
+const baseShaderMaterial = new THREE.PointsMaterial({
+  size:100,
+  map:particleTexture,
+  blending:THREE.NormalBlending,
   depthTest: true,
-  depthWrite: false,
-  transparent: true
+  depthTest: false,
+  transparent:true
 });
 
 function normalDistribution () {
@@ -503,6 +512,7 @@ class ConnectionView extends BaseView {
   }
 
   cleanup () {
+    this.noticeView.cleanup()
     this.particles.geometry.dispose();
     this.shaderMaterial.dispose();
     this.interactiveLineGeometry.dispose();
