@@ -322,6 +322,17 @@ class AggregationInfo extends BaseView {
           self._hightlingLine(uuids,false)
         }
     })
+    _.forEach(this.areaMapToNameView,(view,groupId)=>{
+      if(groupIds.length == 0) {
+        view.material.opacity = 1
+        return 
+      }
+      if(groupIds.includes(groupId)){
+        view.material.opacity = 1
+      }else{
+        view.material.opacity = 0.3
+      }
+    })
   }
   _hightlingLine (uuids,hight) {
     let opacity = 2
@@ -332,7 +343,7 @@ class AggregationInfo extends BaseView {
     _.each(this.lines,(line)=> {
         if(uuids.includes(line.uuid)){
           line.material.transparent = !transparent
-          line.material.linewidth  = opacity
+          line.material.opacity  = opacity
         }
     })
   }
@@ -358,7 +369,6 @@ class AggregationInfo extends BaseView {
     this.interactiveLineMaterial.dispose()
     //this.material.dispose()
     this.cleanLine()
-    this.nameTexture.dispose()
     this.nodeView.container.remove(this.container)
    
   }

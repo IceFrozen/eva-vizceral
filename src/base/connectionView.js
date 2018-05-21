@@ -71,23 +71,14 @@ void main() {
 `;
 
 
-// const baseShaderMaterial = new THREE.ShaderMaterial({
-//   uniforms: {},
-//   vertexShader: trafficVertexShader,
-//   fragmentShader: trafficFragmentShader,
-//   blending: THREE.NormalBlending,
-//   depthTest: true,
-//   depthWrite: false,
-//   transparent: true
-// });
-
-const baseShaderMaterial = new THREE.PointsMaterial({
-  size:100,
-  map:particleTexture,
-  blending:THREE.NormalBlending,
+const baseShaderMaterial = new THREE.ShaderMaterial({
+  uniforms: {},
+  vertexShader: trafficVertexShader,
+  fragmentShader: trafficFragmentShader,
+  blending: THREE.NormalBlending,
   depthTest: true,
-  depthTest: false,
-  transparent:true
+  depthWrite: false,
+  transparent: true
 });
 
 function normalDistribution () {
