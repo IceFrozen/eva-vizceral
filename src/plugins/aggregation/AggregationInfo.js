@@ -54,11 +54,10 @@ class AggregationInfo extends BaseView {
     this.borderOffset = 30
     this.groupNodes = {}
     this.lineMapToGropuId = {}
+    this.areaMapToNameView = {}
     // Create the canvas to build a sprite
     // 说明
     this.keyLocation = {}
-    //this.nameCanvas = this.nodeView.createCanvas(200, this.fontSize + 10);
-    //this.nameTexture = new THREE.Texture(this.nameCanvas);
     // this.nameTexture.minFilter = THREE.LinearFilter;
     //this.updateLabel();
     this.interactiveLineMaterial = new THREE.LineBasicMaterial({
@@ -69,8 +68,6 @@ class AggregationInfo extends BaseView {
       color: 0xfffff1 
     });
     this.nodeView.container.add(this.container);
-    this.material = new THREE.MeshBasicMaterial({transparent: true })
-    //this.view = this.nodeView.addChildElement(new THREE.CubeGeometry(250, 350, 0), this.material);
     this.updateArea()
 
   
@@ -179,32 +176,75 @@ class AggregationInfo extends BaseView {
     }
     return false
   }
-  getDisplayName () {
-    return  "test"
+  getDisplayName (groupId) {
+    return  groupId
   }
+
+  getLocal (groupId) {
+    return this.keyLocation[groupId]
+  }
+
   /*
     生成机房信息
   */
-  genDecText () {
-    const context = this.nameCanvas.getContext('2d');
+  genDecText (groupId) {
+    this.cleanNameViewById(groupId)
+
+    const nameCanvas = this.nodeView.createCanvas(256, 32);
+    const nameTexture = new THREE.Texture(nameCanvas);
+
+    const materialClone = new THREE.MeshBasicMaterial({ map: nameTexture, side: THREE.DoubleSide, transparent: true });
+    const local = this.getLocal(groupId)
+    const geometry = new THREE.PlaneBufferGeometry(200, 30)
+    const startPoint_x = local.left[0]
+    const startPoint_y = local.left[1]
+    const mess = this.addChildElement(geometry, materialClone);
+    const context = nameCanvas.getContext('2d');
     // TODO 这里调整 字体大小
     const fontSize = this.fixedWidth ? 30 : 30;
     const font = `${fontSize}px 'Source Sans Pro', sans-serif`;
     context.font = font;
     // Label Width
-    this.defaultLabelWidth = this.fixedWidth ? 260 : context.measureText(this.getDisplayName(true)).width + 16;
-    const labelWidth = this.fixedWidth ? 260 : context.measureText(this.getDisplayName()).width + 16;
-    if (labelWidth !== this.labelWidth) { this.labelWidth = labelWidth; }
-    this.resizeCanvas(this.nameCanvas, this.labelWidth, fontSize + 10);
+    this.defaultLabelWidth = this.fixedWidth ? 256 : context.measureText(this.getDisplayName(groupId)).width + 16;
+    const labelWidth = this.fixedWidth ? 256 : context.measureText(this.getDisplayName(groupId)).width + 16;
+    this.resizeCanvas(nameCanvas, labelWidth, 32);
 
     // label color
-    console.log(this.nameCanvas.width,this.nameCanvas.height)
-    const labelColor = GlobalStyles.getColorTraffic('normal', this.highlight);
-    roundRect(context, 0, 0, this.nameCanvas.width, this.nameCanvas.height, 3, GlobalStyles.styles.colorLabelBorder, labelColor);
-    context.fillStyle = GlobalStyles.styles.colorLabelText;
-    context.fillText(this.getDisplayName(), this.nameCanvas.width / 2, this.nameCanvas.height / 2);
-    this.nameTexture.needsUpdate = true;
+    const labelColor = GlobalStyles.getColorTraffic('normal');
+    roundRect(context, startPoint_x, startPoint_y, nameCanvas.width / 2, nameCanvas.height / 2, 3, GlobalStyles.styles.colorLabelBorder, labelColor);
+    //context.fillStyle = GlobalStyles.styles.colorLabelText;
+    context.fillText(this.getDisplayName(groupId), nameCanvas.width / 2, nameCanvas.height / 2);
+   
+    this.areaMapToNameView[groupId] ={
+      mess:mess,
+      geometry:geometry,
+      material:materialClone,
+      texture:nameTexture,
+      canvas:nameCanvas
+    }
+    mess.position.x = startPoint_x,
+    mess.position.y = startPoint_y + nameCanvas.height/2
+    nameTexture.needsUpdate = true;
+    return mess
   }
+
+  cleanNameView (groupId) {
+    _.forEach(this.areaMapToNameView,(item,groupId)=>{
+        item.geometry.dispose()
+        item.material.dispose()
+        item.texture.dispose()
+        this.container.remove(item.mess)
+    })
+  }
+
+  cleanNameViewById (groupId) {
+    if(this.areaMapToNameView[groupId]){
+      this.areaMapToNameView[groupId].geometry.dispose()
+      this.areaMapToNameView[groupId].material.dispose()
+      this.areaMapToNameView[groupId].texture.dispose()
+      this.container.remove(this.areaMapToNameView[groupId].mess)
+    }
+  } 
   /*
     生成机房的图
   */
@@ -221,7 +261,7 @@ class AggregationInfo extends BaseView {
     this.container.add(leftline);
     this.container.add(downline);
     this.container.add(upline);
-    //this.genDecText()
+    const nameViewMess = this.genDecText(groupId)
     this.lineMapToGropuId[groupId]=[upline.uuid,leftline.uuid,downline.uuid,rightline.uuid]
   }
 
@@ -231,8 +271,11 @@ class AggregationInfo extends BaseView {
       this.lines[i].material.dispose()
       this.lines[i].geometry.dispose()
     }
+
+    this.cleanNameView()
+
     this.interactiveLineMaterial.dispose()
-    this.material.dispose()
+    //this.material.dispose()
     this.lines = []
     this.interactiveChildren = []
     this.interactiveLine = []
@@ -313,7 +356,7 @@ class AggregationInfo extends BaseView {
 
   cleanup () {
     this.interactiveLineMaterial.dispose()
-    this.material.dispose()
+    //this.material.dispose()
     this.cleanLine()
     this.nameTexture.dispose()
     this.nodeView.container.remove(this.container)
