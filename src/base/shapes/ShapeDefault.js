@@ -17,6 +17,7 @@ class ShapeDefault {
   }
 
   cleanup () {
+    //console.log("shape default clean up")
     this.innergeometry_material.dispose();
     this.outerborder_material.dispose();
     this.innergeometry.dispose()

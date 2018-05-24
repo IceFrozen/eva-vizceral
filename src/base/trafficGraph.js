@@ -134,6 +134,7 @@ class TrafficGraph extends EventEmitter {
       } else {
         _.each(this.connections, connection => connection.cleanup());
         _.each(this.nodes, node => node.cleanup());
+        this.view.cleanup()
         if(this.cleanup) {this.cleanup()}
       }
       this._particleSystem.setLastUpdateTime(getPerformanceNow());
@@ -808,7 +809,7 @@ class TrafficGraph extends EventEmitter {
     this.nodeCounts.visible = visibleNodes;
 
     this.layout.run(graph, this.layoutDimensions, (() => {
-      Console.info(`Layout: Received updated layout for ${this.name} from the worker.`);
+      // Console.info(`Layout: Received updated layout for ${this.name} from the worker.`);
       this.hasPositionData = true;
       this.updateView();
     }));

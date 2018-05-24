@@ -154,11 +154,11 @@ class Vizceral extends EventEmitter {
     this.filters = {};
 
     this.renderers = {
-      global: GlobalTrafficGraph,
+      //global: GlobalTrafficGraph,
       region: RegionTrafficGraph,
       focused: FocusedTrafficGraph,
       focusedChild: FocusedChildTrafficGraph,
-      dns: DnsTrafficGraph,
+      //dns: DnsTrafficGraph,
       Aggregation:AggregationTrafficGraph
     };
     this.moveNodeInteraction = new MoveNodeInteraction(this);

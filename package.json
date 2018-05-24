@@ -18,7 +18,7 @@
     "validate": "npm ls"
   },
   "devDependencies": {
-    "babel-core": "^6.18.0",
+    "babel-core": "^6.26.3",
     "babel-eslint": "^7.0.0",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.18.0",
@@ -26,7 +26,7 @@
     "documentation": "^4.0.0-beta2",
     "eslint": "^3.8.1",
     "eslint-config-airbnb-base": "^10.0.1",
-    "eslint-plugin-import": "^2.0.1",
+    "eslint-plugin-import": "^2.12.0",
     "file-loader": "^0.9.0",
     "precommit-hook": "^3.0.0",
     "raw-loader": "^0.5.1",
@@ -38,12 +38,12 @@
     "yargs": "^6.3.0"
   },
   "dependencies": {
-    "chroma-js": "^1.1.1",
+    "chroma-js": "^1.3.7",
     "generate-uuid": "^1.0.6",
     "hammerjs": "^2.0.8",
-    "lodash": "^4.12.0",
+    "lodash": "^4.17.10",
     "numeral": "^1.5.3",
-    "three": "^0.91.0",
+    "three": "^0.92.0",
     "tween.js": "16.6.0"
   },
   "keywords": [
@@ -56,8 +56,7 @@
     "visceral",
     "visualization"
   ],
-  "pre-commit": [
-  ],
+  "pre-commit": [],
   "author": "Justin Reynolds <jreynolds@netflix.com>",
   "license": "Apache-2.0"
 }

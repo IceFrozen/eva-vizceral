@@ -34,16 +34,23 @@ class TrafficGraphView extends BaseView {
 
     // Add invisible element to make sure the container gets rendered even if all nodes/connections are removed.
     // Required to cleanup the scene if all nodes/connections are filtered out
-    const geometry = new BufferGeometry();
-    geometry.addAttribute('position', new BufferAttribute(new Float32Array([0, 0, 0]), 3));
-    const material = new MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0 });
-    const mesh = new Mesh(geometry, material);
+    this.bufferGeometry = new BufferGeometry();
+    this.bufferGeometry.addAttribute('position', new BufferAttribute(new Float32Array([0, 0, 0]), 3));
+    this.buffermaterial = new MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0 });
+    const mesh = new Mesh(this.bufferGeometry, this.buffermaterial);
     this.container.add(mesh);
 
     if (!this.trafficGraph.isEmpty()) {
       this.updateState();
     }
   }
+
+  cleanup () {
+    //console.log("i am clean up!!")
+    this.bufferGeometry.dispose()
+    this.buffermaterial.dispose()
+  }
+
 
   removeObject (object) {
     // Remove the objects view container

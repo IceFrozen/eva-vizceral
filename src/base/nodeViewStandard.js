@@ -65,12 +65,7 @@ class NodeViewStandard extends NodeView {
 
   cleanup() {
     super.cleanup()
-    this.shape.cleanup()
     this.dotMaterial.dispose()
-    //nameView的cleanup 方法 super 已经释放 为了防止内存泄漏 这里在释放一次
-    if(this.nameView){
-      this.nameView.cleanup()
-    }
   }
 
   getShape () {

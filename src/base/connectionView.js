@@ -503,6 +503,7 @@ class ConnectionView extends BaseView {
   }
 
   cleanup () {
+    //console.log("connection cleanup")
     this.noticeView.cleanup()
     this.particles.geometry.dispose();
     this.shaderMaterial.dispose();

@@ -401,7 +401,7 @@ class EvaRegion extends EventEmitter {
 
     const nodes = this.childNodes
     .map((datanode, index) => datanode.getFormatData());
-		// TODO
+		// 拿到首节点数据，然后构建没有
     let result = entryNode.getFormatData()
     result.connections = connectionItems
     result.nodes = nodes
@@ -414,6 +414,31 @@ class EvaRegion extends EventEmitter {
 
     return result
   }
+  /**
+   * 转换成json数据 new 
+   *
+   */
+   toDateNew () {
+    /**
+      1、frist get entryNode
+      2、get the entryNode Top Infomation
+      3、get the entryNode body data
+                  body info is include
+                        1 entry node top info   
+                        2 entry childeNode node info 
+                                  
+
+                        3、get the connection node and unfold it out
+
+
+
+
+
+    */
+    
+   }
+
+
 	/**
 	 * 获取链接
 	 * @param {string} sourceDataName 起点 EvaDataNode name

@@ -115,6 +115,7 @@ class ConnectionNoticeView extends BaseView {
   }
 
   cleanup () {
+    //console.log("notice clean up")
     this.noticeTexture.dispose();
     this.material.dispose();
   }

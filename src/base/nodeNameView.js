@@ -157,6 +157,7 @@ class NodeNameView extends BaseView {
     this.material.opacity = opacity;
   }
   cleanup () {
+    //console.log("cleanup name view")
     this.nameTexture.dispose();
     this.material.dispose();
   }

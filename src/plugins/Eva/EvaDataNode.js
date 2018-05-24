@@ -31,6 +31,7 @@ class EvaDataNode extends EventEmitter {
     this.aggregationId = options.aggregationId
     this.node_type = options.node_type;
     this.connections = [];
+    this.subRegion = []
     this.detailShow = 'default';
     this._createOptaion = options;
     this._nodeTag = [];      // dataNode 标签类
@@ -39,6 +40,26 @@ class EvaDataNode extends EventEmitter {
     this._addChildNodes(options.nodes)
     this.checkDataNode();
   }
+  /**
+   *  增加子区域入口节点
+   *
+   * @param {string} bool 是否高亮 true or false
+   * @return {EvaDataNode}
+   */
+  setSubRegionEntryNode (subRootData) {
+    if (!(subRootData instanceof EvaDataNode)) {
+      throw new Error('subRootData must be EvaDataNode class');
+    }
+    const exist = this.subRegion.find(dataNodeItem => dataNodeItem.name === subRootData.name);
+    if(!exist) {
+      this.subRegion.push(subRootData)
+    }
+    if(this.subRegion.length > 0) {
+      this.renderer = EvaDataNode.RENDERER.REGION
+    }
+    return this
+  }
+
   _addChildNodes(nodes) {
     if(!_.isArray(nodes)){
       return 
@@ -47,7 +68,7 @@ class EvaDataNode extends EventEmitter {
     nodes.map(node => new EvaDataNode(node.name,node))
     .forEach(evaNode => {
       evaNode.setParentDataNode(self)
-      self.setNode(evaNode)
+      self.setConnectNode(evaNode)
     })
   }
   /**
@@ -139,8 +160,7 @@ class EvaDataNode extends EventEmitter {
     }
     return this;
   }
-  setNode (dataNode) {
-  // 判定是否有链接
+  setConnectNode (dataNode) {
     if (!(dataNode instanceof EvaDataNode)) {
       throw new Error('dataNode must be EvaDataNode class');
     }
@@ -148,9 +168,6 @@ class EvaDataNode extends EventEmitter {
     if (!exist) {
       this.childNodes.push(dataNode);
       dataNode.setParentDataNode(this);
-    }
-    if (this.childNodes.length === 0) {
-      this.renderer = EvaDataNode.CONSTS.RENDERER.FOCUSEDCHILD;
     }
     return this;
   }
@@ -161,14 +178,11 @@ class EvaDataNode extends EventEmitter {
    * @return {EvaDataNode}
    */
   connect (dataNode, streamData) {
-    // 判定是否是类
-    // 增加区域节点
     const self = this;
     const newConnection = new EvaConnection(this.name, dataNode.name, streamData);
     const exist = this.connections.find(connectionItem => connectionItem.id === newConnection.id);
-    // 先加节点 然后更新视图
-    this.setNode(dataNode);
     if (!exist) {
+      this.setConnectNode(dataNode);
       this.connections.push(newConnection);
       newConnection.on('modify', self.emit.bind(self, 'modify'));
       this.emit('modify', 'newConnection', newConnection);
@@ -207,7 +221,6 @@ class EvaDataNode extends EventEmitter {
     if (name !== 'docunt' && name !== 'arc') {
       return this;
     }
-
     this.detailShow = name;
     this.emit('modify', 'detailSwitch', this);
     return this;
@@ -220,7 +233,54 @@ class EvaDataNode extends EventEmitter {
       }
     }
   }
-  getFormatData () {
+
+  getFormatDataNew (infoType) {
+    if(infoType == "head") {
+      return this.getHeadData()
+    }
+    else if(infoType == 'body') {
+      return this.getBodyData()
+    }
+    const head = this.getHeadData()
+    const body = this.getBodyData()
+    return _.assign(head,body)
+  }
+  getHeadData () {
+    return {
+      name: this.name,
+      renderer: this.renderer,
+      node_type: this.node_type,
+      displayName: this.displayName,
+      maxVolume: this.maxVolume,
+      class: this.class,
+      layout: this.layout,
+      updated: this.updated,
+      Aggregation:this.Aggregation,
+      aggregationId:this.aggregationId,
+      metadata: this.metadata
+    }
+  }
+  getBodyData () {
+    // 获取 top 
+    // 获取 所有连接
+    let connections = this.connections.map(connectionItem => connectionItem.getFormatData());
+    const childs = []
+    this.getChildren(childs)
+
+    const nodes = childs.map(node => {
+      let data = node.getFormatDataNew("head")
+      if(node.renderer == EvaDataNode.RENDERER.REGION){
+          const subRegion = node.subRegion[0].getFormatDataNew("body")
+          data = _.assign(data,subRegion)
+      }
+      return data
+    })
+    return {
+      nodes: nodes,
+      connections: connections,
+    }
+  }
+  getFormatData (withoutChilds) {
   // body...
     const childs = this.childNodes.map(dataNodeItem => dataNodeItem.getFormatData());
     const selfEntryNode = {
