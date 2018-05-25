@@ -7,13 +7,10 @@ class ShapeDefault {
   constructor (node) {
     this.customNode = {};
     this.node = node;
-    this.customNode.innergeometry = this._createInnerGeometry(18, 32);
-    this.customNode.outerborder = this._createOuterBorder(20, 32);
-    this.customNode.innergeometry_material = this._createMaterial(node);
-    this.customNode.outerborder_material = this._createMaterial(node);
-    this.customNode.getShapeColor = this.getShapeColor;
-    this.customNode.cleanup = this.cleanup
-    return this.customNode;
+    this.innergeometry = this._createInnerGeometry(18, 32);
+    this.outerborder = this._createOuterBorder(20, 32);
+    this.innergeometry_material = this._createMaterial(node);
+    this.outerborder_material = this._createMaterial(node);
   }
 
   cleanup () {

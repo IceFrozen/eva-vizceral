@@ -2,6 +2,7 @@ import generateUuid from 'generate-uuid';
 import EventEmitter from 'events';
 import Vizceral from '../../vizceral';
 import EvaDataNode from './EvaDataNode';
+import RegionView from "./RegionView";
 
 const Console = console;
 // import TWEEN from 'tween.js';
@@ -15,7 +16,7 @@ const Console = console;
 	 */
 class EvaRegion extends EventEmitter {
   constructor (rootElement) {
-		 super();
+		super();
     this.hasInit = false;
     this.canvasDom = null;
     this.noticeDom = null;
@@ -24,8 +25,7 @@ class EvaRegion extends EventEmitter {
     this.vizceral = null;
     this.perfNow = 0;
     this._reload = false;
-    this.vizstatus = {};
-    this.entryNode = [];
+    this.regionView = new RegionView(this)
     this.childNodes = [];
     this.perfNow = getPerformanceNow();
     this.data = {};
@@ -41,10 +41,11 @@ class EvaRegion extends EventEmitter {
     if (!this.canvasDom) {
       throw new Error('the dom div must be add!!');
     }
-
     this.vizceral = new Vizceral(this.canvasDom);
     this.vizceral.animate(this.perfNow === null ? 0 : this.perfNow);
     const self = this;
+    this.regionView.setRoot(true)
+    this.regionView.on('modify', this.updateEvent.bind(this, 'nodeUpdate'));
     this.vizceral.on('viewChanged', (view) => {
       this.currentView = view;
       self._updateNav();
@@ -100,6 +101,7 @@ class EvaRegion extends EventEmitter {
       }
       self.emit('objectHighlighted', type, node, nativeNode);
     });
+   
     this.hasInit = true;
     this.initDefinitions();
   }
@@ -139,7 +141,6 @@ class EvaRegion extends EventEmitter {
     tmp = tmp.reverse().concat(views)
     tmp.unshift('[back]');
   
-
     const c = tmp.map((data, index) => {
       let name = data;
       if (index !== 0) {
@@ -194,6 +195,9 @@ class EvaRegion extends EventEmitter {
     return this;
   }
   updateEvent (eventName, eventSubType, eventData, ...args) {
+    console.log("aaaaaaa")
+    console.log("I am update")
+    console.log(eventName, eventSubType, eventData, args)
     if (eventSubType == 'hight') {
       const nodeId = eventData.name;
       const isHightObject = !!args[0];
@@ -219,11 +223,9 @@ class EvaRegion extends EventEmitter {
 	 * @returns {EvaRegion}  EvaRegion
 	 */
   backToParentLevel () {
-    
     if (!this.currentView) {
       return;
     }
-    
     const tmp = _.cloneDeep(this.currentView.view);
     tmp.pop();
     this.changeView(tmp, null);
@@ -237,46 +239,8 @@ class EvaRegion extends EventEmitter {
 	 * @returns {EvaRegion} EvaRegion
 	 */
   setRootLevels (...EvaDataNods) {
-    const children = [];
-    for (const dataNode of EvaDataNods) {
-      if (!(dataNode instanceof EvaDataNode)) {
-        throw new Error('dataNode must be EvaDataNode class');
-      }
-      dataNode.getChildren(children);
-    }
-    return this.setChildren(children);
-  }
-  setChildren (dataNodes) {
-    if (dataNodes.length <= 0) {
-      return;
-    }
-    if (this._reload) {
-      this.childNodes.every(child => child.removeAllListeners());
-      this.entryNode.every(child => child.removeAllListeners());
-      this.childNodes = [];
-      this.entryNode = [];
-    }
-    for (let i = 0; i < dataNodes.length; i++) {
-      const datanode = dataNodes[i];
-      if (i == 0) {
-        this.entryNode.push(datanode);
-      }
-      const isExist = this.childNodes.find(child => child.name === datanode.name);
-      if (isExist) continue;
-      datanode.on('modify', this.updateEvent.bind(this, 'nodeUpdate'));
-      this.childNodes.push(datanode);
-    }
-    return this;
-  }
-	 /**
-	 * 根据name 获取 EvaDataNode 对象
-	 *
-	 * @param {string} name EvaDataNode name
-	 *
-	 * @returns {EvaDataNode} EvaDataNode
-	 */
-  getNodeByNodeId (name) {
-    return this.childNodes.find(node => node.name == name);
+    this.regionView.setEntryNodes(...EvaDataNods)
+   return this
   }
 	 /**
 	 * 根据name 获取 EvaDataNode 对象
@@ -286,7 +250,7 @@ class EvaRegion extends EventEmitter {
 	 * @returns {EvaDataNode} EvaDataNode
 	 */
   getNodeByNodeName (name) {
-    return this.childNodes.find(node => node.name == name);
+    return  this.regionView.getNodeByNodeName(name)
   }
 	/**
 	 * 设置高亮节点
@@ -320,44 +284,15 @@ class EvaRegion extends EventEmitter {
   setRegionArea () {
     return this;
   }
-	/**
-	 * 加载节点数据json
-	 *
-	 * @param {object} datas 节点数据json  详情见example
-	 * @returns {object} EvaRegion
-	 */
-  setNodeData (...datas) {
-    const children = [];
-    const connections = [];
-    for (const data of datas) {
-      EvaRegion.transforData(data, children, connections);
-    }
-    if (children.length == 0) {
-      return;
-    }
-    for (let i = 0; i < connections.length; i++) {
-      const conn = connections[i];
-      const sourceName = conn.source;
-      const targetName = conn.target;
-      const sourceNode = children.find(child => child.name === sourceName);
-      const targetNode = children.find(child => child.name === targetName);
-      if (!sourceNode || !targetNode) {
-        Console.warn('error in pass the json data source:', conn.sourceNode, conn.targetNode, conn);
-        continue;
-      }
-      const connection = sourceNode.connectAndGetConnetion(targetNode, conn.metrics);
-      if(conn.class = 'region' && conn.region) {
-        connection.setRegionData(conn.region)
-      }
-      if (conn.notices) {
-        for (let j = 0; j < conn.notices.length; j++) {
-          const notice = conn.notices[j];
-          connection.createNotices(notice.title, notice.severity, notice.link);
-        }
-      }
-    }
-    this.setChildren(children);
-    return this;
+  /**
+   * 加载节点数据json
+   *
+   * @param {object} datas 节点数据json  详情见example
+   * @returns {object} EvaRegion
+   */
+  setNodeData (data) {
+    this.regionView.setData(data)
+    return this
   }
 	/**
 	 * 重载数据 用于不同结构的json 格式
@@ -365,13 +300,13 @@ class EvaRegion extends EventEmitter {
 	 * @param {object} datas 节点数据json
 	 * @returns {EvaRegion} EvaRegion
 	 */
-  reload (...datas) {
+  reload (data) {
     if (this._reload) {
       return;
     }
     this._reload = true;
     this.currentView = undefined;
-    this.setNodeData(...datas);
+    this.setNodeData(data);
     this.vizceral.reload(this.toData())
     this._reload = false;
     return this;
@@ -383,62 +318,9 @@ class EvaRegion extends EventEmitter {
   setAggregation(Aggregations) {
     this.Aggregation = Aggregations
   }
-
-
-   /**
-   * 转换成json数据
-   *
-   */
   toData () {
-    if (this.childNodes.length <= 0) {
-      return {};
-    }
-    const entryNode = this.childNodes[0];
-    const connections = this.childNodes.map((datanode, index) => datanode.getConnections());
-    connections.push([]);
-    const connectionItems = connections.reduce((c1, c2) => c1.concat(c2)).map(connectionItem => connectionItem.getFormatData());
-
-
-    const nodes = this.childNodes
-    .map((datanode, index) => datanode.getFormatData());
-		// 拿到首节点数据，然后构建没有
-    let result = entryNode.getFormatData()
-    result.connections = connectionItems
-    result.nodes = nodes
-
-    if(entryNode.Aggregation.length > 0) {
-       result.renderer = 'Aggregation'
-     }else{
-      result.renderer = 'region'
-     }
-
-    return result
-  }
-  /**
-   * 转换成json数据 new 
-   *
-   */
-   toDateNew () {
-    /**
-      1、frist get entryNode
-      2、get the entryNode Top Infomation
-      3、get the entryNode body data
-                  body info is include
-                        1 entry node top info   
-                        2 entry childeNode node info 
-                                  
-
-                        3、get the connection node and unfold it out
-
-
-
-
-
-    */
-    
+    return this.regionView.toData()
    }
-
-
 	/**
 	 * 获取链接
 	 * @param {string} sourceDataName 起点 EvaDataNode name
@@ -446,8 +328,7 @@ class EvaRegion extends EventEmitter {
 	 * @returns {EvaConnection} EvaConnection
 	 */
   getConnection (sourceDataName, targetDataName) {
-    const node = this.getNodeByNodeId(sourceDataName);
-    return node.getConnection(targetDataName);
+    return this.regionView.getConnection(sourceDataName, targetDataName);
   }
 	/**
 	 * 转换成json数据
@@ -465,21 +346,6 @@ class EvaRegion extends EventEmitter {
   }
 }
 
-EvaRegion.transforData = function (data, nodeCollections, conCollections) {
-  const dataNode = new EvaDataNode(data.name, data);
-  nodeCollections.push(dataNode);
-  if (data.connections) {
-    for (let i = 0; i < data.connections.length; i++) {
-      conCollections.push(data.connections[i]);
-    }
-  }
-  if (!data.nodes) {
-    return;
-  }
-  for (let i = 0; i < data.nodes.length; i++) {
-    EvaRegion.transforData(data.nodes[i], nodeCollections, conCollections);
-  }
-};
 EvaRegion.prototype.initDefinitions = function () {
   if (!this.hasInit) {
     return;

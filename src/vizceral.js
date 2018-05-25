@@ -885,10 +885,10 @@ class Vizceral extends EventEmitter {
       let currentOldGraph = this.currentGraph
       _.forEach(this.graphs,(graph) => {
           graph.removeAllListeners()
+          graph.setCurrent(false)
           if(graph.cleanup){
             graph.cleanup()
           }
-          graph.setCurrent(false)
           this.__parentTrafficData = []
       })
       this.graphs = {};

@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import EvaConnection from './EvaConnection';
+import RegionView from "./RegionView";
  /**
    * EvaDataNode (name,options)布局对象
    *
@@ -31,46 +32,31 @@ class EvaDataNode extends EventEmitter {
     this.aggregationId = options.aggregationId
     this.node_type = options.node_type;
     this.connections = [];
-    this.subRegion = []
+    this.subRegion = undefined
     this.detailShow = 'default';
     this._createOptaion = options;
     this._nodeTag = [];      // dataNode 标签类
     this._genTime = Date.now();
     this.metadata = options.metadata;    // 用于资深私有数据
-    this._addChildNodes(options.nodes)
+    this._addChildNodes()
     this.checkDataNode();
   }
+  _addChildNodes(nodes,connections) {
+    if(this._createOptaion.nodes && this._createOptaion.nodes.length >0){
+      this.subRegion = new RegionView(this)
+      this.subRegion.setData(this._createOptaion)
+      this.subRegion.on("modify",this.emit.bind(this))
+    }
+  }
   /**
-   *  增加子区域入口节点
+   *  setSubRegionEntry
    *
-   * @param {string} bool 是否高亮 true or false
+   * @param {string} 设置子区域
    * @return {EvaDataNode}
    */
-  setSubRegionEntryNode (subRootData) {
-    if (!(subRootData instanceof EvaDataNode)) {
-      throw new Error('subRootData must be EvaDataNode class');
-    }
-    const exist = this.subRegion.find(dataNodeItem => dataNodeItem.name === subRootData.name);
-    if(!exist) {
-      this.subRegion.push(subRootData)
-    }
-    if(this.subRegion.length > 0) {
-      this.renderer = EvaDataNode.RENDERER.REGION
-    }
+   setSubRegion () {
     return this
-  }
-
-  _addChildNodes(nodes) {
-    if(!_.isArray(nodes)){
-      return 
-    }
-    let self = this
-    nodes.map(node => new EvaDataNode(node.name,node))
-    .forEach(evaNode => {
-      evaNode.setParentDataNode(self)
-      self.setConnectNode(evaNode)
-    })
-  }
+   }
   /**
    *  设置高亮
    *
@@ -116,7 +102,7 @@ class EvaDataNode extends EventEmitter {
     }
     if (!this.node_type) {
       // TODO
-      this.node_type = 'default';
+      this.node_type = EvaDataNode.CONSTS.DEAULT.NODE_TYPE
     }
     if (!this.maxVolume) {
       this.maxVolume = EvaDataNode.CONSTS.DEAULT.MAXVOLUME;
@@ -234,7 +220,7 @@ class EvaDataNode extends EventEmitter {
     }
   }
 
-  getFormatDataNew (infoType) {
+  getFormatData (infoType) {
     if(infoType == "head") {
       return this.getHeadData()
     }
@@ -243,6 +229,9 @@ class EvaDataNode extends EventEmitter {
     }
     const head = this.getHeadData()
     const body = this.getBodyData()
+    if(body.nodes.length >0) {
+      head.renderer = EvaDataNode.CONSTS.RENDERER.REGION
+    }
     return _.assign(head,body)
   }
   getHeadData () {
@@ -263,61 +252,24 @@ class EvaDataNode extends EventEmitter {
   getBodyData () {
     // 获取 top 
     // 获取 所有连接
-    let connections = this.connections.map(connectionItem => connectionItem.getFormatData());
+    let connections = []
     const childs = []
     this.getChildren(childs)
-
     const nodes = childs.map(node => {
-      let data = node.getFormatDataNew("head")
-      if(node.renderer == EvaDataNode.RENDERER.REGION){
-          const subRegion = node.subRegion[0].getFormatDataNew("body")
-          data = _.assign(data,subRegion)
+      let data = node.getFormatData("head")
+      let connectionItems = node.connections.map(connectionItem => connectionItem.getFormatData());
+      connections.push(connectionItems)
+      if(node.renderer == EvaDataNode.CONSTS.RENDERER.REGION){
+         const subRegion = node.subRegion.toData()
+         data.nodes = subRegion.nodes
+         data.connections = subRegion.connections
       }
       return data
     })
     return {
       nodes: nodes,
-      connections: connections,
+      connections: _.flattenDeep(connections)
     }
-  }
-  getFormatData (withoutChilds) {
-  // body...
-    const childs = this.childNodes.map(dataNodeItem => dataNodeItem.getFormatData());
-    const selfEntryNode = {
-      name: this.name,
-      renderer: this.renderer,
-      node_type: this.node_type,
-      displayName: this.displayName,
-      maxVolume: this.maxVolume,
-      class: this.class,
-      layout: this.layout,
-      updated: this.updated,
-      nodes: childs,
-      connections: connections,
-      Aggregation:this.Aggregation,
-      aggregationId:this.aggregationId,
-      metadata: this.metadata
-    };
-    if (this.displayName) {
-      selfEntryNode.displayName = this.displayName;
-    }
-    childs.push(selfEntryNode);
-    let connections = this.connections.map(connectionItem => connectionItem.getFormatData());
-    return {
-      renderer: this.renderer,
-      name: this.name,
-      node_type: this.node_type,
-      displayName: this.displayName,
-      maxVolume: this.maxVolume,
-      class: this.class,
-      layout: this.layout,
-      updated: this.updated,
-      nodes: childs,
-      Aggregation:this.Aggregation,
-      aggregationId:this.aggregationId,
-      connections: connections,
-      metadata: this.metadata
-    };
   }
 }
 
@@ -332,9 +284,13 @@ EvaDataNode.CONSTS = {
     NORMAL: 'normal',
     WARNING: 'warning'
   },
+  NODE_TYPE:{
+    DEAULT:"default"
+  },
   DEAULT: {
     RENDERER: 'focusedChild',
     DISPLAYNAME_PRE: 'dataNode',
+    NODE_TYPE:"default",
     MAXVOLUME: 50000,
     LAYOUT: 'ltrTree',
     CLASS: 'normal'
