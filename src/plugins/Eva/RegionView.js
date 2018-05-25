@@ -12,8 +12,8 @@ class RegionView extends EventEmitter {
     this.isRoot = false
     this.reginInfomation = {}
     this.entryNodes = []
-    this.nodeMap = {}
-    this.connectionMap ={}
+    // this.nodeMap = {}
+    // this.connectionMap ={}
   }
   setEntryNodes (...entryNodes) {
     for (const dataNode of entryNodes) {
@@ -22,8 +22,7 @@ class RegionView extends EventEmitter {
       }
       const exist = this.entryNodes.find(dataNodeItem => dataNodeItem.name === dataNode.name);
       if(!exist){
-      	 this.entryNodes.push(dataNode)  
-         this._headEvent(dataNode)
+      	 this.entryNodes.push(dataNode)
       }     
     }
     return this
@@ -37,11 +36,17 @@ class RegionView extends EventEmitter {
       return {}
     }
     let data = entryNode.getFormatData()
+    data = _.defaults(this.reginInfomation,data);
     for(let i = 1 ;i< this.entryNodes.length;i++){
       const secEntryNode = this.entryNodes[i]
       const secData = secEntryNode.getFormatData("body")
       data.nodes = data.nodes.concat(secData.nodes)
       data.connections = data.connections.concat(secData.connections)
+    }
+    if(this.isRoot) {
+      if(data.renderer === EvaDataNode.CONSTS.DEAULT.RENDERER) {
+        data.renderer = EvaDataNode.CONSTS.RENDERER.REGION;
+      }
     }
     return data
   }
@@ -84,7 +89,16 @@ class RegionView extends EventEmitter {
       }
     }
     rootDatanode.filter(node => node.parentNodes.length == 0).forEach(node => this.setEntryNodes(node))
+    this.setHeadTop(data)
   }
+  setHeadTop(data) {
+    const top = _.cloneDeep(data)
+    delete top.nodes
+    delete top.connections
+    this.reginInfomation = top
+  }
+
+
   cleanup() {
   	for(let i =0 ; i < this.entryNodes.length;i++){
   		this.entryNodes[i].removeAllListeners()

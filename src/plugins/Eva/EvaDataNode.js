@@ -229,9 +229,6 @@ class EvaDataNode extends EventEmitter {
     }
     const head = this.getHeadData()
     const body = this.getBodyData()
-    if(body.nodes.length >0) {
-      head.renderer = EvaDataNode.CONSTS.RENDERER.REGION
-    }
     return _.assign(head,body)
   }
   getHeadData () {
