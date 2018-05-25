@@ -7,13 +7,13 @@ const Console = console;
 
 class RegionView extends EventEmitter {
   constructor (vizRegion) {
-	super();
-	this.evaReion = vizRegion
-	this.isRoot = false
-	this.reginInfomation = {}
-  this.entryNodes = []
-  this.nodeMap = {}
-  this.connectionMap ={}
+	 super();
+    this.evaReion = vizRegion
+    this.isRoot = false
+    this.reginInfomation = {}
+    this.entryNodes = []
+    this.nodeMap = {}
+    this.connectionMap ={}
   }
   setEntryNodes (...entryNodes) {
     for (const dataNode of entryNodes) {
@@ -23,6 +23,7 @@ class RegionView extends EventEmitter {
       const exist = this.entryNodes.find(dataNodeItem => dataNodeItem.name === dataNode.name);
       if(!exist){
       	 this.entryNodes.push(dataNode)  
+         this._headEvent(dataNode)
       }     
     }
     return this
@@ -45,10 +46,14 @@ class RegionView extends EventEmitter {
     return data
   }
 
-  emitUpdate() {
-    console.log("emitUpdate",arguments)
+  _headEvent (dataNode) {
+    // if (!(dataNode instanceof EvaDataNode)) {
+    //   throw new Error('dataNode must be EvaDataNode class');
+    // }
+    // const child = []
+    // dataNode.getChildren(child)
+    // child.forEach(node => node.on("modify",(events)=>{}))
   }
-
   setData (data) {
   	// 解析入口点
   	this.cleanup()
