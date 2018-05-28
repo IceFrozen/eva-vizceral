@@ -278,18 +278,27 @@ class Vizceral extends EventEmitter {
       this.__parentTrafficData = []
     }
     if (trafficData && trafficData.nodes) {
+      const oldTrafficData = this.trafficData
       this.trafficData = trafficData;
       this.rootGraphName = trafficData.name;
-
       // Now that the initial data is loaded, check if we can set the initial node
       if (this.initialView) {
         this.setView(this.initialView, this.initialObjectToHighlight);
       }
       this.version+=1
-      return this.updateGraph(this.currentGraph);
-    }
+
+      if(!oldTrafficData || oldTrafficData.name == this.rootGraphName){
+        this.updateGraph(this.currentGraph)
+        return 
+      }
+      if(clear) {
+        const newGraph = this.getNearestValidGraph([]);
+        this.selectGraph(newGraph, null);
+        this.calculateMouseOver();
+      }
     return undefined
-  }
+   }
+ }
 
   /**
    * 在父节点加入子节点
@@ -723,6 +732,9 @@ class Vizceral extends EventEmitter {
 
   // Needed for all graphs
   selectGraph (graph, redirectedFrom) {
+    if(this.currentGraph === graph) {
+      return
+    }
     if (this.currentGraph !== undefined) {
       this.scene.remove(this.currentGraph.view.container);
       this.currentGraph.setCurrent(false);
@@ -881,25 +893,26 @@ class Vizceral extends EventEmitter {
   }
   // 重新reload 数据
   reload(trafficData) {
-    if (trafficData && trafficData.nodes) {
-      let currentOldGraph = this.currentGraph
-      _.forEach(this.graphs,(graph) => {
-          graph.removeAllListeners()
-          graph.setCurrent(false)
-          if(graph.cleanup){
-            graph.cleanup()
-          }
-          this.__parentTrafficData = []
-      })
-      this.graphs = {};
-      this.trafficData = trafficData;
-      this.rootGraphName = trafficData.name;
-      this.setCurrentGraph(this.getGraph())
-      this.currentGraph = undefined
-      this.scene.remove(currentOldGraph.view.container);
-      this.updateGraph(this.currentGraph);
-      this.setView()
-    }
+    this.updateData(trafficData,true)
+    // if (trafficData && trafficData.nodes) {
+    //   let currentOldGraph = this.currentGraph
+    //   _.forEach(this.graphs,(graph) => {
+    //       graph.removeAllListeners()
+    //       graph.setCurrent(false)
+    //       if(graph.cleanup){
+    //         graph.cleanup()
+    //       }
+    //       this.__parentTrafficData = []
+    //   })
+    //   this.graphs = {};
+    //   this.trafficData = trafficData;
+    //   this.rootGraphName = trafficData.name;
+    //   this.setCurrentGraph(this.getGraph())
+    //   this.currentGraph = undefined
+    //   this.scene.remove(currentOldGraph.view.container);
+    //   this.updateGraph(this.currentGraph);
+    //   this.setView()
+    // }
 
   }
 }
