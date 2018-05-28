@@ -212,9 +212,17 @@ class EvaDataNode extends EventEmitter {
     return this;
   }
   getChildren (collectionArray) {
-    collectionArray.push(this);
+    const isExit = collectionArray.find((node)=>node.name === this.name)
+    if(!isExit) {
+      collectionArray.push(this)
+    }
     if (this.childNodes.length > 0) {
       for (let i = this.childNodes.length - 1; i >= 0; i--) {
+        const childNode = this.childNodes[i]
+        const isExit = collectionArray.find((collectionArrayItem)=>collectionArrayItem.name === childNode.name)
+        if(isExit) {
+          continue;
+        }
         this.childNodes[i].getChildren(collectionArray);
       }
     }
