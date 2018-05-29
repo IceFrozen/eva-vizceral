@@ -91,7 +91,6 @@ function generateParticleSystem (size, customWidth, connectionWidth, connectionD
   const customOpacities = new Float32Array(size);
   const sizes = new Float32Array(size);
   const velocities = new Float32Array(size * 3); // Don't want to to be doing math in the update loop
-
   for (let i = 0; i < size; i++) {
       // Position
     vertices[i * 3] = 0;
@@ -456,7 +455,7 @@ class ConnectionView extends BaseView {
       }
 
       if (wholeParticles > 0) {
-        this.launchParticles(wholeParticles, releaseInfo.name);
+        //this.launchParticles(wholeParticles, releaseInfo.name);
       }
     }
 
