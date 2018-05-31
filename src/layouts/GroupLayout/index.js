@@ -37,7 +37,6 @@ class GroupTreeLayout {
     const offsetY = 10
     //dimensions  长度 和狂赌
     let groups =  _.uniq(graph.allNodes.filter((node)=>node.groupId).map((node)=>node.groupId))
-    console.log("graph",graph)
     let groupMap = _.groupBy(graph.allNodes,(node)=>node.groupId)
     const groupNumber = Math.ceil(groups.length/3)
     const chunk = _.chunk(groups, 3);

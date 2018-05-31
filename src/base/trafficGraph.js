@@ -636,7 +636,6 @@ class TrafficGraph extends EventEmitter {
 
   removeNode (node) {
     // remove the node from the view
-    console.log("delete",node.name)
     this.view.removeObject(node);
     // remove the node from the map of nodes
     delete this.nodes[node.getName()];
@@ -792,7 +791,6 @@ class TrafficGraph extends EventEmitter {
     const graph = { nodes: [], connections: [],allNodes:[], options: this.layoutOptions, entryNode: this.entryNode };
     let totalNodes = 0;
     let visibleNodes = 0;
-    console.log("graph",graph)
     // Go through all the filters and separate the node and connection filters
     const filters = { connection: [], node: [] };
     _.each(this.filters, (filter) => {

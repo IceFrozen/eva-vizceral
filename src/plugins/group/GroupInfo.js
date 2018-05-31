@@ -80,7 +80,6 @@ class GroupInfo extends BaseView {
       return 
     }
     this.cleanLine()
-    console.log(this.groups)
     _.forEach(this.groups,(group)=>{
       this.genArea(group.getGroupId(),group.getStartPoint(),group.getWidth(),group.getHeight())
     })
@@ -247,7 +246,7 @@ class GroupInfo extends BaseView {
     }else {
       nodes = []
     }
-    nodes = _.uniq(nodes.filter((node)=>node.GroupId).map((node)=>node.GroupId))
+    nodes = _.uniq(nodes.filter((node)=>node.groupId).map((node)=>node.groupId))
     this._hightlingArea(nodes)
   }
 

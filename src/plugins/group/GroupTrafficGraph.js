@@ -40,10 +40,12 @@ class GroupTrafficGraph extends TrafficGraph {
       if (!this.highlightedObject) {
         if (!this.intersectedObject) {
           // If we are not hovering over anything, clear the highlighting
+          if(this.groupInfo) this.groupInfo.highlight(this.intersectedObject)
           this.highlightConnectedNodes(undefined);
         } else if (this.intersectedObject instanceof this.NodeClass ||
                     this.intersectedObject instanceof this.ConnectionClass) {
           this.emit('objectHovered', this.intersectedObject);
+          if(this.groupInfo) this.groupInfo.highlight(this.intersectedObject)
           this.highlightConnectedNodes(this.intersectedObject);
         }
       }
@@ -54,10 +56,12 @@ class GroupTrafficGraph extends TrafficGraph {
     // If we clicked on nothing, clear highlight
     if (!this.intersectedObject) {
       this.highlightObject(undefined);
+      if(this.groupInfo) this.groupInfo.highlight(this.intersectedObject)
     } else if ((this.intersectedObject instanceof this.NodeClass)
              || (this.intersectedObject instanceof this.ConnectionClass)) {
       // If clicked on a node and highlighting is allowed, highlight
       // Or if clicked on a connection, highlight.
+      if(this.groupInfo) this.groupInfo.highlight(this.intersectedObject)
       this.highlightObject(this.intersectedObject);
     }
     return this

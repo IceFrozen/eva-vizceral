@@ -350,7 +350,7 @@ class AggregationInfo extends BaseView {
 
   // 节点高亮
   highlightObject() {
-    console.log('i am hight in aggregation')  
+    //console.log('i am hight in aggregation')  
   }
   /*
     生成线
