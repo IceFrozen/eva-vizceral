@@ -18,14 +18,12 @@
 import FocusedNodeView from '../../focused/focusedNodeView';
 import Node from '../../base/node';
 import NodeViewStandard from '../../base/nodeViewStandard';
-import AggregationInfo from './AggregationInfo';
+import GroupInfo from './GroupInfo';
 
-class AggregationNode extends Node {
+class GroupNode extends Node {
   constructor (node,entryNode,state) {
     node.size = node.size || 60;
     super(node, 'region');
-    this.Aggregation = state.GroupInfo
-    this.aggregationId = node.groupId
     this.loaded = true;
   }
 
@@ -46,4 +44,4 @@ class AggregationNode extends Node {
   }
 }
 
-export default AggregationNode;
+export default GroupNode;

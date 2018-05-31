@@ -111,7 +111,7 @@ const weightSort = function (a, b) {
       const graph = new Graph(data.graph.nodes, data.graph.edges); // Build a simple graph object
 
       graph.removeSameEdges(); // Remove edges that have same source and target
-      // 删除肺循环链接
+      
       AcyclicFAS.remove(graph); // Remove acyclic links
       Ranker.longestPathRanking(graph); // Run a longest path algorithm to build a layout baseline
       // TODO: Rank the nodes from the dropped same edges...
@@ -120,10 +120,6 @@ const weightSort = function (a, b) {
       graph.restoreSameEdges(); // Replace edges that have same source and target
 
       Ranker.normalizeRanks(graph); // Normalize node ranks to be 0++
-      if (!options.noRankPromotion) {
-        Ranker.forcePrimaryRankPromotions(graph, data.entryNode); // Force all entry nodes to be first
-        Ranker.forceSecondaryRankPromotions(graph, data.entryNode); // Force any leafs that are one level deep from specified entry node to not move all the way to the edge
-      }
 
       const nodesSortedByDepth = sortNodesByDepth(graph);
    

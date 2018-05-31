@@ -16,7 +16,7 @@
  *
  */
 /* eslint no-restricted-syntax: 0 */
-import Graph from './ltrTreeGraph';
+import Graph from './GroupGraph';
 import AcyclicFAS from './acyclicFAS';
 import Ranker from './ranker';
 
@@ -27,17 +27,19 @@ const weightSort = function (a, b) {
 };
 
 (function () {
-  const LTRTreeLayouter = (function () {
-    const ltrTreeLayouter = function () {};
+  const GroupLayouterWorker = (function () {
+    const GroupLayouterWorker = function () {};
     // TODO: Make layout deterministic
 
     function sortNodesByDepth (graph) {
       // Build the map of nodes to their levels
       let nodesSortedByDepth = [];
       let index;
+   
       for (index in graph.nodes) {
         if ({}.hasOwnProperty.call(graph.nodes, index)) {
           const node = graph.nodes[index];
+        
           nodesSortedByDepth[node.rank] = nodesSortedByDepth[node.rank] || [];
           nodesSortedByDepth[node.rank].push(node);
         }
@@ -45,7 +47,6 @@ const weightSort = function (a, b) {
 
       // Remove empty ranks (and normalize to base 0)
       nodesSortedByDepth = nodesSortedByDepth.reduce((a, n) => { a.push(n); return a; }, []);
-
       const maxNodesPerDepth = 30;
       for (let i = 0; i < nodesSortedByDepth.length; i++) {
         const nodesInDepth = nodesSortedByDepth[i];
@@ -67,11 +68,7 @@ const weightSort = function (a, b) {
 
         // Heaviest in the middle, lightest to the outside
         for (let j = nodesAtDepth.length - 1; j >= 0; j--) {
-          if (j % 2) {
-            newNodesAtDepth.push(nodesAtDepth[j]);
-          } else {
-            newNodesAtDepth.unshift(nodesAtDepth[j]);
-          }
+            newNodesAtDepth.unshift(nodesAtDepth[j]); 
         }
         nodesSortedByDepth[i] = newNodesAtDepth;
       }
@@ -83,11 +80,11 @@ const weightSort = function (a, b) {
       let yOffset = -35;
 
       function setPositions (column, nodesAtDepth, xDelta) {
+       
         const curXDelta = xDelta * column;
         const yDelta = dimensions.height / (nodesAtDepth.length + 1);
         const needsYOffset = yDelta < lastYDelta ? lastYDelta % yDelta < 1 : yDelta % lastYDelta < 1;
         if (needsYOffset) { yOffset = -yOffset; }
-
         for (let j = 0; j < nodesAtDepth.length; j++) {
           const curYDelta = (yDelta * (j + 1)) + (needsYOffset ? yOffset : 0);
           nodePositions[nodesAtDepth[j].name] = { x: curXDelta, y: curYDelta };
@@ -106,17 +103,28 @@ const weightSort = function (a, b) {
           setPositions(i, nodesSortedByDepth[i], xDelta);
         }
       }
-
       return nodePositions;
     }
 
-    ltrTreeLayouter.prototype.layout = function (data) {
-      const options = data.options || {};
-      const graph = new Graph(data.graph.nodes, data.graph.edges); // Build a simple graph object
+    /*
+      layout  得到一共介个组别
+          1、得到每个组别
+          2、确定每个组别的长宽高
+                1、如果分组太多，则设置最小的长宽 然后根据条件 来分割屏幕 每组最多三个 
 
-      
-      graph.removeSameEdges(); // Remove edges that have same source and target
-      AcyclicFAS.remove(graph); // Remove acyclic links
+          3、得到每组的节点进行排列
+              1、首先确定每组的进入节点
+              2、根据节点生成最大深度
+              3、根据深度来分割每组位置
+              4、循环链接按照最大深度计算
+              5、将深度一样的节点坐落到不同的
+    */
+    GroupLayouterWorker.prototype.layout = function (data) {
+      const options = data.options || {};
+      const graph = new Graph(data.graph.nodes, data.graph.edges);
+
+      graph.removeSameEdges(); // 删除相同链接
+      AcyclicFAS.remove(graph); // 删除循环的链接
       Ranker.longestPathRanking(graph); // Run a longest path algorithm to build a layout baseline
       // TODO: Rank the nodes from the dropped same edges...
 
@@ -124,25 +132,25 @@ const weightSort = function (a, b) {
       graph.restoreSameEdges(); // Replace edges that have same source and target
 
       Ranker.normalizeRanks(graph); // Normalize node ranks to be 0++
-      // if (!options.noRankPromotion) {
-      //   Ranker.forcePrimaryRankPromotions(graph, data.entryNode); // Force all entry nodes to be first
-      //   Ranker.forceSecondaryRankPromotions(graph, data.entryNode); // Force any leafs that are one level deep from specified entry node to not move all the way to the edge
-      // }
+      
+
+
       const nodesSortedByDepth = sortNodesByDepth(graph);
+   
       sortNodesWithinDepth(nodesSortedByDepth);
       const nodePositions = positionNodes(nodesSortedByDepth, data.dimensions);
       return nodePositions;
     };
 
-    return ltrTreeLayouter;
+    return GroupLayouterWorker;
   }());
 
   if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-    module.exports = LTRTreeLayouter;
+    module.exports = GroupLayouterWorker;
   } else if (self !== undefined) {
-    self.LTRTreeLayouter = LTRTreeLayouter;
+    self.GroupLayouterWorker = GroupLayouterWorker;
   } else {
-    window.LTRTreeLayouter = LTRTreeLayouter;
+    window.GroupLayouterWorker = GroupLayouterWorker;
   }
 }());
 

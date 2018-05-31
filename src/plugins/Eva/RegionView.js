@@ -36,7 +36,7 @@ class RegionView extends EventEmitter {
       return {}
     }
     let data = entryNode.getFormatData()
-    data = _.defaults(this.reginInfomation,data);
+    data = _.defaults(_.cloneDeep(this.reginInfomation),data);
     for(let i = 1 ;i< this.entryNodes.length;i++){
       const secEntryNode = this.entryNodes[i]
       const secData = secEntryNode.getFormatData("body")
@@ -68,6 +68,7 @@ class RegionView extends EventEmitter {
   	rootDatanode.forEach(node=>{
   		nodeMap[node.name] = node
   	})
+    const connectionMap = {}
   	for(let i =0 ;i < data.connections.length;i++){
       const conn = data.connections[i]
       const target = conn.target
@@ -78,6 +79,13 @@ class RegionView extends EventEmitter {
         continue
       }
       const connection = sourceNode.connectAndGetConnetion(targetNode, conn.metrics);
+      // const cId = [target,source].sort().join()
+      // if(connectionMap[cId] == null) {
+      //   connectionsMap[cId] = []
+      // }
+      // connectionsMap[cid].push(connection)
+      // 记住代还
+
       if(conn.class = 'region' && conn.region) {
         connection.setRegionData(conn.region)
       }
@@ -88,6 +96,7 @@ class RegionView extends EventEmitter {
         }
       }
     }
+    // 有环啊！！！
     rootDatanode.filter(node => node.parentNodes.length == 0).forEach(node => this.setEntryNodes(node))
     this.setHeadTop(data)
   }

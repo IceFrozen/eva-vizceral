@@ -28,8 +28,8 @@ class EvaDataNode extends EventEmitter {
     this.updated = options.updated ? options.updated : Date.now();         // 更新时间戳 目前没用
     this.parentNodes = [];
     this.childNodes = [];
-    this.Aggregation = options.Aggregation || []
-    this.aggregationId = options.aggregationId
+    this.GroupInfo = options.GroupInfo || []
+    this.groupId = options.groupId
     this.node_type = options.node_type;
     this.connections = [];
     this.subRegion = undefined
@@ -200,6 +200,13 @@ class EvaDataNode extends EventEmitter {
   getConnections () {
     return this.connections;
   }
+  /**
+   * 是否有环
+   * @return {[EvaConnection]}
+   */
+   isLoop () {
+     return true  
+   }
   showDetail (name) {
     if (!name) {
       name = 'default';
@@ -249,8 +256,8 @@ class EvaDataNode extends EventEmitter {
       class: this.class,
       layout: this.layout,
       updated: this.updated,
-      Aggregation:this.Aggregation,
-      aggregationId:this.aggregationId,
+      GroupInfo:this.GroupInfo,
+      groupId:this.groupId,
       metadata: this.metadata
     }
   }

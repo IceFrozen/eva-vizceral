@@ -76,7 +76,9 @@ class TrafficGraph extends EventEmitter {
 
     this.layoutDimensions = {
       width: graphWidth - 400,
-      height: graphHeight - 45
+      height: graphHeight - 45,
+      graphWidth:graphWidth,
+      graphHeight:graphHeight
     };
 
     this.displayOptions = {
@@ -414,7 +416,7 @@ class TrafficGraph extends EventEmitter {
           stateNodeMap[stateNode.name] = true;
           let node = this.nodes[stateNode.name];
           if (!node) {
-            node = new this.NodeClass(stateNode, this.entryNode,state);
+            node = new this.NodeClass(stateNode, this.entryNode);
             node.setRendUtils(this.renderUtilsInstance)
             node.updatePosition(stateNode.position, index);
             this.nodes[stateNode.name] = node;
@@ -501,6 +503,32 @@ class TrafficGraph extends EventEmitter {
           this.view.invalidateInteractiveChildren();
         }
 
+        //找出1 -2， 2-1 的点 
+        const circleLink = {}
+        _.each(this.connections, (connection) => {
+          const starray = [connection.target.name,connection.source.name]
+          connection.cleanSiblingNode()
+          const key = starray.sort().join("<-->")
+          if(!circleLink[key]){
+            circleLink[key] = []
+          }
+          connection.siblingIndex = circleLink[key].length + 1
+          circleLink[key].push(connection)
+        })
+        // 增加兄弟节点
+        _.each(circleLink,(InConnections)=>{
+          // 找到两个链接的
+          if(InConnections.length == 1) {
+            return 
+          }
+          for(let i =0 ; i < InConnections.length;i++){
+            const inConn = InConnections[i]
+            for(let j =0; j< InConnections.length;j++){
+              if(i == j) continue;
+              inConn.pushSiblingNode(InConnections[j])
+            }
+          }
+        })
         this.emitObjectUpdated();
         updatedState = true;
       } else {
@@ -608,6 +636,7 @@ class TrafficGraph extends EventEmitter {
 
   removeNode (node) {
     // remove the node from the view
+    console.log("delete",node.name)
     this.view.removeObject(node);
     // remove the node from the map of nodes
     delete this.nodes[node.getName()];
@@ -730,7 +759,9 @@ class TrafficGraph extends EventEmitter {
               })
               .start();
   }
-
+  layoutRunCompleted () {
+    
+  }
 
   getPhysicsOptions () {
     const o = this._particleSystem.getOptions();
@@ -758,10 +789,10 @@ class TrafficGraph extends EventEmitter {
 
   _relayout () {
     // Update filters
-    const graph = { nodes: [], connections: [], options: this.layoutOptions, entryNode: this.entryNode };
+    const graph = { nodes: [], connections: [],allNodes:[], options: this.layoutOptions, entryNode: this.entryNode };
     let totalNodes = 0;
     let visibleNodes = 0;
-
+    console.log("graph",graph)
     // Go through all the filters and separate the node and connection filters
     const filters = { connection: [], node: [] };
     _.each(this.filters, (filter) => {
@@ -771,12 +802,11 @@ class TrafficGraph extends EventEmitter {
         filters.node.push(filter);
       }
     });
-
     _.each(this.nodes, (node) => {
       delete node.forceLabel;
+      node.filtered = false;
+      graph.allNodes.push(node)
     });
-
-    _.each(this.nodes, (n) => { n.filtered = false; });
     _.each(this.connections, (c) => { c.filtered = false; });
 
     const forceNodesVisible = Object.keys(this.nodes).length > 1;
@@ -807,9 +837,9 @@ class TrafficGraph extends EventEmitter {
 
     this.nodeCounts.total = totalNodes;
     this.nodeCounts.visible = visibleNodes;
-
-    this.layout.run(graph, this.layoutDimensions, (() => {
+    this.layout.run(graph, this.layoutDimensions, ((result) => {
       // Console.info(`Layout: Received updated layout for ${this.name} from the worker.`);
+      this.layoutRunCompleted(graph,result)
       this.hasPositionData = true;
       this.updateView();
     }));

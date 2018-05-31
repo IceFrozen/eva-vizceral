@@ -1,31 +1,31 @@
 import _ from 'lodash';
-import EvaLTRTreeLayout from '../../layouts/EvaLTRTreeLayout';
-import AggregationConnection from './AggregationConnection';
-import AggregationNode from './AggregationNode';
+import GroupLayout from '../../layouts/GroupLayout';
+import GroupConnection from './GroupConnection';
+import GroupNode from './GroupNode';
 import TrafficGraph from '../../base/trafficGraph';
-import AggregationInfo from './AggregationInfo';
+import GroupInfo from './GroupInfo';
 
 
 const Console = console;
 /**
-  Aggregation
+  Group
    * 机房 用于绘图绘制 节点和节点之间的 关系
    * @constructor
    * @param {string} source 源节点name
    * @param {string} target 目的节点name
    * @param {object} metadata 私有数据
 */
-class AggregationTrafficGraph extends TrafficGraph {
+class GroupTrafficGraph extends TrafficGraph {
   constructor (name, mainView, parentGraph, graphWidth, graphHeight, Layout = EvaLTRTreeLayout, entryNode) {
-    Layout = EvaLTRTreeLayout
-    super(name, mainView, parentGraph, graphWidth, graphHeight, AggregationNode, AggregationConnection, Layout, entryNode);
-    this.type = 'Aggregation';
+    Layout = GroupLayout
+    super(name, mainView, parentGraph, graphWidth, graphHeight, GroupNode, GroupConnection, Layout, entryNode);
+    this.type = 'Group';
     this.linePrecision = 4;
     this.data = {};
     this._layoutTimeoutId = null;
     this._numberOfRunningAsyncLayoutTasks = 0;
     this._onAsyncLayoutTimeout_func = this._onAsyncLayoutTimeout.bind(this);
-    this.aggregationInfo = new AggregationInfo(this.view)
+    this.groupInfo = new GroupInfo(this.view)
   }
 
   updateVisibleInfo () {
@@ -41,12 +41,10 @@ class AggregationTrafficGraph extends TrafficGraph {
         if (!this.intersectedObject) {
           // If we are not hovering over anything, clear the highlighting
           this.highlightConnectedNodes(undefined);
-          if(this.aggregationInfo) this.aggregationInfo.highlight(this.intersectedObject)
         } else if (this.intersectedObject instanceof this.NodeClass ||
                     this.intersectedObject instanceof this.ConnectionClass) {
           this.emit('objectHovered', this.intersectedObject);
           this.highlightConnectedNodes(this.intersectedObject);
-           if(this.aggregationInfo) this.aggregationInfo.highlight(this.intersectedObject)
         }
       }
     }
@@ -74,9 +72,6 @@ class AggregationTrafficGraph extends TrafficGraph {
 
   highlightObject (objectToHighlight, force) {
     super.highlightObject(objectToHighlight, force)
-    if(this.aggregationInfo){
-      this.aggregationInfo.highlightObject(objectToHighlight, force)
-    }
   }
   getSelectedNode () {
     return this.nodes[this.nodeName];
@@ -107,7 +102,6 @@ class AggregationTrafficGraph extends TrafficGraph {
     super.update()
   }
   _onAsyncLayoutBegin () {
-    console.log("_onAsyncLayoutBegin")
     this._numberOfRunningAsyncLayoutTasks += 1;
     this._clearLayoutTimeoutId();
     this._layoutTimeoutId = setTimeout(this._onAsyncLayoutTimeout_func, 5000);
@@ -115,7 +109,6 @@ class AggregationTrafficGraph extends TrafficGraph {
   }
 
   _clearLayoutTimeoutId () {
-    console.log("_clearLayoutTimeoutId")
     if (this._layoutTimeoutId !== null) {
       clearTimeout(this._layoutTimeoutId);
       this._layoutTimeoutId = null;
@@ -133,10 +126,16 @@ class AggregationTrafficGraph extends TrafficGraph {
     return super.computeShouldParticleSystemBeEnabled() && this._numberOfRunningAsyncLayoutTasks === 0;
   }
   cleanup (force) {
-    if(force){
-      if(this.aggregationInfo){
-        this.aggregationInfo.cleanup()
-      }
+    super.cleanup()
+    if(this.groupInfo){
+      this.groupInfo.cleanup()
+    }
+  }
+
+  layoutRunCompleted (graph,result) {
+    if(this.groupInfo) {
+      this.groupInfo.setGroupInfo(result)
+      this.groupInfo.updateArea()
     }
   }
   onAsyncLayoutCompleted () {
@@ -148,8 +147,8 @@ class AggregationTrafficGraph extends TrafficGraph {
       }
       this.updateIsParticleSystemEnabled();
     }
-    this.aggregationInfo.updateArea()
+    
   }
 }
 
-export default AggregationTrafficGraph;
+export default GroupTrafficGraph;

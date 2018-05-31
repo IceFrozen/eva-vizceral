@@ -66,7 +66,7 @@ function forcePrimaryRankPromotions (graph, entryNodeName = 'INTERNET') {
   }
 }
 
-function forceSecondaryRankPromotions (graph, entryNodeName = 'INTERNET') {
+function forceSecondaryRankPromotions (graph, entryNodeName = 'INTERNET') { 
   let entryNodes = graph.entryNodes();
   if (entryNodeName) {
     if (entryNodes.includes(entryNodeName)) {
@@ -77,7 +77,7 @@ function forceSecondaryRankPromotions (graph, entryNodeName = 'INTERNET') {
     const outgoingNodes = graph.outgoingNodes(entryNodes[i]);
     for (let j = 0; j < outgoingNodes.length; j++) {
       const node = graph.getNode(outgoingNodes[j]);
-      node.rank = 1;
+      node.rank += 1;
     }
   }
 }

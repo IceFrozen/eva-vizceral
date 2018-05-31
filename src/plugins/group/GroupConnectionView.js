@@ -20,7 +20,7 @@ import * as THREE from 'three';
 import ConnectionView from '../../base/connectionView';
 import GlobalStyles from '../../globalStyles';
 
-class AggregationConnectionView extends ConnectionView {
+class GroupConnectionView extends ConnectionView {
   constructor (connection) {
     super(connection, 650, false);
 
@@ -75,4 +75,4 @@ class AggregationConnectionView extends ConnectionView {
   }
 }
 
-export default AggregationConnectionView;
+export default GroupConnectionView;

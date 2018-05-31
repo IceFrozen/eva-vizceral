@@ -83,14 +83,14 @@ class NodeNameView extends BaseView {
   updateLabel () {
     const context = this.nameCanvas.getContext('2d');
     // TODO 这里调整 字体大小
-    const fontSize = this.fixedWidth ? 30 : 30;
+    const fontSize = this.fixedWidth ? 25 : 25;
 
     const font = `${fontSize}px 'Source Sans Pro', sans-serif`;
     context.font = font;
 
     // Label Width
-    this.defaultLabelWidth = this.fixedWidth ? 260 : context.measureText(this.getDisplayName(true)).width + 16;
-    const labelWidth = this.fixedWidth ? 260 : context.measureText(this.getDisplayName()).width + 16;
+    this.defaultLabelWidth = this.fixedWidth ? 220 : context.measureText(this.getDisplayName(true)).width + 16;
+    const labelWidth = this.fixedWidth ? 220 : context.measureText(this.getDisplayName()).width + 16;
     if (labelWidth !== this.labelWidth) { this.labelWidth = labelWidth; }
     this.resizeCanvas(this.nameCanvas, this.labelWidth, fontSize + 10);
 

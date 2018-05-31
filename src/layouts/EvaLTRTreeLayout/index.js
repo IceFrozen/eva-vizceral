@@ -17,7 +17,7 @@
  */
 import _ from 'lodash';
 
-import LayoutWorker from 'worker?inline!./ltrTreeLayoutWorker'; // eslint-disable-line import/no-extraneous-dependencies, import/extensions
+//import LayoutWorker from 'worker?inline!./ltrTreeLayoutWorker'; // eslint-disable-line import/no-extraneous-dependencies, import/extensions
 class EvaLTRTreeLayout {
   constructor () {}
 
@@ -87,7 +87,9 @@ class EvaLTRTreeLayout {
   }
 
 
-
+  /*
+    多线程的版本 目前先关掉 绘图功能暂时不影响速度
+  */
   __run (graph, dimensions, layoutComplete) {
     const workerGraph = {
       nodes: _.map(graph.nodes, node => ({ name: node.getName(), position: node.position, size: node.size, weight: node.depth, metadata: node.metadata })),

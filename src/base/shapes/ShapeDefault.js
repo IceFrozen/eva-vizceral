@@ -7,8 +7,8 @@ class ShapeDefault {
   constructor (node) {
     this.customNode = {};
     this.node = node;
-    this.innergeometry = this._createInnerGeometry(18, 32);
-    this.outerborder = this._createOuterBorder(20, 32);
+    this.innergeometry = this._createInnerGeometry(13, 32);
+    this.outerborder = this._createOuterBorder(15, 32);
     this.innergeometry_material = this._createMaterial(node);
     this.outerborder_material = this._createMaterial(node);
   }

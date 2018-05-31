@@ -27,10 +27,11 @@ class Connection extends GraphObject {
     this.type = 'connection';
     this.source = options.source;
     this.target = options.target;
-
     this.source.addOutgoingConnection(this);
     this.target.addIncomingConnection(this);
     this.region = options.data.region
+    this.siblingNode = []       // 兄弟节点
+    this.siblingIndex = 0       // 兄弟节点的index
     this.name = `${this.source.name}--${this.target.name}`;
     this.update(options.data);
     this.loaded = true;
@@ -47,11 +48,23 @@ class Connection extends GraphObject {
   getVolumePercent (key) {
     return this.volumePercent[key];
   }
-
+  cleanSiblingNode () {
+    this.siblingNode = []
+    this.siblingIndex = 0
+  }
+  // 兄弟节点
+  pushSiblingNode (connection) {
+    if(connection.name == this.name) {
+      return 
+    }
+    const isExist = this.siblingNode.find((connectionItem)=>connectionItem.name == connection.name)
+    if(!isExist){
+      this.siblingNode.push(connection)
+    }
+  }
   getVolumeTotal () {
     return this.volumeTotal;
   }
-
   update (data) {
     this.metadata = data.metadata || this.metadata;
     this.annotations = data.annotations || this.annotations;

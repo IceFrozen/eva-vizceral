@@ -248,7 +248,8 @@ class ConnectionView extends BaseView {
     this.interactiveLine = new THREE.Line(this.interactiveLineGeometry, this.interactiveLineMaterial);
     this.addInteractiveChild(this.interactiveLine);
     this.container.add(this.interactiveLine);
-
+    // 组要解决的是循环链接问题
+    this.startAndEndPoint = []  
     // Add the connection notice
     this.noticeView = new ConnectionNoticeView(this);
     this.noticeView.refresh(true);
@@ -331,26 +332,92 @@ class ConnectionView extends BaseView {
       // this.refresh(true);
       // this.updatePosition();
     }
+  }
 
+  getPosition (type) {
 
+    const connection = this.object
+    const startPosition = this.object.source.getView().container.position;
+    const endPosition = this.object.target.getView().container.position;
+    if(connection.siblingNode.length == 0) {
+      // 没有兄弟节点
+      if(type === "start") {
+      return startPosition
+      }
+      if(type === "end") {
+        return endPosition
+      }
+      return {
+        startPosition: startPosition,
+        endPosition: endPosition
+      } 
+    }else {
+      // 有兄弟链接 得到target-source 的垂直向量 
+      const tarray = function (border) {
+        const isSingle = border % 2
+        const array = []
+        let filterFunc = null
+        if(isSingle == 1){
+          filterFunc = Math.floor
+        }else{
+          filterFunc = Math.ceil
+        }
+        for(let i =1;i <= border;i++) {
+          if((i%2) ==0){
+            array.push(filterFunc(i/2))
+          }else{
+            array.push(-filterFunc(i/2))
+          }
+        }
+        return array      
+      }
+      // 表示斜边的长度
+      const stepLeng = (tarray(connection.siblingNode.length + 1)[connection.siblingIndex -1]) * 5
+      const A  = Math.abs(startPosition.y - endPosition.y)
+      const B = Math.abs(startPosition.x- endPosition.x)
+      const C = Math.sqrt(A*A + B*B)
+      let _x = stepLeng * A / C
+      let _y = stepLeng * B / C
+      let startClone = _.cloneDeep(startPosition)
+      let endClone = _.cloneDeep(endPosition)
+      startClone.x +=_x
+      startClone.y +=_y
+      endClone.x += _x
+      endClone.y += _y
+      return {
+        startPosition: startClone,
+        endPosition: endClone
+      }
+    }
+  }
 
+  updateStartAndEndPostion (direction) {
+    const position = this.getPosition()
+    const startPosition = position.startPosition
+    const endPosition = position.endPosition
+    startPosition.x += direction.x
+    startPosition.y += direction.y
+    endPosition.x += direction.x
+    endPosition.y += direction.y
   }
 
   updatePosition (depthOnly) {
     this.depth = this.dimmed ? Constants.DEPTH.dimmedConnection : Constants.DEPTH.normalConnection;
 
     // Position and rotate the connection to be between the two nodes
-    this.startPosition = this.object.source.getView().container.position;
-    this.endPosition = this.object.target.getView().container.position;
-    const start = new THREE.Vector3(this.startPosition.x, this.startPosition.y, this.depth);
+    
+    const position = this.getPosition()
+    const startPosition = position.startPosition
+    const endPosition = position.endPosition
+    const start = new THREE.Vector3(startPosition.x, startPosition.y, this.depth);
     this.particles.position.set(start.x, start.y, start.z);
 
     if (!depthOnly) {
       // particles
-      const centerX = (this.startPosition.x + this.endPosition.x) / 2;
-      const centerY = (this.startPosition.y + this.endPosition.y) / 2;
+      const centerX = (startPosition.x + endPosition.x) / 2;
+      const centerY = (startPosition.y + endPosition.y) / 2;
       this.centerVector = new THREE.Vector3(centerX, centerY, this.depth);
-      const end = new THREE.Vector3(this.endPosition.x, this.endPosition.y, this.depth);
+      const end = new THREE.Vector3(endPosition.x, endPosition.y, this.depth);
       const direction = new THREE.Vector3().copy(end).sub(start).normalize();
       this.particles.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), direction);
 
@@ -455,7 +522,7 @@ class ConnectionView extends BaseView {
       }
 
       if (wholeParticles > 0) {
-        //this.launchParticles(wholeParticles, releaseInfo.name);
+        this.launchParticles(wholeParticles, releaseInfo.name);
       }
     }
 

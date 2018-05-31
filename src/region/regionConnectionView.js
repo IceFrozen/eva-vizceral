@@ -42,8 +42,9 @@ class RegionConnectionView extends ConnectionView {
   }
 
   positionConnectingLine () {
-    const start = new THREE.Vector3(this.startPosition.x, this.startPosition.y, this.depth - 1);
-    const end = new THREE.Vector3(this.endPosition.x, this.endPosition.y, this.depth - 1);
+    const positon = this.getPosition()
+    const start = new THREE.Vector3(positon.startPosition.x, positon.startPosition.y, this.depth - 1);
+    const end = new THREE.Vector3(positon.endPosition.x, positon.endPosition.y, this.depth - 1);
 
     this.connectionLine.geometry.vertices[0] = start;
     this.connectionLine.geometry.vertices[1] = end;
