@@ -65,6 +65,11 @@ class RegionView extends EventEmitter {
   	const rootDatanode = data.nodes.map(node => new EvaDataNode(node.name,node))
     const nodeMap = {}
     const self = this
+
+    if(rootDatanode.length == 0) {
+      return this
+    }
+
   	rootDatanode.forEach(node=>{
   		nodeMap[node.name] = node
   	})
@@ -97,7 +102,13 @@ class RegionView extends EventEmitter {
       }
     }
     // 有环啊！！！
-    rootDatanode.filter(node => node.parentNodes.length == 0).forEach(node => this.setEntryNodes(node))
+    const firstLevelNodes = rootDatanode.filter(node => node.parentNodes.length == 0)
+    if(firstLevelNodes.length == 0) {
+      this.setEntryNodes(rootDatanode[0])
+    }else{
+      firstLevelNodes.forEach(node => this.setEntryNodes(node))
+    }
+
     this.setHeadTop(data)
   }
   setHeadTop(data) {
@@ -129,8 +140,8 @@ class RegionView extends EventEmitter {
       }
       if(this.entryNodes[i].subRegion){
         targetNode = this.entryNodes[i].subRegion.getNodeByNodeName(name)
-        if(target) {
-          return target
+        if(targetNode) {
+          return targetNode
         }
       }
     }

@@ -60,6 +60,10 @@ function Graph (nodes, edges) {
       delete this._entryNodeMap[sourceNodeName];
     }
   });
+  // 用于解决 孤岛环形数据结果出现的时候 图绘制不出来的bug
+  if(_.size(this._entryNodeMap) == 0 && _.size(this.nodes) !== 0 ){
+    this._entryNodeMap[this.nodes[0].name] = true
+  }
 }
 
 Graph.prototype.validateData = function (nodes, edges) {

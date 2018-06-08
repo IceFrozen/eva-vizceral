@@ -303,6 +303,15 @@ class GroupInfo extends BaseView {
   }
 
   cleanup () {
+     for(let i = 0; i< this.lines.length;i++) {
+      this.lines[i].material.dispose()
+      this.lines[i].geometry.dispose()
+    }
+    _.forEach(this.areaMapToNameView,(item,groupId)=>{
+        item.geometry.dispose()
+        item.material.dispose()
+        item.texture.dispose()
+    })
     this.interactiveLineMaterial.dispose()
   }
 }

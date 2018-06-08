@@ -48,7 +48,12 @@ class NodeView extends BaseView {
     this.innerCircleMaterial = this.shape.innergeometry_material;
   }
 
-  setOpacity (opacity) {
+  setOpacity (opacity,focused) {
+
+    if(!focused && this.object && this.object.fixedOpacityValue > 0){
+      opacity = this.object.fixedOpacityValue
+    }
+
     super.setOpacity(opacity);
     this.innerCircleMaterial.opacity = opacity * this.borderColor.a;
     this.borderMaterial.opacity = opacity * this.borderColor.a;

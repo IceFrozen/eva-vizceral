@@ -35,10 +35,23 @@ class GroupConnectionView extends ConnectionView {
       transparent: true,
       opacity: this.lineColor.a
     });
-    this.connectionLine = new THREE.Line(this.connectionLineGeometry, this.connectionLineMaterial);
+    this.lineType = "line"
+    this.connectionLineDashedMaterial = new THREE.LineDashedMaterial({ 
+        dashSize: 10, 
+        gapSize: 10, 
+        color: new THREE.Color(this.lineColor.r, this.lineColor.g, this.lineColor.b),
+        blending: THREE.AdditiveBlending,
+        depthTest: true,
+        depthWrite: false,
+        transparent: true,
+        opacity: this.lineColor.a
+    })
+    //this.connectionLine = new THREE.LineSegments( this.connectionLineGeometry, new THREE.LineDashedMaterial( { color: 0xffaa00, dashSize: 30, gapSize: 10, linewidth: 2 } ) );
+    this.connectionLine = new THREE.LineSegments(this.connectionLineGeometry, this.connectionLineMaterial);
     this.container.add(this.connectionLine);
     this.updatePosition();
     this.updateVolume();
+    this.dashedLine()
   }
 
   positionConnectingLine () {
@@ -49,12 +62,55 @@ class GroupConnectionView extends ConnectionView {
     this.connectionLine.geometry.vertices[0] = start;
     this.connectionLine.geometry.vertices[1] = end;
     this.connectionLine.geometry.verticesNeedUpdate = true;
+    this.connectionLine.computeLineDistances();
   }
 
   updatePosition (depthOnly) {
     super.updatePosition(depthOnly);
     if (this.connectionLine) {
       this.positionConnectingLine();
+    }
+  }
+
+  refresh () {
+    super.refresh()
+    this.dashedLine()
+
+  }
+
+  dashedLine () {
+    let total = this.object.getVolumeTotal()
+    if(this.lineType == "line" && total ==0) {
+       if (this.connectionLine) {
+          this.connectionLine.material = this.connectionLineDashedMaterial
+          this.lineType = "Dashed"
+          this.connectionLine.computeLineDistances();
+        }
+    }else if(this.lineType == "Dashed" && total > 0){
+      if (this.connectionLine) {
+          this.connectionLine.material = this.connectionLineMaterial
+          this.lineType = "line"
+          this.connectionLine.computeLineDistances();
+        }
+    }
+
+   
+    const targetTotal = this.object.target.getVolumeTotal()
+    const sourceTotal = this.object.source.getVolumeTotal()
+
+    if(!targetTotal){
+      this.object.target.fixedOpacity(0.1)
+      this.object.target.view.setOpacity(0.1)
+    }else{
+      this.object.target.fixedOpacity(-1)
+      this.object.target.view.setOpacity(1)
+    }
+    if(!sourceTotal) {
+      this.object.source.fixedOpacity(0.1)
+      this.object.source.view.setOpacity(0.1)
+    }else{
+      this.object.source.fixedOpacity(-1)
+      this.object.source.view.setOpacity(1)
     }
   }
 
@@ -67,6 +123,7 @@ class GroupConnectionView extends ConnectionView {
     super.cleanup();
     this.connectionLineGeometry.dispose();
     this.connectionLineMaterial.dispose();
+    this.connectionLineDashedMaterial.dispose()
   }
 
   setParticleLevels () {

@@ -19,6 +19,8 @@ import _ from 'lodash';
 import Group from './Group';
 const GroupLayouterWorker = require('./GroupLayouterWorker')
 
+
+const chukNumber = 4
 class GroupTreeLayout {
   constructor () {}
   layoutPositions (graph, positions) {
@@ -38,8 +40,8 @@ class GroupTreeLayout {
     //dimensions  长度 和狂赌
     let groups =  _.uniq(graph.allNodes.filter((node)=>node.groupId).map((node)=>node.groupId))
     let groupMap = _.groupBy(graph.allNodes,(node)=>node.groupId)
-    const groupNumber = Math.ceil(groups.length/3)
-    const chunk = _.chunk(groups, 3);
+    const groupNumber = Math.ceil(groups.length/chukNumber)
+    const chunk = _.chunk(groups, chukNumber);
     // 每一段长
     const everyGroupLength = (dimensions.graphWidth / groupNumber)
     const startPoint = -(dimensions.graphWidth)/2

@@ -44,6 +44,7 @@ class Node extends GraphObject {
 
     this.invalidatedSinceLastViewUpdate = true;
 
+    this.fixedOpacityValue = -1
     this.options = {
       showLabel: true
     };
@@ -64,6 +65,11 @@ class Node extends GraphObject {
     this.connected = true;
   }
 
+
+  fixedOpacity (opacity) {
+    this.fixedOpacityValue = opacity
+  }
+  
   addOutgoingConnection (connection) {
     this.outgoingConnections.push(connection);
     this.invalidateOutgoingVolume();
@@ -238,6 +244,10 @@ class Node extends GraphObject {
     }
 
     return updated;
+  }
+
+  getVolumeTotal () {
+    return this.getIncomingVolume() + this.getOutgoingVolume()
   }
 
   update (stateNode) {

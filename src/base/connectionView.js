@@ -372,12 +372,14 @@ class ConnectionView extends BaseView {
         return array      
       }
       // 表示斜边的长度
-      const stepLeng = (tarray(connection.siblingNode.length + 1)[connection.siblingIndex -1]) * 5
+      const stepLeng = (tarray(connection.siblingNode.length + 1)[connection.siblingIndex -1]) * 8
       const A  = Math.abs(startPosition.y - endPosition.y)
       const B = Math.abs(startPosition.x- endPosition.x)
       const C = Math.sqrt(A*A + B*B)
       let _x = stepLeng * A / C
       let _y = stepLeng * B / C
+      _x = Math.ceil(_x)
+       _y = Math.ceil(_y)
       let startClone = _.cloneDeep(startPosition)
       let endClone = _.cloneDeep(endPosition)
       startClone.x +=_x

@@ -137,7 +137,7 @@ class TrafficGraph extends EventEmitter {
         _.each(this.connections, connection => connection.cleanup());
         _.each(this.nodes, node => node.cleanup());
         this.view.cleanup()
-        if(this.cleanup) {this.cleanup()}
+        this.cleanup()
       }
       this._particleSystem.setLastUpdateTime(getPerformanceNow());
       this.updateIsParticleSystemEnabled();
@@ -843,6 +843,11 @@ class TrafficGraph extends EventEmitter {
     }));
     this.onAsyncLayoutCompleted();
     this.onAsyncLayoutBegin();
+  }
+  cleanup() {
+    if(this.view){
+      this.view.cleanup()
+    }
   }
 }
 

@@ -288,8 +288,11 @@ class Vizceral extends EventEmitter {
         this.setView(this.initialView, this.initialObjectToHighlight);
       }
       this.version+=1
-
-      if(!oldTrafficData || oldTrafficData.name == this.rootGraphName){
+      if(!oldTrafficData){
+        this.updateGraph(this.currentGraph)
+        return 
+      }
+      if(oldTrafficData && oldTrafficData.name == this.rootGraphName){
         this.updateGraph(this.currentGraph)
         return 
       }

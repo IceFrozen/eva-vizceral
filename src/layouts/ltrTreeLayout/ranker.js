@@ -36,7 +36,6 @@ function longestPathRanking (graph) {
     }
     return node.rank;
   }
-
   _.each(graph.entryNodes(), dfs);
 }
 

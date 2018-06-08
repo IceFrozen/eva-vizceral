@@ -56,8 +56,8 @@ class NodeViewStandard extends NodeView {
     this.showLabel(this.object.options.showLabel);
   }
 
-  setOpacity (opacity) {
-    super.setOpacity(opacity);
+  setOpacity (opacity,forced) {
+    super.setOpacity(opacity,forced);
     if (this.object.hasNotices()) {
       this.dotMaterial.opacity = opacity * this.dotColor.a;
     }
@@ -85,7 +85,6 @@ class NodeViewStandard extends NodeView {
 
   refresh (force) {
     super.refresh(force);
-
     // Refresh severity
     if (this.highlight) {
       this.dotMaterial.color.set(this.donutInternalColor);

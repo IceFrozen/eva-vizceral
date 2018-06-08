@@ -77,12 +77,12 @@ const weightSort = function (a, b) {
       }
     }
 
-    function positionNodes (nodesSortedByDepth, dimensions) {
+    function positionNodes (nodesSortedByDepth, dimensions,graph) {
       const nodePositions = {};
       let lastYDelta = 0;
       let yOffset = -35;
 
-      function setPositions (column, nodesAtDepth, xDelta) {
+      function setPositions (column, nodesAtDepth, xDelta,graph) {
         const curXDelta = xDelta * column;
         const yDelta = dimensions.height / (nodesAtDepth.length + 1);
         const needsYOffset = yDelta < lastYDelta ? lastYDelta % yDelta < 1 : yDelta % lastYDelta < 1;
@@ -92,18 +92,18 @@ const weightSort = function (a, b) {
           const curYDelta = (yDelta * (j + 1)) + (needsYOffset ? yOffset : 0);
           nodePositions[nodesAtDepth[j].name] = { x: curXDelta, y: curYDelta };
         }
-
+        // TODO 如果换装的同级别调用
         lastYDelta = yDelta;
       }
 
       let xDelta;
       if (nodesSortedByDepth.length === 1) {
         xDelta = dimensions.width / 2;
-        setPositions(1, nodesSortedByDepth[0], xDelta);
+        setPositions(1, nodesSortedByDepth[0], xDelta,graph);
       } else {
         xDelta = dimensions.width / (nodesSortedByDepth.length - 1);
         for (let i = 0; i < nodesSortedByDepth.length; i++) {
-          setPositions(i, nodesSortedByDepth[i], xDelta);
+          setPositions(i, nodesSortedByDepth[i], xDelta,graph);
         }
       }
 
@@ -119,18 +119,17 @@ const weightSort = function (a, b) {
       AcyclicFAS.remove(graph); // Remove acyclic links
       Ranker.longestPathRanking(graph); // Run a longest path algorithm to build a layout baseline
       // TODO: Rank the nodes from the dropped same edges...
-
       AcyclicFAS.restore(graph); // Restore acyclic links
       graph.restoreSameEdges(); // Replace edges that have same source and target
-
       Ranker.normalizeRanks(graph); // Normalize node ranks to be 0++
-      // if (!options.noRankPromotion) {
-      //   Ranker.forcePrimaryRankPromotions(graph, data.entryNode); // Force all entry nodes to be first
-      //   Ranker.forceSecondaryRankPromotions(graph, data.entryNode); // Force any leafs that are one level deep from specified entry node to not move all the way to the edge
-      // }
+      if (!options.noRankPromotion) {
+        Ranker.forcePrimaryRankPromotions(graph, data.entryNode); // Force all entry nodes to be first
+        Ranker.forceSecondaryRankPromotions(graph, data.entryNode); // Force any leafs that are one level deep from specified entry node to not move all the way to the edge
+      }
       const nodesSortedByDepth = sortNodesByDepth(graph);
       sortNodesWithinDepth(nodesSortedByDepth);
-      const nodePositions = positionNodes(nodesSortedByDepth, data.dimensions);
+      console.log("nodesSortedByDepth",nodesSortedByDepth)
+      const nodePositions = positionNodes(nodesSortedByDepth, data.dimensions,graph);
       return nodePositions;
     };
 

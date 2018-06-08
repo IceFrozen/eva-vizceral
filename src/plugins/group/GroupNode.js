@@ -19,6 +19,7 @@ import FocusedNodeView from '../../focused/focusedNodeView';
 import Node from '../../base/node';
 import NodeViewStandard from '../../base/nodeViewStandard';
 import GroupInfo from './GroupInfo';
+import _ from 'lodash';
 
 class GroupNode extends Node {
   constructor (node,entryNode,state) {
@@ -34,7 +35,6 @@ class GroupNode extends Node {
   isInteractive () {
     return true;
   }
-
   render () {
     if (this.nodeView === 'focused') {
       this.view = new FocusedNodeView(this);

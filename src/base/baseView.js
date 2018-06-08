@@ -27,6 +27,7 @@ class BaseView {
     this.dimmedLevel = 0.2;
     this.opacity = 1.0;
     this.dimmed = false;
+    this.disable = false
 
     this.meshes = {};
   }
@@ -91,7 +92,15 @@ class BaseView {
     context.scale(ratio, ratio);
   }
 
-  setOpacity (opacity) {
+  setOpacity (opacity,focused) {
+    if(focused) {
+      this.opacity = opacity;
+      return 
+    }
+
+    if(this.object && this.object.fixedOpacityValue > 0){
+      opacity = this.object.fixedOpacityValue
+    }
     this.opacity = opacity;
   }
 
