@@ -195,9 +195,9 @@ function rptToSPR (rpt) {
 
 class ConnectionView extends BaseView {
   constructor (connection, maxParticles, customWidth) {
-    super(connection);
+    super(connection);    
     this.setParticleLevels();
-    this.maxParticles = maxParticles;
+    this.maxParticles = maxParticles;//650
 
     this.dimmedLevel = 0.05;
 
@@ -216,7 +216,7 @@ class ConnectionView extends BaseView {
     this.shaderMaterial = baseShaderMaterial.clone();
     this.shaderMaterial.uniforms = this.uniforms;
 
-    this.customWidth = customWidth;
+    this.customWidth = customWidth; //false
     this.connectionWidth = Math.min(this.object.source.getView().radius, this.object.target.getView().radius) * 0.45;
     this.connectionDepth = Math.min(connection.source.getView().getDepth(), (connection.target.getView().getDepth()) / 2) - 2;
 
@@ -264,6 +264,7 @@ class ConnectionView extends BaseView {
   }
 
   growParticles (bumpSize) {
+    //console.log("growParticles",bumpSize)
     const newSize = bumpSize + this.particleSystemSize;
 
     for (let i = this.particleSystemSize; i < newSize; i++) {

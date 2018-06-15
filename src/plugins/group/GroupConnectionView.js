@@ -97,17 +97,17 @@ class GroupConnectionView extends ConnectionView {
    
     const targetTotal = this.object.target.getVolumeTotal()
     const sourceTotal = this.object.source.getVolumeTotal()
-
+    const fixedOpacity = 0.4
     if(!targetTotal){
-      this.object.target.fixedOpacity(0.1)
-      this.object.target.view.setOpacity(0.1)
+      this.object.target.fixedOpacity(fixedOpacity)
+      this.object.target.view.setOpacity(fixedOpacity)
     }else{
       this.object.target.fixedOpacity(-1)
       this.object.target.view.setOpacity(1)
     }
     if(!sourceTotal) {
-      this.object.source.fixedOpacity(0.1)
-      this.object.source.view.setOpacity(0.1)
+      this.object.source.fixedOpacity(fixedOpacity)
+      this.object.source.view.setOpacity(fixedOpacity)
     }else{
       this.object.source.fixedOpacity(-1)
       this.object.source.view.setOpacity(1)

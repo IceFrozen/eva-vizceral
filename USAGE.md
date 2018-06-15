@@ -16,6 +16,7 @@
     -   [connectAndGetConnetion](#connectandgetconnetion)
     -   [getConnection](#getconnection)
     -   [getConnections](#getconnections)
+    -   [isLoop](#isloop)
 -   [EvaRegion](#evaregion)
     -   [show](#show)
     -   [setDebugger](#setdebugger)
@@ -169,6 +170,12 @@ Returns **[EvaConnection](#evaconnection)**
 ### getConnections
 
 获全部取链接
+
+Returns **\[[EvaConnection](#evaconnection)]** 
+
+### isLoop
+
+是否有环
 
 Returns **\[[EvaConnection](#evaconnection)]** 
 

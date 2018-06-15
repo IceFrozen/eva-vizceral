@@ -123,12 +123,11 @@ const weightSort = function (a, b) {
       graph.restoreSameEdges(); // Replace edges that have same source and target
       Ranker.normalizeRanks(graph); // Normalize node ranks to be 0++
       if (!options.noRankPromotion) {
-        Ranker.forcePrimaryRankPromotions(graph, data.entryNode); // Force all entry nodes to be first
-        Ranker.forceSecondaryRankPromotions(graph, data.entryNode); // Force any leafs that are one level deep from specified entry node to not move all the way to the edge
+        //Ranker.forcePrimaryRankPromotions(graph, data.entryNode); // Force all entry nodes to be first
+        //Ranker.forceSecondaryRankPromotions(graph, data.entryNode); // Force any leafs that are one level deep from specified entry node to not move all the way to the edge
       }
       const nodesSortedByDepth = sortNodesByDepth(graph);
       sortNodesWithinDepth(nodesSortedByDepth);
-      console.log("nodesSortedByDepth",nodesSortedByDepth)
       const nodePositions = positionNodes(nodesSortedByDepth, data.dimensions,graph);
       return nodePositions;
     };

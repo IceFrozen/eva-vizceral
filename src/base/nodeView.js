@@ -66,6 +66,12 @@ class NodeView extends BaseView {
     if (opacity === 1) {
       this.refresh(true);
     }
+
+    if(!focused && this.object && this.object.fixedOpacityValue > 0){
+      opacity = this.object.fixedOpacityValue
+      this.nameView.setOpacity(1 - opacity);
+      return 
+    }
     if (this.nameView) {
       this.nameView.setOpacity(opacity);
     }

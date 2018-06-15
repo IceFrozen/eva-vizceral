@@ -46,7 +46,6 @@ class TrafficGraphView extends BaseView {
   }
 
   cleanup () {
-    //console.log("i am clean up!!")
     this.bufferGeometry.dispose()
     this.buffermaterial.dispose()
   }

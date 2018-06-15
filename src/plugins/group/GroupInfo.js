@@ -132,8 +132,11 @@ class GroupInfo extends BaseView {
     const nameTexture = new THREE.Texture(nameCanvas);
     const materialClone = new THREE.MeshBasicMaterial({ map: nameTexture, side: THREE.DoubleSide, transparent: true });
     const geometry = new THREE.PlaneBufferGeometry(200, 30)
-    const startPoint_x = group.getStartPoint().x
-    const startPoint_y = group.getStartPoint().y
+
+    const nameOfferset = { x:60, y:-30 }   //调整文字的位置 使之进入框内
+
+    const startPoint_x = group.getStartPoint().x + nameOfferset.x
+    const startPoint_y = group.getStartPoint().y + nameOfferset.y
     const mess = this.addChildElement(geometry, materialClone);
     const context = nameCanvas.getContext('2d');
     // TODO 这里调整 字体大小
@@ -158,9 +161,9 @@ class GroupInfo extends BaseView {
       texture:nameTexture,
       canvas:nameCanvas
     }
-    const nameOfferset = { x:60, y:-30 }   //调整文字的位置 使之进入框内
-    mess.position.x = startPoint_x + nameOfferset.x,  
-    mess.position.y = startPoint_y + nameCanvas.height/2  + nameOfferset.y
+   
+    mess.position.x = startPoint_x
+    mess.position.y = startPoint_y + nameCanvas.height/2 
     nameTexture.needsUpdate = true;
     return mess
   }
