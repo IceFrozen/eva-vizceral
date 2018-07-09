@@ -93,8 +93,6 @@ class GroupConnectionView extends ConnectionView {
           this.connectionLine.computeLineDistances();
         }
     }
-
-   
     const targetTotal = this.object.target.getVolumeTotal()
     const sourceTotal = this.object.source.getVolumeTotal()
     const fixedOpacity = 0.4
@@ -113,7 +111,7 @@ class GroupConnectionView extends ConnectionView {
       this.object.source.view.setOpacity(1)
     }
   }
-
+  
   setOpacity (opacity) {
     super.setOpacity(opacity);
     this.connectionLine.material.opacity = opacity * this.lineColor.a;

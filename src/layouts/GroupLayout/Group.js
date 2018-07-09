@@ -6,6 +6,8 @@ import _ from 'lodash';
 class Group {
     constructor (groupId,startPoinx,width,height,offset) {
       this.groupId = groupId
+      this.groupSplitIndex = 0      //分组在屏幕是上的位置
+      this.groupSplitIn = 0       //每个分组中从上到下 第几个
       this.startPoinx = startPoinx
       this.height  = height
       this.width = width
@@ -38,6 +40,11 @@ class Group {
       for(let i =0 ;i < nodes.length; i++){
         this.nodes.push(nodes[i])
       }
+      return this
+    }
+    setGroupIndex (chunkIndex,groupIndex) {
+      this.groupSplitIndex = chunkIndex
+      this.groupSplitIn = groupIndex
       return this
     }
     setConnections (connections) {

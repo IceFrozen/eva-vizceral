@@ -35,10 +35,12 @@ class GroupTreeLayout {
     TODO
   */
   run (graph, dimensions, layoutComplete) { 
+    let groupIndex = 0
     const offsetX = 10
     const offsetY = 10
-    //dimensions  长度 和狂赌
+    //dimensions  长度 和宽度
     let groups =  _.uniq(graph.allNodes.filter((node)=>node.groupId).map((node)=>node.groupId))
+    groups.sort()  // 排序
     let groupMap = _.groupBy(graph.allNodes,(node)=>node.groupId)
     const groupNumber = Math.ceil(groups.length/chukNumber)
     const chunk = _.chunk(groups, chukNumber);
@@ -56,6 +58,7 @@ class GroupTreeLayout {
           const groupId = group[j]
           const startY = startYPoint - stepY_length * j - offsetY
           const g = new Group(groupId,{x:startX,y:startY},everyGroupLength - offsetX,stepY_length - offsetY,{offsetX,offsetY})
+          g.setGroupIndex(i,j)
           g.setNodes(groupMap[groupId])
           g.setConnections(graph.connections)
           groupsObject.push(g)

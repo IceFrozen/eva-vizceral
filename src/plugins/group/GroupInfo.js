@@ -79,6 +79,58 @@ class GroupInfo extends BaseView {
     if(this.groups.length == 0) {
       return 
     }
+    /*
+      1、这里微调 节点和节点直接的覆盖
+    */
+    let allNodes = _.flattenDeep(this.groups.map((group) => group.nodes));
+    let connections = _.uniq(_.flattenDeep(this.groups.map((group)=>group.connections)))
+    let xDirect =  _.groupBy(allNodes, node=>node.position.x)
+    let yDirect =  _.groupBy(allNodes, node=>node.position.y)
+    
+    _.each(xDirect,(nodes,key)=>{
+      if(nodes.length <=2 ){
+        return 
+      }
+      let sortNodes =  _.sortBy(nodes, [function(node) { return node.position.y }])
+      /*
+        找出排序后
+      */
+      sortNodes.reverse()
+      let nodeMap = _.groupBy(sortNodes, node=>node.name)
+      let indexArray = []
+      for(let i = 0 ; i < sortNodes.length;i++) {
+        let sourceTarget = sortNodes[i]
+        // 找到跟这个节点相关的节点
+        const filterConnection = connections.filter(connection => {
+            if(connection.source.name == sourceTarget.name) {
+              return nodeMap[connection.target.name]
+            }
+            if(connection.target.name == sourceTarget.name) {
+              return nodeMap[connection.source.name]
+            }
+        }).forEach(c => {
+            let source = c.source;
+            let target = c.target;
+            indexArray.push(_.findIndex(sortNodes, function(node) { return node.name == source.name; }));
+            indexArray.push( _.findIndex(sortNodes, function(node) { return node.name == target.name; }));
+        })
+      }
+      if(indexArray.length == 0) {
+        return 
+      }
+      //处理函数
+      let min = _.min(indexArray)
+      let max  = _.max(indexArray)
+      if((max - min )<=1) {
+        return 
+      }
+      for(let i = min+1;i<max;i++) {
+        let n = sortNodes[i]
+        let offerDir =i %2?1:-1
+        n.position.x += (offerDir) * (30 +(i*10))
+      }
+    })
+    
     this.cleanLine()
     _.forEach(this.groups,(group)=>{
       this.genArea(group.getGroupId(),group.getStartPoint(),group.getWidth(),group.getHeight())
