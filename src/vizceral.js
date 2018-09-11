@@ -210,7 +210,7 @@ class Vizceral extends EventEmitter {
       if(stats) stats.dom.remove()
       stats = null
       return 
-    } 
+    } ``
     this.stats = new Stats();
     this.stats.domElement.style.position = 'absolute';
     this.stats.domElement.style.left = '100px';
@@ -240,7 +240,7 @@ class Vizceral extends EventEmitter {
           if (graphData.layout && !this.layouts[graphData.layout]) {
             Console.log(`Attempted to create a graph with a layout type that does not exist: ${graphData.layout}. Using default layout for graph type.`);
           }
-          graph = new (this.renderers[graphData.renderer])(graphData.name, mainView, parentGraph, width, height, this.layouts[graphData.layout], graphData.entryNode);
+          graph = new (this.renderers[graphData.renderer])(graphData.name, mainView, parentGraph, width, height, this.layouts[graphData.layout], graphData.entryNode, graphData);
           graph.setRendUtils(this.rendererUtils)
           this._attachGraphHandlers(graph); // 绑定事件用
           graph.setFilters(this.filters);

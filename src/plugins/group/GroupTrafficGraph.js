@@ -16,12 +16,12 @@ const Console = console;
    * @param {object} metadata 私有数据
 */
 class GroupTrafficGraph extends TrafficGraph {
-  constructor (name, mainView, parentGraph, graphWidth, graphHeight, Layout = EvaLTRTreeLayout, entryNode) {
+  constructor (name, mainView, parentGraph, graphWidth, graphHeight, Layout = EvaLTRTreeLayout, entryNode, GroupData) {
     Layout = GroupLayout
     super(name, mainView, parentGraph, graphWidth, graphHeight, GroupNode, GroupConnection, Layout, entryNode);
     this.type = 'Group';
     this.linePrecision = 4;
-    this.data = {};
+    this.data = GroupData;
     this._layoutTimeoutId = null;
     this._numberOfRunningAsyncLayoutTasks = 0;
     this._onAsyncLayoutTimeout_func = this._onAsyncLayoutTimeout.bind(this);
