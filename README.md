@@ -7,7 +7,7 @@ example
 ## Using
 
 1.  安装nodejs
-1.  git clone ...
+1.  git clone https://github.com/IceFrozen/eva-vizceral.git
 2.  cd eva-vizceral
 3.  do some thing change
 4.  npm run build
