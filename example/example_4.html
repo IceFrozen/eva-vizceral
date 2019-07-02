@@ -1,0 +1,120 @@
+<html>
+  <head>
+    <script src="./vizceral_eva.js"></script>
+    <link rel="stylesheet" type="text/css" href="./vizceral_eva.css" />
+<script>
+  var region
+  // 构建app 
+  var  appNode =  new Vizceral.EvaDataNode("app")   
+  appNode.setNodeType('users')
+  // api层面
+  var sendMessage = new Vizceral.EvaDataNode("sendMessage")   
+  var create = new Vizceral.EvaDataNode("create")   
+  var getActiveGroupInfo = new Vizceral.EvaDataNode("getActiveGroupInfo")
+  var getMessage = new Vizceral.EvaDataNode("getMessage")
+
+  // connector
+  var  msg_connector_tc = new Vizceral.EvaDataNode("msg_connector_tc")
+  var  msg_connector_yf = new Vizceral.EvaDataNode("msg_connector_yf")
+
+  // processor
+  var  msg_processor_tc = new Vizceral.EvaDataNode("msg_processor_tc")
+  var  msg_processor_yf = new Vizceral.EvaDataNode("msg_processor_yf")
+
+  //service
+  var  groupchat_yf = new Vizceral.EvaDataNode("groupchat_yf")
+  var  groupchat_tc = new Vizceral.EvaDataNode("groupchat_tc")
+
+
+  //redis 
+  var redis_group_user_yf = new  Vizceral.EvaDataNode("redis_group_user_yf")
+  var redis_group_user_tc = new  Vizceral.EvaDataNode("redis_group_user_tc")
+  var redis_redis_member_yf = new  Vizceral.EvaDataNode("redis_redis_member_yf")
+  var redis_redis_member_tc = new  Vizceral.EvaDataNode("redis_redis_member_tc")
+  //mcq
+  var mcq_wesync_yf = new Vizceral.EvaDataNode("mcq_wesync_tc")
+  var mcq_wesync_tc = new Vizceral.EvaDataNode("mcq_wesync_tc")
+  
+  //kafak
+  var kafka_yf = new Vizceral.EvaDataNode("kafka_yf")
+  var kafka_tc = new Vizceral.EvaDataNode("kafka_tc")
+
+  mcq_wesync_tc.setNodeType('pipe')
+  mcq_wesync_yf.setNodeType('pipe')
+  kafka_yf.setNodeType('pipe')
+  kafka_tc.setNodeType('pipe')
+
+
+  // 链路
+  appNode.connectAndGetConnetion(sendMessage).setDetails({"normal":1000}).createNotices("链路正常",4)
+  appNode.connectAndGetConnetion(create).setDetails({"normal":500}).createNotices("链路正常",4)
+  appNode.connectAndGetConnetion(getActiveGroupInfo).setDetails({"normal":800}).createNotices("链路正常",4)
+  appNode.connectAndGetConnetion(getMessage).setDetails({"normal":100,"danger":100}).createNotices("链路信息",2)
+
+
+  create.connectAndGetConnetion(msg_connector_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+  create.connectAndGetConnetion(msg_connector_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+  getActiveGroupInfo.connectAndGetConnetion(msg_connector_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+  getActiveGroupInfo.connectAndGetConnetion(msg_connector_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+  getMessage.connectAndGetConnetion(msg_connector_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+  getMessage.connectAndGetConnetion(msg_connector_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+
+  sendMessage.connectAndGetConnetion(msg_connector_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+  sendMessage.connectAndGetConnetion(msg_connector_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+  msg_connector_tc.connectAndGetConnetion(msg_processor_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+  msg_connector_tc.connectAndGetConnetion(msg_processor_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+
+
+  msg_connector_yf.connectAndGetConnetion(msg_processor_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+  msg_connector_yf.connectAndGetConnetion(msg_processor_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+  msg_processor_yf.connectAndGetConnetion(groupchat_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+  msg_processor_yf.connectAndGetConnetion(groupchat_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+  msg_processor_tc.connectAndGetConnetion(groupchat_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+  msg_processor_tc.connectAndGetConnetion(groupchat_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+
+
+  groupchat_yf.connectAndGetConnetion(redis_group_user_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+  groupchat_tc.connectAndGetConnetion(redis_group_user_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+
+
+  groupchat_yf.connectAndGetConnetion(redis_redis_member_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+  groupchat_tc.connectAndGetConnetion(redis_redis_member_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+
+
+  groupchat_yf.connectAndGetConnetion(mcq_wesync_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+  groupchat_tc.connectAndGetConnetion(mcq_wesync_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+
+
+  groupchat_yf.connectAndGetConnetion(kafka_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+  groupchat_tc.connectAndGetConnetion(redis_redis_member_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+
+
+  groupchat_yf.connectAndGetConnetion(redis_redis_member_yf).setDetails({"normal":1000}).createNotices("链路正常",4)
+  groupchat_tc.connectAndGetConnetion(kafka_tc).setDetails({"normal":1000}).createNotices("链路正常",4)
+
+
+  var run = function  () {
+    region = new Vizceral.EvaRegion(document.getElementById('viz'))
+    region.setRootLevels(appNode).show()
+    region.setAggregation([{name:"yf"}])
+  }     
+      
+</script>
+</head>
+  <body onload='run()'>
+    <div id="viz">
+    </div>
+   
+  </body>
+</html>

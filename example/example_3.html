@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <script src="./vizceral_eva.js"></script>
+    <link rel="stylesheet" type="text/css" href="./vizceral_eva.css" />
+  <script>
+  var region
+  var dataNode1 = new Vizceral.EvaDataNode("dataNode1")   
+  var dataNode2 = new Vizceral.EvaDataNode("dataNode2")   
+  var dataNode3 = new Vizceral.EvaDataNode("dataNode3")
+  var dataNode4 = new Vizceral.EvaDataNode("dataNode4")
+  var dataNode5 = new Vizceral.EvaDataNode("dataNode5")
+  dataNode1
+    .connectAndGetConnetion(dataNode2)
+    .setDetail("danger",100)
+    .createNotices("i am notices",0,"http://www.baidu.com")
+
+  dataNode2
+  .connectAndGetConnetion(dataNode1,{"danger":100,"normal":100})
+  .createNotices("I am notice",1)
+
+
+  dataNode2
+  .connectAndGetConnetion(dataNode3,{"danger":200,"normal":10})
+  .createNotices("I am notice",1)
+
+
+  dataNode3
+  .connectAndGetConnetion(dataNode2,{"danger":200,"normal":10})
+  .createNotices("I am notice",1)
+
+
+
+    dataNode3
+  .connectAndGetConnetion(dataNode4,{"danger":200,"normal":10})
+  .createNotices("I am notice",1)
+      dataNode4
+  .connectAndGetConnetion(dataNode3,{"danger":200,"normal":10})
+  .createNotices("I am notice",1)
+
+  function run () {
+    region = new Vizceral.EvaRegion(document.getElementById('viz'))
+    region.setRootLevels(dataNode1).show()
+  }
+
+</script>
+</head>
+  <body onload='run()'>
+    <div id="viz"></div>
+  </body>
+</html>

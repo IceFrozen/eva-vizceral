@@ -280,7 +280,7 @@ var nodeView1 = {
       }
     ],
     "displayName": "合流上行",
-    "name": "node_0",
+    "name": "newView_test1",
     "class": "normal",
     "updated": 1523936876017,
     "maxVolume": 50000,
@@ -710,7 +710,7 @@ var nodeView2 = {
       }
     ],
     "displayName": "合流上行",
-    "name": "node_0",
+    "name": "newView_test2",
     "class": "normal",
     "updated": 1523936876017,
     "maxVolume": 50000,
@@ -812,7 +812,7 @@ var nodeView2 = {
           "danger": 0
         },
         "class": "normal",
-        "target": "node_88"
+        "target": "node_88",
       },
       {
         "source": "node_103",
@@ -834,4 +834,3 @@ var nodeView2 = {
       }
     ],
     "did": 22}
-

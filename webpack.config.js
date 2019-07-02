@@ -1,6 +1,8 @@
 /* eslint no-var:0 */
 var webpack = require('webpack');
 var yargs = require('yargs');
+var path = require('path')
+const basePath = path.dirname(__filename)
 
 var options = yargs
   .alias('p', 'optimize-minimize')
@@ -8,9 +10,9 @@ var options = yargs
   .argv;
 
 var config = {
-  entry: './src/index.js',
+  entry: `${basePath}/src/index.js`,
   output: {
-    path: './dist',
+    path: `${basePath}/dist`,
     filename: options.optimizeMinimize ? 'vizceral_eva.min.js' : 'vizceral_eva.js',
     library: 'Vizceral',
     libraryTarget: 'umd',
@@ -36,8 +38,9 @@ var config = {
   plugins: [
     new webpack.DefinePlugin({
       __DEBUG__: process.env.NODE_ENV !== 'production',
-      __HIDE_DATA__: !!process.env.HIDE_DATA
-    }),
+      __HIDE_DATA__: !!process.env.HIDE_DATA,
+      'process.env.ASSET_PATH': basePath
+    }),  
   ]
 };
 

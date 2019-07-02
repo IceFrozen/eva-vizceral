@@ -1,0 +1,21 @@
+<html>
+  <head>
+    <script src="./vizceral_eva.js"></script>
+    <link rel="stylesheet" type="text/css" href="./vizceral_eva.css" />
+    <script src="./data/nodeView_java.js"></script>
+   
+  <script>
+  var region
+  function run2() {
+    region = new Vizceral.EvaRegion(document.getElementById('viz'))
+    console.log(nodeViewJava)
+    region.setNodeData(nodeViewJava).show()
+  }
+
+
+</script>
+</head>
+  <body onload='run()'>
+    <div id="viz"></div>
+  </body>
+</html>

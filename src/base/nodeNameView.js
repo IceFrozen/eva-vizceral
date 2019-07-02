@@ -45,6 +45,7 @@ function truncate (name) {
   if (name.length > 18) {
     return `${name.substr(0, 7)}…${name.substr(-7)}`;
   }
+  return name
 }
 
 class NodeNameView extends BaseView {
@@ -128,16 +129,21 @@ class NodeNameView extends BaseView {
   applyPosition () {
     let x;
     const y = this.nodeView.object.graphRenderer === 'global' ? 80 : 2.5*this.nodeView.radius;
-    console.log("this",this)
     // Prioritize left side if node is left of center, right side if node is right of center
-    if (this.nodeView.labelPositionLeft) {
-      // Put the label to the left of the node
-      x = 0 - this.nodeView.radius - (this.labelWidth / 2) + this.buffer + this.object.rank - 1  * 20
-    } else {
-      // Put the label to the right of the node
-      x = this.nodeView.radius + (this.labelWidth / 2) + this.buffer + this.object.rank -1 * 50
+    let x_offset = 0
+    let y_offset = 0
+    if (this.object.groupId) {
+      x_offset = _.isNumber(this.object.rank - 1  * 20)?this.object.rank - 1  * 20 :0
+      y_offset = _.isNumber(this.object.rank - 1  * 50)?this.object.rank - 1  * 20 :0
     }
 
+    if (this.nodeView.labelPositionLeft) {
+      // Put the label to the left of the node
+      x = 0 - this.nodeView.radius - (this.labelWidth / 2) + this.buffer + x_offset
+    } else {
+      // Put the label to the right of the node
+      x = this.nodeView.radius + (this.labelWidth / 2) + this.buffer + y_offset
+    }
     this.container.position.set(x, y, 1);
   }
 

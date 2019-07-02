@@ -1,7 +1,7 @@
 <html>
   <head>
-    <script src="../dist/vizceral_eva.js"></script>
-    <link rel="stylesheet" type="text/css" href="./css/vizceral_eva.css" />
+    <script src="./vizceral_eva.js"></script>
+    <link rel="stylesheet" type="text/css" href="./vizceral_eva.css" />
 <script>
   var testView = new Vizceral.EvaDataNode("test1")    // 创建节点1 入口点
   var testView2 = new Vizceral.EvaDataNode("test2")    //创建节点2
@@ -34,7 +34,6 @@
           .setDetail("danger",300)
           .setDetail("normal",300)
           .setDetail("warning",300)
-          //.setDetail("hello",300)
 
   var region
   function run () {
@@ -66,25 +65,19 @@
 
       setTimeout(function(){
       // 以下步骤自动刷新视图
+      console.log("setTimeout")
         var c = region.getNodeByNodeName(testView.name)
-        //c.setClass("warning")  //设置变化
-        //c.setNodeType("users")
+        c.setClass("warning")  //设置变化
+        c.setNodeType("users")
        
         // 动态增加节点颜色
-        //console.log(testView.name,testView2.name)
         var connection1 = region.getConnection(testView.name,testView2.name)
-        //console.log(connection1)
-        connection1.setDetail("hello",3000)
+    
+        connection1.setDetail("danger",0)
         c.setHightLight(true)     // 设置高亮
         var node = region.getNodeByNodeName(testView6.name)
         // 动态链接 通知名 通知级别 是否有链接 新增节点
         //node.connectAndGetConnetion(testView4,{"danger":1000,"normal":2000}).createNotices("test title 3",1)   //
-        setTimeout(function(){
-            connection1.setDetail('hello',110)
-             c.setClass("warning")  //设置变化   
-            console.log("============")
-           c.setHightLight(false)     // 取消高亮
-        },3000)
       },3000)
 
       }
