@@ -42,10 +42,9 @@ function roundRect (context, x, y, w, h, radius, strokeColor, fillColor) {
 }
 
 function truncate (name) {
-  // if (name.length > 18) {
-  //   return `${name.substr(0, 7)}…${name.substr(-7)}`;
-  // }
-  return name;
+  if (name.length > 18) {
+    return `${name.substr(0, 7)}…${name.substr(-7)}`;
+  }
 }
 
 class NodeNameView extends BaseView {
@@ -58,8 +57,6 @@ class NodeNameView extends BaseView {
     // How far away from the node we want the label to begin
     // TODO 25 调整离节点距离
     this.buffer = Math.max(this.nodeView.radius * 0.3, 25);
-
-
     // Create the canvas to build a sprite
     this.nameCanvas = this.createCanvas(200, this.fontSize + 10);
 
@@ -130,15 +127,15 @@ class NodeNameView extends BaseView {
 
   applyPosition () {
     let x;
-    const y = this.nodeView.object.graphRenderer === 'global' ? 80 : 0;
-
+    const y = this.nodeView.object.graphRenderer === 'global' ? 80 : 2.5*this.nodeView.radius;
+    console.log("this",this)
     // Prioritize left side if node is left of center, right side if node is right of center
     if (this.nodeView.labelPositionLeft) {
       // Put the label to the left of the node
-      x = 0 - this.nodeView.radius - (this.labelWidth / 2) - this.buffer;
+      x = 0 - this.nodeView.radius - (this.labelWidth / 2) + this.buffer + this.object.rank - 1  * 20
     } else {
       // Put the label to the right of the node
-      x = this.nodeView.radius + (this.labelWidth / 2) + this.buffer;
+      x = this.nodeView.radius + (this.labelWidth / 2) + this.buffer + this.object.rank -1 * 50
     }
 
     this.container.position.set(x, y, 1);
@@ -157,7 +154,6 @@ class NodeNameView extends BaseView {
     this.material.opacity = opacity;
   }
   cleanup () {
-    //console.log("cleanup name view")
     this.nameTexture.dispose();
     this.material.dispose();
   }
